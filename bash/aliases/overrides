@@ -1,0 +1,10 @@
+# Use NVIM instead of VIM if installed
+if type nvim > /dev/null 2>&1; then
+  alias vim='nvim'
+fi
+
+# Ensure full path is created
+alias mkdir='mkdir -p'
+
+# Ensure coloured output on ls
+alias ls='ls --color'

@@ -1,0 +1,16 @@
+# Show Vagrant IP addresses for Trellis
+alias check_vagrant_ips="grep -r 'vagrant_ip:' ~/Code/*/trellis/vagrant.local.yml"
+
+alias open="xdg-open"
+
+# Load all alias files from ~/.aliases/
+for f in ~/.aliases/*; do source $f; done
+
+# Git shortcuts
+alias g='git'
+alias gs='git status -sb'
+alias ga='git add'
+alias gc='git commit'
+
+# Print PATH values on new lines
+alias path='echo $PATH | tr -s ":" "\n"'

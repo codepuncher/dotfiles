@@ -1,0 +1,84 @@
+# If you come from bash you might have to change your $PATH.
+export PATH=$HOME/bin:/usr/local/bin:$PATH:$HOME/.yarn/bin
+
+# Setup history
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=1000
+setopt SHARE_HISTORY
+
+# Set local and remote editor
+export EDITOR='vim'
+
+# ssh
+export SSH_KEY_PATH="~/.ssh/rsa_id"
+
+# Load aliases
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Fix VTC issue for Ubuntu
+if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+	source /etc/profile.d/vte-2.91.sh
+fi
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /home/lee/bin/trellis trellis
+
+setopt promptsubst
+
+source ~/.zplug/init.zsh
+
+# Plugins
+zplug "zdharma/fast-syntax-highlighting", defer:2
+zplug "zsh-users/zsh-autosuggestions"
+zplug "zsh-users/zsh-completions"
+zplug "plugins/history-substring-search", from:oh-my-zsh
+zplug "plugins/git", from:oh-my-zsh
+zplug "plugins/npm", from:oh-my-zsh
+zplug "plugins/composer", from:oh-my-zsh
+zplug "plugins/encode64", from:oh-my-zsh
+zplug "plugins/vagrant", from:oh-my-zsh
+zplug "plugins/yarn", from:oh-my-zsh
+zplug "g-plane/zsh-yarn-autocompletions", hook-build:"./zplug.zsh", defer:2
+
+# Theme
+zplug denysdovhan/spaceship-prompt, use:spaceship.zsh, from:github, as:theme
+
+zplug load
+
+# Spaceship Prompt
+SPACESHIP_PROMPT_ORDER=(
+  time          # Time stampts section
+  user          # Username section
+  dir           # Current directory section
+  host          # Hostname section
+  git           # Git section (git_branch + git_status)
+  package       # Package version
+  node          # Node.js section
+  ruby          # Ruby section
+  golang        # Go section
+  php           # PHP section
+  docker        # Docker section
+  aws           # Amazon Web Services section
+  venv          # virtualenv section
+  pyenv         # Pyenv section
+  exec_time     # Execution time
+  line_sep      # Line break
+  battery       # Battery level and status
+  vi_mode       # Vi-mode indicator
+  jobs          # Background jobs indicator
+  exit_code     # Exit code section
+  char          # Prompt character
+)
+
+SPACESHIP_RPROMPT_ORDER=(
+  # empty by default
+  time          # Time stampts section
+)
+
