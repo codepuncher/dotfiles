@@ -40,7 +40,7 @@ init_links () {
     move .vimrc
     move_link .config/nvim nvim
     move_link .gitconfig git/gitconfig
-  echo "Symlinking complete"
+    echo "Symlinking complete"
   else
     echo "Symlinking cancelled by user"
     return 1

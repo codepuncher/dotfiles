@@ -2,7 +2,6 @@
 for f in ~/.aliases/*; do source $f; done
 
 # Git
-#alias git='hub'
 alias g='git'
 alias gs='git status -sb'
 alias ga='git add'
@@ -10,13 +9,10 @@ alias gc='git commit'
 alias git_copy_branch="gb --show-current | xclip -selection c"
 alias gcb="git_copy_branch"
 
-# Print PATH values on new lines
-
 # WordPress
 alias export_staging='wp @staging db export - > "staging_db_$(date +%F_$R).sql"'
 alias export_production='wp @production db export - > "production_db_$(date +%F_$R).sql"'
 alias t='trellis'
-alias wp_user_create='wp user create lee.hanbury lee.hanbury-pickett@itineris.co.uk --role=administrator --user_pass=admin'
 delete_posts() {
   wp post delete $(wp post list --post_type=$1 --format=ids) --force
 }
@@ -35,18 +31,19 @@ alias yrb='y run build'
 alias yrbp='y run build:production'
 alias c='composer'
 alias cda='c dump-autoload'
-alias check_vagrant_ips="grep -r 'vagrant_ip:' ~/Code/*/trellis/vagrant.local.yml"
 
 # Navigation
-alias down1='cd ..'
-alias down2='cd ../..'
-alias down3='cd ../../..'
-alias down4='cd ../../../..'
-alias down5='cd ../../../../..'
+alias up1='cd ..'
+alias up2='cd ../..'
+alias up3='cd ../../..'
+alias up4='cd ../../../..'
+alias up5='cd ../../../../..'
 
 # Misc
 alias v='vim'
-alias open='xdg-open'
+if [[ "${OSTYPE:0:6}" = "linux" ]] ; then
+  alias open='xdg-open'
+fi
 alias ll='ls -al --block-size=K'
 alias watch_error_log='tail -f ~/.valet/Log/nginx-error.log'
 alias ducks='du -cks * | sort -rn | head'
