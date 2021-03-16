@@ -32,7 +32,6 @@ set splitright
 call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'mattn/emmet-vim'
-Plug 'scrooloose/nerdtree'
 Plug 'neomake/neomake'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'junegunn/fzf'
@@ -44,8 +43,10 @@ Plug 'kristijanhusak/vim-hybrid-material'
 Plug 'joshdick/onedark.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'chrisbra/Colorizer'
 
 let g:deoplete#enable_at_startup = 1
+let g:colorizer_auto_color = 1
 
 call plug#end()
 
@@ -70,10 +71,12 @@ if (has("termguicolors"))
   set termguicolors
 endif
 
+" Make background transparent
+highlight Normal guibg=none
+highlight NonText guibg=none
+
 call neomake#configure#automake('nrwi')
 let g:neomake_php_phpcs_args_standard='PSR2'
-
-autocmd vimenter * NERDTree
 
 " Use CTRL + direction to change windows/buffers
 noremap <C-l> <C-w>l
