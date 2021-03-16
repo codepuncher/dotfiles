@@ -7,6 +7,11 @@ HISTSIZE=10000
 SAVEHIST=1000
 setopt SHARE_HISTORY
 
+# Load sensitive variables such as credentials and tokens
+if [ -f ~/.env ]; then
+  . ~/.env
+fi
+
 # Set local and remote editor
 export EDITOR='vim'
 
@@ -15,7 +20,7 @@ export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 # Load aliases
 if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
+  . ~/.bash_aliases
 fi
 
 export NVM_DIR="$HOME/.nvm"
