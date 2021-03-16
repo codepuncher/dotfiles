@@ -1,6 +1,6 @@
 # dotfiles
 
-My dotfiles, used on Ubuntu systems.
+My dotfiles, used on Ubuntu and macOS systems.
 
 ## Requirements
 
