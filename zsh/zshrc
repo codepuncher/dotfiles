@@ -1,11 +1,4 @@
-# If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:$PATH:$HOME/.yarn/bin
-
-# Setup history
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=1000
-setopt SHARE_HISTORY
+export PATH="$HOME/bin:/usr/local/bin:$PATH:$(yarn global bin):$HOME/.local/bin"
 
 # Load sensitive variables such as credentials and tokens
 if [ -f ~/.env ]; then
@@ -23,17 +16,19 @@ if [ -f ~/.bash_aliases ]; then
   . ~/.bash_aliases
 fi
 
+# Key bindings
+bindkey '^[[1;5D' backward-word
+bindkey '^[[1;5C' forward-word
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+export NVM_AUTO_USE=true
 
 # Fix VTC issue for Ubuntu
 if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
 	source /etc/profile.d/vte-2.91.sh
 fi
-
-autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /home/lee/bin/trellis trellis
 
 setopt promptsubst
 
@@ -45,34 +40,31 @@ zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-completions"
 zplug "plugins/history-substring-search", from:oh-my-zsh
 zplug "plugins/git", from:oh-my-zsh
+zplug "lukechilds/zsh-nvm"
 zplug "plugins/npm", from:oh-my-zsh
 zplug "plugins/composer", from:oh-my-zsh
 zplug "plugins/encode64", from:oh-my-zsh
-zplug "plugins/vagrant", from:oh-my-zsh
 zplug "plugins/yarn", from:oh-my-zsh
 zplug "g-plane/zsh-yarn-autocompletions", hook-build:"./zplug.zsh", defer:2
 
 # Theme
 zplug denysdovhan/spaceship-prompt, use:spaceship.zsh, from:github, as:theme
 
+# Load
 zplug load
+
+SPACESHIP_TIME_SHOW=true
 
 # Spaceship Prompt
 SPACESHIP_PROMPT_ORDER=(
-  time          # Time stampts section
   user          # Username section
   dir           # Current directory section
   host          # Hostname section
   git           # Git section (git_branch + git_status)
   package       # Package version
   node          # Node.js section
-  ruby          # Ruby section
-  golang        # Go section
   php           # PHP section
-  docker        # Docker section
-  aws           # Amazon Web Services section
   venv          # virtualenv section
-  pyenv         # Pyenv section
   exec_time     # Execution time
   line_sep      # Line break
   battery       # Battery level and status
@@ -83,7 +75,18 @@ SPACESHIP_PROMPT_ORDER=(
 )
 
 SPACESHIP_RPROMPT_ORDER=(
-  # empty by default
   time          # Time stampts section
 )
 
+# Setup history
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=1000
+setopt SHARE_HISTORY
+
+autoload -U compinit && compinit
+zmodload -i zsh/complist
+compdef __git_branch_names gpDo
+
+# Trellis virtualenv shell integration
+eval "$(trellis shell-init zsh)"
