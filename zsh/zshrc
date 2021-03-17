@@ -19,11 +19,6 @@ export EDITOR='vim'
 # ssh
 export SSH_KEY_PATH="~/.ssh/rsa_id"
 
-# Load aliases
-if [ -f ~/.bash_aliases ]; then
-  . ~/.bash_aliases
-fi
-
 # Key bindings
 bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word
@@ -94,3 +89,8 @@ compdef __git_branch_names gpDo
 
 # Trellis virtualenv shell integration
 eval "$(trellis shell-init zsh)"
+
+# Load aliases
+if [ -f ~/.bash_aliases ]; then
+  . ~/.bash_aliases
+fi
