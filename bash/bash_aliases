@@ -43,8 +43,10 @@ alias up5='cd ../../../../..'
 alias v='vim'
 if [[ "${OSTYPE:0:6}" = "linux" ]] ; then
   alias open='xdg-open'
+  alias ll='ls -al --block-size=K'
+elif [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
+  alias ll='ls -alh'
 fi
-alias ll='ls -al --block-size=K'
 alias watch_error_log='tail -f ~/.valet/Log/nginx-error.log'
 alias ducks='du -cks * | sort -rn | head'
 alias whatsmyip='curl -s https://api.ipify.org; echo'
