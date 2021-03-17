@@ -1,4 +1,12 @@
-export PATH="$HOME/bin:/usr/local/bin:$PATH:$(yarn global bin):$HOME/.local/bin"
+export PATH="$HOME/bin:/usr/local/bin:$PATH:$HOME/.local/bin"
+
+# Homebrew
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+
+  autoload -Uz compinit
+  compinit
+fi
 
 # Load sensitive variables such as credentials and tokens
 if [ -f ~/.env ]; then
@@ -20,14 +28,12 @@ fi
 bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-export NVM_AUTO_USE=true
-
-setopt promptsubst
-
-source ~/.zplug/init.zsh
+if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
+  export ZPLUG_HOME=/usr/local/opt/zplug
+  source $ZPLUG_HOME/init.zsh
+elif [[ "${OSTYPE:0:6}" = "linux" ]] ; then
+  source ~/.zplug/init.zsh
+fi
 
 # Plugins
 zplug "zdharma/fast-syntax-highlighting", defer:2
@@ -48,9 +54,12 @@ zplug denysdovhan/spaceship-prompt, use:spaceship.zsh, from:github, as:theme
 # Load
 zplug load
 
-SPACESHIP_TIME_SHOW=true
+# Node
+export NVM_AUTO_USE=true
+export PATH="$PATH:$(yarn global bin)"
 
 # Spaceship Prompt
+SPACESHIP_TIME_SHOW=true
 SPACESHIP_PROMPT_ORDER=(
   user          # Username section
   dir           # Current directory section
