@@ -93,6 +93,11 @@ compdef __git_branch_names gpDo
 # Trellis virtualenv shell integration
 eval "$(trellis shell-init zsh)"
 
+# iTerm2 shell integration
+if [[ "${OSTYPE:0:6}" == "darwin" && -f ~/.iterm2_shell_integration.zsh ]]; then
+  source ~/.iterm2_shell_integration.zsh
+fi
+
 # Load aliases
 if [ -f ~/.bash_aliases ]; then
   . ~/.bash_aliases
