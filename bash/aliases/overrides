@@ -7,4 +7,8 @@ fi
 alias mkdir='mkdir -p'
 
 # Ensure coloured output on ls
-alias ls='ls --color'
+if [[ "${OSTYPE:0:6}" = "linux" ]] ; then
+  alias ls='ls --color'
+elif [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
+  alias ls='ls -G'
+fi
