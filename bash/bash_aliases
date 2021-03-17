@@ -35,6 +35,7 @@ set_posts_statuses() {
 }
 
 # Dev
+alias y='yarn'
 alias yrb='y run build'
 alias yrbp='y run build:production'
 alias c='composer'
