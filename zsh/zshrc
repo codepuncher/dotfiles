@@ -30,6 +30,10 @@ elif [[ "${OSTYPE:0:6}" = "linux" ]] ; then
   source ~/.zplug/init.zsh
 fi
 
+# Node
+export NVM_SYMLINK_CURRENT=true
+export NVM_AUTO_USE=true
+
 # Plugins
 zplug "zdharma/fast-syntax-highlighting", defer:2
 zplug "zsh-users/zsh-autosuggestions"
@@ -49,8 +53,7 @@ zplug denysdovhan/spaceship-prompt, use:spaceship.zsh, from:github, as:theme
 # Load
 zplug load
 
-# Node
-export NVM_AUTO_USE=true
+# Yarn
 export PATH="$PATH:$(yarn global bin)"
 
 # Spaceship Prompt
