@@ -1,3 +1,6 @@
+# Zinit
+source ~/.zinit/bin/zinit.zsh
+
 export PATH="$HOME/bin:/usr/local/bin:$PATH:$HOME/.local/bin"
 
 # Homebrew
@@ -19,42 +22,26 @@ export EDITOR='vim'
 # ssh
 export SSH_KEY_PATH="~/.ssh/rsa_id"
 
-# Key bindings
-bindkey '^[[1;5D' backward-word
-bindkey '^[[1;5C' forward-word
-
-if [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
-  export ZPLUG_HOME=/usr/local/opt/zplug
-  source $ZPLUG_HOME/init.zsh
-elif [[ "${OSTYPE:0:6}" = "linux" ]] ; then
-  source ~/.zplug/init.zsh
-fi
-
 # Node
 export NVM_SYMLINK_CURRENT=true
 export NVM_AUTO_USE=true
 
 # Plugins
-zplug "zdharma/fast-syntax-highlighting", defer:2
-zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-completions"
-zplug "plugins/history-substring-search", from:oh-my-zsh
-zplug "plugins/git", from:oh-my-zsh
-zplug "lukechilds/zsh-nvm"
-zplug "plugins/npm", from:oh-my-zsh
-zplug "plugins/composer", from:oh-my-zsh
-zplug "plugins/encode64", from:oh-my-zsh
-zplug "plugins/yarn", from:oh-my-zsh
-zplug "g-plane/zsh-yarn-autocompletions", hook-build:"./zplug.zsh", defer:2
+zinit ice wait"0b" lucid atload'bindkey "$terminfo[kcuu1]" history-substring-search-up; bindkey "$terminfo[kcud1]" history-substring-search-down'
+zinit light zsh-users/zsh-history-substring-search
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+zinit ice wait"0a" lucid atload"_zsh_autosuggest_start"
+zinit light zsh-users/zsh-autosuggestions
+zinit ice wait"0b" lucid blockf
+zinit light zsh-users/zsh-completions
+zinit ice wait"0c" lucid atinit"zpcompinit;zpcdreplay"
+zinit light zdharma/fast-syntax-highlighting
+zinit ice wait"1" lucid
+zinit light lukechilds/zsh-nvm
+zinit snippet OMZP::npm
 
 # Theme
-zplug denysdovhan/spaceship-prompt, use:spaceship.zsh, from:github, as:theme
-
-# Load
-zplug load
-
-# Yarn
-export PATH="$PATH:$(yarn global bin)"
+zinit light denysdovhan/spaceship-prompt
 
 # Spaceship Prompt
 SPACESHIP_TIME_SHOW=true
@@ -102,3 +89,11 @@ fi
 if [ -f ~/.bash_aliases ]; then
   . ~/.bash_aliases
 fi
+
+# Key bindings
+bindkey '^[[1;5D' backward-word
+bindkey '^[[1;5C' forward-word
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
