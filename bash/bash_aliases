@@ -17,6 +17,18 @@ alias gs='g status -sb'
 alias git_copy_branch="gb --show-current | xclip -selection c"
 alias gcb="git_copy_branch"
 
+# Composer
+alias c="composer"
+alias cda="c dump-autoload"
+alias ci="c install"
+alias cr="c require"
+alias crm"c remove"
+
+# Node
+alias y='yarn'
+alias yrb='y run build'
+alias yrbp='y run build:production'
+
 # WordPress
 alias export_staging='wp @staging db export - > "staging_db_$(date +%F_$R).sql"'
 alias export_production='wp @production db export - > "production_db_$(date +%F_$R).sql"'
@@ -33,13 +45,6 @@ delete_terms() {
 set_posts_statuses() {
   wp post update $(wp post list --post_type=$1 --post_status=$2 --format=ids) --post_status=$3
 }
-
-# Dev
-alias y='yarn'
-alias yrb='y run build'
-alias yrbp='y run build:production'
-alias c='composer'
-alias cda='c dump-autoload'
 
 # Navigation
 alias up1='cd ..'
