@@ -10,6 +10,7 @@ alias gcl='g clone'
 alias gco='g checkout'
 alias gd='g diff'
 alias gf='g fetch'
+alias gl='g log'
 alias gm='g merge'
 alias gp='g push'
 alias gr='g reset'
@@ -26,6 +27,8 @@ alias crm"c remove"
 
 # Node
 alias y='yarn'
+alias ya='y add'
+alias yad='ya -D'
 alias yrb='y run build'
 alias yrbp='y run build:production'
 
