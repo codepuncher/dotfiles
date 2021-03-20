@@ -48,10 +48,22 @@ init_links () {
   fi
 }
 
-# TODO: Install tools like git, valet etc.
-# install_tools () {
-# }
+install_zinit() {
+  ZINIT_HOME="$HOME/.zinit"
+  if [[ ! -f "$ZINIT_HOME/bin/zinit.zsh" ]]; then
+    echo "Zinit not installed. Installing..."
+    command mkdir -p "$ZINIT_HOME" && command chmod g-rwX "$ZINIT_HOME"
+    command git clone https://github.com/zdharma/zinit "$ZINIT_HOME/bin" && \
+      echo "Zinit installed." || \
+      echo "Zinit installation failed."
+  fi
+}
 
-# install_tools
+install_tools () {
+  install_zinit
+}
+
+install_tools
 init_dirs
 init_links
+command zsh
