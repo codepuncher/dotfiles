@@ -15,15 +15,20 @@ alias gm='g merge'
 alias gp='g push'
 alias gr='g reset'
 alias gs='g status -sb'
-alias git_copy_branch="gb --show-current | xclip -selection c"
-alias gcb="git_copy_branch"
+if [[ "${OSTYPE:0:6}" = 'linux' ]] ; then
+  alias git_copy_branch='gb --show-current | xclip -selection c'
+elif [[ "${OSTYPE:0:6}" = 'darwin' ]] ; then
+  alias git_copy_branch='gb --show-current | pbcopy'
+fi
+alias gcb='git_copy_branch'
 
 # Composer
-alias c="composer"
-alias cda="c dump-autoload"
-alias ci="c install"
-alias cr="c require"
-alias crm"c remove"
+alias c='composer'
+alias cda='c dump-autoload'
+alias ci='c install'
+alias cr='c require'
+alias crm='c remove'
+alias cu='c update'
 
 # Node
 alias y='yarn'
@@ -58,10 +63,10 @@ alias up5='cd ../../../../..'
 
 # Misc
 alias v='vim'
-if [[ "${OSTYPE:0:6}" = "linux" ]] ; then
+if [[ "${OSTYPE:0:6}" = 'linux' ]] ; then
   alias open='xdg-open'
   alias ll='ls -al --block-size=K'
-elif [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
+elif [[ "${OSTYPE:0:6}" = 'darwin' ]] ; then
   alias ll='ls -alh'
 fi
 alias watch_error_log='tail -f ~/.valet/Log/nginx-error.log'
