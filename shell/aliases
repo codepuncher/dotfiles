@@ -1,6 +1,3 @@
-# Load all alias files from ~/.aliases/
-for f in ~/.aliases/*; do source $f; done
-
 # Git
 alias g='git'
 alias ga='g add'
@@ -63,11 +60,25 @@ alias up5='cd ../../../../..'
 
 # Misc
 alias v='vim'
+## Use NVIM instead of VIM if installed
+if type nvim > /dev/null 2>&1; then
+  alias vim='nvim'
+fi
+## Ensure full path is created
+alias mkdir='mkdir -p'
+## Ensure coloured output on ls
+if [[ "${OSTYPE:0:6}" = "linux" ]] ; then
+  alias ls='ls --color'
+elif [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
+  alias ls='ls -G'
+fi
 if [[ "${OSTYPE:0:6}" = 'linux' ]] ; then
-  alias open='xdg-open'
   alias ll='ls -al --block-size=K'
 elif [[ "${OSTYPE:0:6}" = 'darwin' ]] ; then
   alias ll='ls -alh'
+fi
+if [[ "${OSTYPE:0:6}" = 'linux' ]] ; then
+  alias open='xdg-open'
 fi
 alias watch_error_log='tail -f ~/.valet/Log/nginx-error.log'
 alias ducks='du -cks * | sort -rn | head'

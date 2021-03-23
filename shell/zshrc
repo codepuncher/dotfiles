@@ -12,8 +12,8 @@ if type brew &>/dev/null; then
 fi
 
 # Load sensitive variables such as credentials and tokens
-if [ -f ~/.env ]; then
-  . ~/.env
+if [ -f ~/.shell_env ]; then
+  . ~/.shell_env
 fi
 
 # Set local and remote editor
@@ -86,8 +86,8 @@ if [[ "${OSTYPE:0:6}" == "darwin" && -f ~/.iterm2_shell_integration.zsh ]]; then
 fi
 
 # Load aliases
-if [ -f ~/.bash_aliases ]; then
-  . ~/.bash_aliases
+if [ -f ~/.shell_aliases ]; then
+  . ~/.shell_aliases
 fi
 
 # Key bindings
