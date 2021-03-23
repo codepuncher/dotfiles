@@ -10,7 +10,7 @@ My dotfiles, used on Ubuntu and macOS systems.
   - Ubuntu: `sudo apt install zsh && chsh -s $(which zsh)`
 - Neovim
   - macOS: `brew install neovim`
-  - Ububtu: `sudo apt install neovim`
+  - Ubuntu: `sudo apt install neovim`
 
 ## Installation
 1. `git clone git@github.com:codepuncher/dotfiles.git ~/.dotfiles`
