@@ -32,11 +32,10 @@ init_links () {
   read resp
 
   if [ "$resp" = 'y' -o "$resp" = 'Y' ] ; then
-    move_link .bashrc bash/bashrc
-    move_link .profile bash/profile
-    move_link .bash_aliases bash/bash_aliases
-    move_link .aliases/overrides bash/aliases/overrides
-    move_link .zshrc zsh/zshrc
+    move_link .bashrc shell/bashrc
+    move_link .profile shell/profile
+    move_link .shell_aliases shell/aliases
+    move_link .zshrc shell/zshrc
     move_link .vim vim
     backup .vimrc
     move_link .config/nvim nvim
