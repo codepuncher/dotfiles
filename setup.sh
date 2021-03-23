@@ -8,10 +8,11 @@ echo "Running from $PWD"
 
 # Initialize a few directories.
 init_dirs () {
-  echo "Creating ~/Code"
+  echo 'Creating ~/Code'
   mkdir -p "$HOME/Code"
-  echo "Creating ~/Tools"
+  echo 'Creating ~/Tools'
   mkdir -p "$HOME/Tools"
+  echo 'Directories created'
 }
 
 backup() {
@@ -43,7 +44,7 @@ init_links () {
     echo "Symlinking complete"
   else
     echo "Symlinking cancelled by user"
-    return 1
+    exit 1
   fi
 }
 
