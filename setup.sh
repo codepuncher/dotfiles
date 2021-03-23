@@ -15,11 +15,11 @@ init_dirs () {
 }
 
 backup() {
-  [ -e $HOME/$1 ] && mv $HOME/$1 $HOME/$1.bak
+  [ -e "$HOME/$1" ] && mv "$HOME/$1" "$HOME/$1.bak"
 }
 
 move_link() {
-  backup $1
+  backup "$1"
   from="$SCRIPT_PATH/$2"
   to="$HOME/$1"
   new_path="$(dirname "$to")"
@@ -29,9 +29,9 @@ move_link() {
 
 init_links () {
   echo "Ready to symlink dotfiles? (y/n)"
-  read resp
+  read -r resp
 
-  if [ "$resp" = 'y' -o "$resp" = 'Y' ] ; then
+  if [ "$resp" = 'y' ] || [ "$resp" = 'Y' ] ; then
     move_link .bashrc shell/bashrc
     move_link .profile shell/profile
     move_link .shell_aliases shell/aliases
