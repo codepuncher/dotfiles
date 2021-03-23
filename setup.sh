@@ -1,29 +1,30 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Debug mode
+# Uncomment below line for "debug mode"
 # set -x
 
-echo Running from $(pwd)
+SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo "Running from $PWD"
 
-# Initialize a few things
+# Initialize a few directories.
 init_dirs () {
   echo "Creating ~/Code"
-  mkdir -p ~/Code
+  mkdir -p "$HOME/Code"
   echo "Creating ~/Tools"
-  mkdir -p ~/Tools
+  mkdir -p "$HOME/Tools"
 }
 
-move() {
+backup() {
   [ -e $HOME/$1 ] && mv $HOME/$1 $HOME/$1.bak
 }
 
 move_link() {
-  move $1
-  from="$(pwd)/$2"
+  backup $1
+  from="$SCRIPT_PATH/$2"
   to="$HOME/$1"
-  new_path=`dirname $to`
-  mkdir -p $new_path
-  ln -sv $from $to
+  new_path="$(dirname "$to")"
+  mkdir -p "$new_path"
+  ln -s "$from" "$to"
 }
 
 init_links () {
@@ -37,7 +38,7 @@ init_links () {
     move_link .aliases/overrides bash/aliases/overrides
     move_link .zshrc zsh/zshrc
     move_link .vim vim
-    move .vimrc
+    backup .vimrc
     move_link .config/nvim nvim
     move_link .gitconfig git/gitconfig
     echo "Symlinking complete"
@@ -47,10 +48,22 @@ init_links () {
   fi
 }
 
-# TODO: Install tools like git, valet etc.
-# install_tools () {
-# }
+install_zinit() {
+  ZINIT_HOME="$HOME/.zinit"
+  if [[ ! -f "$ZINIT_HOME/bin/zinit.zsh" ]]; then
+    echo "Zinit not installed. Installing..."
+    command mkdir -p "$ZINIT_HOME" && command chmod g-rwX "$ZINIT_HOME"
+    command git clone https://github.com/zdharma/zinit "$ZINIT_HOME/bin" && \
+      echo "Zinit installed." || \
+      echo "Zinit installation failed."
+  fi
+}
 
-# install_tools
+install_tools () {
+  install_zinit
+}
+
+install_tools
 init_dirs
 init_links
+command zsh
