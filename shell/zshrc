@@ -13,14 +13,8 @@ fi
 
 # Load sensitive variables such as credentials and tokens
 if [ -f ~/.shell_env ]; then
-  . ~/.shell_env
+  source ~/.shell_env
 fi
-
-# Set local and remote editor
-export EDITOR='vim'
-
-# ssh
-export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 # Node
 export NVM_SYMLINK_CURRENT=true
@@ -87,8 +81,14 @@ fi
 
 # Load aliases
 if [ -f ~/.shell_aliases ]; then
-  . ~/.shell_aliases
+  source ~/.shell_aliases
 fi
+
+# Set local and remote editor
+export EDITOR='vim'
+
+# ssh
+export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 # Key bindings
 bindkey '^[[1;5D' backward-word
