@@ -1,3 +1,8 @@
+# Load shell variables
+if [ -f "$HOME/.shell_variables" ]; then
+  source "$HOME/.shell_variables"
+fi
+
 # Zinit
 source ~/.zinit/bin/zinit.zsh
 
@@ -13,14 +18,8 @@ fi
 
 # Load sensitive variables such as credentials and tokens
 if [ -f ~/.shell_env ]; then
-  . ~/.shell_env
+  source ~/.shell_env
 fi
-
-# Set local and remote editor
-export EDITOR='vim'
-
-# ssh
-export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 # Node
 export NVM_SYMLINK_CURRENT=true
@@ -82,13 +81,19 @@ eval "$(trellis shell-init zsh)"
 
 # iTerm2 shell integration
 if [[ "${OSTYPE:0:6}" == "darwin" && -f ~/.iterm2_shell_integration.zsh ]]; then
-  source ~/.iterm2_shell_integration.zsh
+  source "$HOME/.iterm2_shell_integration.zsh"
 fi
 
 # Load aliases
-if [ -f ~/.shell_aliases ]; then
-  . ~/.shell_aliases
+if [ -f "$HOME/.shell_aliases" ]; then
+  source "$HOME/.shell_aliases"
 fi
+
+# Set local and remote editor
+export EDITOR='vim'
+
+# ssh
+export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 # Key bindings
 bindkey '^[[1;5D' backward-word

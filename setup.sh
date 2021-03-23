@@ -33,9 +33,10 @@ init_links () {
   read -r resp
 
   if [ "$resp" = 'y' ] || [ "$resp" = 'Y' ] ; then
+    move_link .shell_variables shell/variables
+    move_link .shell_aliases shell/aliases
     move_link .bashrc shell/bashrc
     move_link .profile shell/profile
-    move_link .shell_aliases shell/aliases
     move_link .zshrc shell/zshrc
     move_link .vim vim
     backup .vimrc
