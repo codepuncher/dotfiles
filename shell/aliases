@@ -84,3 +84,5 @@ alias watch_error_log='tail -f ~/.valet/Log/nginx-error.log'
 alias ducks='du -cks * | sort -rn | head'
 alias whatsmyip='curl -s https://api.ipify.org; echo'
 alias show_path='echo $PATH | tr -s ":" "\n"'
+
+# vi:syntax=sh
