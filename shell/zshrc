@@ -6,7 +6,19 @@ fi
 # Zinit
 source ~/.zinit/bin/zinit.zsh
 
-export PATH="$HOME/bin:/usr/local/bin:$PATH:$HOME/.local/bin"
+if [[ "${OSTYPE:0:6}" == "darwin" ]]; then
+  # iTerm2 shell integration
+  if [[ -f ~/.iterm2_shell_integration.zsh ]]; then
+    source "$HOME/.iterm2_shell_integration.zsh"
+  fi
+
+  # https://jekyllrb.com/docs/installation/macos/#set-sdkroot-only-macos-catalina-or-later
+  export SDKROOT=$(xcrun --show-sdk-path)
+
+  export PATH="$PATH:$HOME/Library/Python/3.9/bin:/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/3.0.0/bin:$HOME/bin:/usr/local/bin:/usr/local/sbin:$HOME/.local/bin"
+else
+  export PATH="$PATH:$HOME/bin:/usr/local/bin:$HOME/.local/bin"
+fi
 
 # Homebrew
 if type brew &>/dev/null; then
@@ -78,11 +90,6 @@ compdef __git_branch_names gpDo
 
 # Trellis virtualenv shell integration
 eval "$(trellis shell-init zsh)"
-
-# iTerm2 shell integration
-if [[ "${OSTYPE:0:6}" == "darwin" && -f ~/.iterm2_shell_integration.zsh ]]; then
-  source "$HOME/.iterm2_shell_integration.zsh"
-fi
 
 # Load aliases
 if [ -f "$HOME/.shell_aliases" ]; then
