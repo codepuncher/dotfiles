@@ -18,6 +18,7 @@ elif [[ "${OSTYPE:0:6}" = 'darwin' ]] ; then
   alias git_copy_branch='gb --show-current | pbcopy'
 fi
 alias gcb='git_copy_branch'
+alias git_set_missing_end_of_file='git ls-files -z | while IFS= read -rd "" f; do tail -c1 < "$f" | read -r _ || echo >> "$f"; done'
 
 # Composer
 alias c='composer'
@@ -38,6 +39,10 @@ alias yrbp='y run build:production'
 alias export_staging='wp @staging db export - > "staging_db_$(date +%F_$R).sql"'
 alias export_production='wp @production db export - > "production_db_$(date +%F_$R).sql"'
 alias t='trellis'
+generate_vault_pass() {
+  vault_pass=$(LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 512; echo '')
+  echo "$vault_pass" > .vault_pass
+}
 delete_posts() {
   wp post delete $(wp post list --post_type=$1 --format=ids) --force
 }
@@ -84,5 +89,9 @@ alias watch_error_log='tail -f ~/.valet/Log/nginx-error.log'
 alias ducks='du -cks * | sort -rn | head'
 alias whatsmyip='curl -s https://api.ipify.org; echo'
 alias show_path='echo $PATH | tr -s ":" "\n"'
+alias generate_string='openssl rand -base64 500 | tr -dc 'a-zA-Z0-9' | fold -w 128 | head -n 1'
+alias generate_satis_pass='openssl rand -base64 500 | tr -dc a-zA-Z0-9 | fold -w 64 | head -n 1'
+alias clear_dns_cache='sudo killall -HUP mDNSResponder'
+alias cat='cat -n'
 
 # vi:syntax=sh
