@@ -60,8 +60,23 @@ install_zinit() {
   fi
 }
 
+install_vim_plug() {
+  NVIM_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/nvim"
+  VIM_PLUG_FILE="$NVIM_HOME/site/autoload/plug.vim"
+  if [[ ! -f "$VIM_PLUG_FILE" ]]; then
+    echo "vim-plug not installed. Installing..."
+    curl -fLo "$VIM_PLUG_FILE" \
+      --create-dirs \
+      --progress-bar \
+      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
+      echo "vim-plug installed. Don't forget to run :PlugInstall when opening nvim for the first time!" || \
+      echo "vim-plug installation failed."
+  fi
+}
+
 install_tools () {
   install_zinit
+  install_vim_plug
 }
 
 install_tools
