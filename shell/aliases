@@ -1,6 +1,7 @@
 # Git
 alias g='git'
 alias ga='g add'
+alias gaa='ga -A'
 alias gb='g branch'
 alias gc='g commit'
 alias gcl='g clone'
