@@ -1,5 +1,5 @@
 # dotfiles
-My dotfiles, used on Ubuntu and macOS systems.
+My dotfiles, used on Ubuntu, Arch and macOS systems.
 
 ## Requirements
 - ZSH
