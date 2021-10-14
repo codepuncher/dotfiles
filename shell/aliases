@@ -34,6 +34,7 @@ alias cu='c update'
 alias y='yarn'
 alias ya='y add'
 alias yad='ya -D'
+alias yrm='y remove'
 alias yrb='y run build'
 alias yrbp='y run build:production'
 
