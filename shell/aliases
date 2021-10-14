@@ -26,6 +26,7 @@ alias c='composer'
 alias cda='c dump-autoload'
 alias ci='c install'
 alias cr='c require'
+alias crd='cr --dev'
 alias crm='c remove'
 alias cu='c update'
 
