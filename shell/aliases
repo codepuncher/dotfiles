@@ -81,11 +81,7 @@ if [[ "${OSTYPE:0:6}" =~ ^linux.* ]] ; then
 elif [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   alias ls='ls -G'
 fi
-if [[ "${OSTYPE:0:6}" =~ ^linux.* ]] ; then
-  alias ll='ls -al --block-size=K'
-elif [[ "${OSTYPE:0:6}" = 'darwin' ]] ; then
-  alias ll='ls -alh'
-fi
+alias ll='ls -alh'
 if [[ "${OSTYPE:0:6}" =~ ^linux.* ]] ; then
   alias open='xdg-open'
 fi
