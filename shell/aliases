@@ -13,7 +13,7 @@ alias gm='g merge'
 alias gp='g push'
 alias gr='g reset'
 alias gs='g status -sb'
-if [[ "${OSTYPE:0:6}" = 'linux' ]] ; then
+if [[ "${OSTYPE:0:6}" =~ ^linux.* ]] ; then
   alias git_copy_branch='gb --show-current | xclip -selection c'
 elif [[ "${OSTYPE:0:6}" = 'darwin' ]] ; then
   alias git_copy_branch='gb --show-current | pbcopy'
@@ -76,17 +76,17 @@ fi
 ## Ensure full path is created
 alias mkdir='mkdir -p'
 ## Ensure coloured output on ls
-if [[ "${OSTYPE:0:6}" = "linux" ]] ; then
+if [[ "${OSTYPE:0:6}" =~ ^linux.* ]] ; then
   alias ls='ls --color'
 elif [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
   alias ls='ls -G'
 fi
-if [[ "${OSTYPE:0:6}" = 'linux' ]] ; then
+if [[ "${OSTYPE:0:6}" =~ ^linux.* ]] ; then
   alias ll='ls -al --block-size=K'
 elif [[ "${OSTYPE:0:6}" = 'darwin' ]] ; then
   alias ll='ls -alh'
 fi
-if [[ "${OSTYPE:0:6}" = 'linux' ]] ; then
+if [[ "${OSTYPE:0:6}" =~ ^linux.* ]] ; then
   alias open='xdg-open'
 fi
 alias watch_error_log='tail -f ~/.valet/Log/nginx-error.log'
