@@ -31,6 +31,7 @@ set splitright
 
 call plug#begin('~/.local/share/nvim/plugged')
 
+Plug 'preservim/nerdtree'
 Plug 'mattn/emmet-vim'
 Plug 'neomake/neomake'
 Plug 'terryma/vim-multiple-cursors'
@@ -83,3 +84,9 @@ noremap <C-l> <C-w>l
 noremap <C-h> <C-w>h
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
+
+" Start NERDTree and put the cursor back in the other window.
+autocmd VimEnter * NERDTree | wincmd p
+
+" Exit Vim if NERDTree is the only window remaining in the only tab.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
