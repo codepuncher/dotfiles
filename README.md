@@ -7,7 +7,7 @@ My dotfiles, used on Ubuntu, Arch and macOS systems.
   - Ubuntu: `sudo apt install zsh && chsh -s $(which zsh)`
 - Git 
   - macOS: `brew install git`
-  - Ubuntu: `sudo apt install zsh && chsh -s $(which zsh)`
+  - Ubuntu: `sudo apt install git`
 - Neovim
   - macOS: `brew install neovim`
   - Ubuntu: `sudo apt install neovim`
