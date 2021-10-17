@@ -35,20 +35,19 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'preservim/nerdcommenter'
-Plug 'mattn/emmet-vim'
 Plug 'neomake/neomake'
-Plug 'terryma/vim-multiple-cursors'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'vim-airline/vim-airline'
+Plug 'edkolev/tmuxline.vim'
 Plug 'airblade/vim-gitgutter'
-Plug 'jwalton512/vim-blade', { 'for': 'blade' }
 Plug 'joshdick/onedark.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'chrisbra/Colorizer'
 Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
-Plug 'edkolev/tmuxline.vim'
+Plug 'jwalton512/vim-blade', { 'for': 'blade' }
+Plug 'mattn/emmet-vim'
 
 let g:deoplete#enable_at_startup = 1
 let g:colorizer_auto_color = 1
