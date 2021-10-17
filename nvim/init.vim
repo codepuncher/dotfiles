@@ -48,6 +48,7 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'chrisbra/Colorizer'
 Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
+Plug 'edkolev/tmuxline.vim'
 
 let g:deoplete#enable_at_startup = 1
 let g:colorizer_auto_color = 1
