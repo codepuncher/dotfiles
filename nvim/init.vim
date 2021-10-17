@@ -47,7 +47,6 @@ Plug 'joshdick/onedark.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'chrisbra/Colorizer'
-Plug 'vim-scripts/buftabs'
 Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
 
 let g:deoplete#enable_at_startup = 1
