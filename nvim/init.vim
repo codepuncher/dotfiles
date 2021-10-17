@@ -11,18 +11,20 @@ set ruler             " show the cursor position all the time
 set showcmd           " display incomplete commands
 set incsearch         " do incremental searching
 
-" Whitespace stuff
+" Tabs and spaces
 set tabstop=2
 set shiftwidth=2
-set shiftround
+set softtabstop=2
+set backspace=indent,eol,start
 set expandtab
-set nowrap
+set autoindent
+set smartindent
+set smarttab
 set list listchars=tab:->,trail:·
 set nojoinspaces
 
 " Numbers
 set number
-set relativenumber
 set numberwidth=5
 
 " Open new split panes to right and bottom, which feels more natural
@@ -31,20 +33,22 @@ set splitright
 
 call plug#begin('~/.local/share/nvim/plugged')
 
-Plug 'preservim/nerdtree'
+Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'preservim/nerdcommenter'
 Plug 'mattn/emmet-vim'
 Plug 'neomake/neomake'
 Plug 'terryma/vim-multiple-cursors'
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'itchyny/lightline.vim'
+Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
-Plug 'jwalton512/vim-blade'
-Plug 'kristijanhusak/vim-hybrid-material'
+Plug 'jwalton512/vim-blade', { 'for': 'blade' }
 Plug 'joshdick/onedark.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'chrisbra/Colorizer'
+Plug 'vim-scripts/buftabs'
+Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
 
 let g:deoplete#enable_at_startup = 1
 let g:colorizer_auto_color = 1
