@@ -26,6 +26,13 @@ set nojoinspaces
 " Numbers
 set number
 set numberwidth=5
+" On insert, use absolute. On leave, use relative.
+" From: https://jeffkreeftmeijer.com/vim-number/
+augroup numbertoggle
+  autocmd!
+  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+augroup END
 
 " Open new split panes to right and bottom, which feels more natural
 set splitbelow
