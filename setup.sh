@@ -38,8 +38,7 @@ init_links () {
     move_link .bashrc shell/bashrc
     move_link .profile shell/profile
     move_link .zshrc shell/zshrc
-    move_link .vim vim
-    backup .vimrc
+    move_link .tmux.conf tmux/conf
     move_link .config/nvim nvim
     move_link .gitconfig git/gitconfig
     echo "Symlinking complete"
