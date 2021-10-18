@@ -39,6 +39,7 @@ init_links () {
     move_link .profile shell/profile
     move_link .zshrc shell/zshrc
     move_link .vim vim
+    move_link .tmux.conf tmux/conf
     backup .vimrc
     move_link .config/nvim nvim
     move_link .gitconfig git/gitconfig
