@@ -48,6 +48,8 @@ Plug 'junegunn/fzf.vim'
 Plug 'itchyny/lightline.vim'
 Plug 'edkolev/tmuxline.vim'
 Plug 'airblade/vim-gitgutter'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'lewis6991/gitsigns.nvim'
 Plug 'joshdick/onedark.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'StanAngeloff/php.vim', { 'for': 'php' }
@@ -58,6 +60,8 @@ Plug 'chrisbra/Colorizer', { 'for': ['css', 'scss'] }
 Plug 'jwalton512/vim-blade', { 'for': 'blade' }
 Plug 'mattn/emmet-vim', { 'for': ['html', 'php'] }
 Plug 'preservim/tagbar', { 'for': 'php' }
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 
 let g:deoplete#enable_at_startup = 1
 let g:colorizer_auto_color = 1
@@ -118,3 +122,6 @@ au BufWritePost *.php silent! !eval '[ -f ".git/hooks/uctags" ] && .git/hooks/uc
 " Tagbar
 nmap <F8> :TagbarToggle<CR>
 let g:tagbar_ctags_bin = '/usr/bin/uctags'
+
+" Update sign column every quarter second
+set updatetime=250
