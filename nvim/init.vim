@@ -45,7 +45,7 @@ Plug 'preservim/nerdcommenter'
 Plug 'neomake/neomake'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'vim-airline/vim-airline'
+Plug 'itchyny/lightline.vim'
 Plug 'edkolev/tmuxline.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'joshdick/onedark.vim'
