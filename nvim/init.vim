@@ -50,11 +50,14 @@ Plug 'edkolev/tmuxline.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'joshdick/onedark.vim'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'StanAngeloff/php.vim', { 'for': 'php' }
+Plug 'phpactor/phpactor', { 'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o' }
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'chrisbra/Colorizer'
-Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
+Plug 'kristijanhusak/deoplete-phpactor', { 'for': 'php' }
+Plug 'chrisbra/Colorizer', { 'for': ['css', 'scss'] }
 Plug 'jwalton512/vim-blade', { 'for': 'blade' }
-Plug 'mattn/emmet-vim'
+Plug 'mattn/emmet-vim', { 'for': ['html', 'php'] }
+Plug 'preservim/tagbar', { 'for': 'php' }
 
 let g:deoplete#enable_at_startup = 1
 let g:colorizer_auto_color = 1
@@ -108,3 +111,10 @@ autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
 "NERDCommenter
 let g:NERDDefaultAlign = 'left'
 let g:NERDSpaceDelims = 1
+
+" CTags regeneration on write
+au BufWritePost *.php silent! !eval '[ -f ".git/hooks/uctags" ] && .git/hooks/uctags' &
+
+" Tagbar
+nmap <F8> :TagbarToggle<CR>
+let g:tagbar_ctags_bin = '/usr/bin/uctags'
