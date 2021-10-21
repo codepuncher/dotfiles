@@ -38,33 +38,10 @@ augroup END
 set splitbelow
 set splitright
 
-call plug#begin('~/.local/share/nvim/plugged')
-
-Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'preservim/nerdcommenter'
-Plug 'neomake/neomake'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'itchyny/lightline.vim'
-Plug 'edkolev/tmuxline.vim'
-Plug 'airblade/vim-gitgutter'
-Plug 'EdenEast/nightfox.nvim'
-Plug 'editorconfig/editorconfig-vim'
-Plug 'StanAngeloff/php.vim', { 'for': 'php' }
-Plug 'phpactor/phpactor', { 'for': 'php', 'tag': '*', 'do': 'composer install --no-dev -o' }
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'kristijanhusak/deoplete-phpactor', { 'for': 'php' }
-Plug 'chrisbra/Colorizer', { 'for': ['css', 'scss'] }
-Plug 'jwalton512/vim-blade', { 'for': 'blade' }
-Plug 'mattn/emmet-vim', { 'for': ['html', 'php'] }
-Plug 'preservim/tagbar', { 'for': 'php' }
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-rhubarb'
+lua require('plugins')
 
 let g:deoplete#enable_at_startup = 1
 let g:colorizer_auto_color = 1
-
-call plug#end()
 
 syntax on
 colorscheme nightfox
@@ -77,10 +54,6 @@ let g:lightline = {
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 set termguicolors
 
-" Make background transparent
-"highlight Normal guibg=none
-"highlight NonText guibg=none
-
 call neomake#configure#automake('nrwi')
 let g:neomake_php_phpcs_args_standard='PSR2'
 
@@ -90,17 +63,7 @@ noremap <C-h> <C-w>h
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 
-" Start NERDTree. If a file is specified, move the cursor to its window.
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * NERDTree | if argc() > 0 || exists("s:std_in") | wincmd p | endif
-
-" Exit Vim if NERDTree is the only window remaining in the only tab.
-autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
-
-" Open the existing NERDTree on each new tab.
-autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
-
-"NERDCommenter
+" NERDCommenter
 let g:NERDDefaultAlign = 'left'
 let g:NERDSpaceDelims = 1
 
@@ -113,3 +76,8 @@ let g:tagbar_ctags_bin = '/usr/bin/uctags'
 
 " Update sign column every quarter second
 set updatetime=250
+
+" barbar
+" Move to previous/next
+nnoremap <silent>    <A-,> :BufferPrevious<CR>
+nnoremap <silent>    <A-.> :BufferNext<CR>
