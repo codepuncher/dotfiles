@@ -70,6 +70,10 @@ return require('packer').startup(function()
       config = function() require('custom.lspconfig') end,
     },
     {
+      'windwp/nvim-autopairs',
+      config = function() require('custom.autopairs') end,
+    },
+    {
       'neomake/neomake',
     },
     {
