@@ -41,7 +41,6 @@ set splitright
 lua require('plugins')
 lua require('custom/nvim-tree')
 
-let g:deoplete#enable_at_startup = 1
 let g:colorizer_auto_color = 1
 
 syntax on

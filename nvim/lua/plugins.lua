@@ -66,6 +66,10 @@ return require('packer').startup(function()
   -- Dev
   use {
     {
+      'neovim/nvim-lspconfig',
+      config = function() require('custom.lspconfig') end,
+    },
+    {
       'neomake/neomake',
     },
     {
@@ -90,14 +94,6 @@ return require('packer').startup(function()
       'phpactor/phpactor',
       ft = 'php',
       run = 'composer install --no-dev -o',
-    },
-    {
-      'Shougo/deoplete.nvim',
-      run = ':UpdateRemotePlugins',
-    },
-    {
-      'kristijanhusak/deoplete-phpactor',
-      ft = 'php',
     },
     {
       'chrisbra/Colorizer',
