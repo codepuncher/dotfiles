@@ -17,25 +17,25 @@ return require('packer').startup(function()
   use {
     use 'EdenEast/nightfox.nvim',
     use {
-      'shadmansaleh/lualine.nvim',
+      'nvim-lualine/lualine.nvim',
       requires = {
         'kyazdani42/nvim-web-devicons',
         opt = true,
       },
-      config = function() require('plugins/lualine') end,
+      config = function() require('custom.lualine') end,
     },
-    use {
-      'kyazdani42/nvim-tree.lua',
-      requires = 'kyazdani42/nvim-web-devicons',
-      config = function() require('plugins/nvim-tree') end,
-    },
-    use 'lukas-reineke/indent-blankline.nvim',
     use {
       'romgrk/barbar.nvim',
       requires = {
         'kyazdani42/nvim-web-devicons',
       },
     },
+    use {
+      'kyazdani42/nvim-tree.lua',
+      requires = 'kyazdani42/nvim-web-devicons',
+      config = function() require('custom.nvim-tree').toggle() end,
+    },
+    use 'lukas-reineke/indent-blankline.nvim',
   }
 
   -- Git
