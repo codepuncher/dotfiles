@@ -74,6 +74,10 @@ return require('packer').startup(function()
       config = function() require('custom.autopairs') end,
     },
     {
+      'rinx/lspsaga.nvim', -- this is a fork to fix hover_doc not working whilst repo maintainer is OOA.
+      config = function() require('custom.lspsaga') end,
+    },
+    {
       'neomake/neomake',
     },
     {

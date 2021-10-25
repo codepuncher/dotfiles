@@ -81,3 +81,9 @@ set updatetime=250
 " Move to previous/next
 nnoremap <silent>    <A-,> :BufferPrevious<CR>
 nnoremap <silent>    <A-.> :BufferNext<CR>
+
+" lspsaga
+" show hover doc
+nnoremap <silent> <C-j> :Lspsaga diagnostic_jump_next<CR>
+nnoremap <silent>K :Lspsaga hover_doc<CR>
+inoremap <silent> <C-k> :Lspsaga signature_help<CR>
