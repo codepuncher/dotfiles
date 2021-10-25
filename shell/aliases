@@ -43,6 +43,10 @@ alias export_staging='wp @staging db export - > "staging_db_$(date +%F_$R).sql"'
 alias export_production='wp @production db export - > "production_db_$(date +%F_$R).sql"'
 alias t='trellis'
 alias trellis_copy_basic_auth_pass='trellis vault view staging | grep -o "http_basic_auth_password: .*" | cut -f2- -d: | cut -c2- | pbcopy'
+wp_copy_user_id() {
+  [ -z "$1" ] && email='wordpress@itineris.co.uk' || email="$1"
+  wp user get "$email" --field=ID --format=csv | head -n1 | tr -d '\n' | pbcopy
+}
 generate_vault_pass() {
   vault_pass=$(LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 512; echo '')
   echo "$vault_pass" > .vault_pass
