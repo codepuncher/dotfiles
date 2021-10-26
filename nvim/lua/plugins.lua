@@ -78,6 +78,16 @@ return require('packer').startup(function()
       config = function() require('custom.lspsaga') end,
     },
     {
+    'folke/trouble.nvim',
+      requires = 'kyazdani42/nvim-web-devicons',
+      -- TODO: fix the config not loading without :source xxx
+      config = function() require('trouble').setup{
+        auto_open = true,
+        auto_close = true,
+        auto_preview = true,
+      } end,
+    },
+    {
       'neomake/neomake',
     },
     {
