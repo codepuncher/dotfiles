@@ -36,6 +36,11 @@ return require('packer').startup(function()
       config = function() require('custom.nvim-tree').toggle() end,
     },
     use 'lukas-reineke/indent-blankline.nvim',
+    use {
+      'nvim-treesitter/nvim-treesitter',
+      run = ':TSUpdate',
+      config = function() require('custom.treesitter') end,
+    },
   }
 
   -- Git
