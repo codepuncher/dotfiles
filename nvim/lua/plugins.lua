@@ -93,6 +93,9 @@ return require('packer').startup(function()
       config = function() require('custom.autopairs') end,
     },
     {
+      'tpope/vim-surround',
+    },
+    {
     'folke/trouble.nvim',
       requires = 'kyazdani42/nvim-web-devicons',
       -- TODO: fix the config not loading without :source xxx
