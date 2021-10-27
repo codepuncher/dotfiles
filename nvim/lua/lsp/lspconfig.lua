@@ -30,3 +30,5 @@ nvim_lsp.tsserver.setup {
     'typescript.tsx',
   },
 }
+
+require'lsp.lua-lsp'

@@ -72,11 +72,17 @@ return require('packer').startup(function()
   use {
     {
       'neovim/nvim-lspconfig',
-      config = function() require('custom.lspconfig') end,
+      config = function() require('lsp.lspconfig') end,
+    },
+    {
+      'rinx/lspsaga.nvim', -- this is a fork to fix hover_doc not working whilst repo maintainer is OOA.
+      config = function() require('lsp.lspsaga') end,
     },
     {
       'hrsh7th/nvim-cmp',
       requires = {
+        'hrsh7th/cmp-vsnip',
+        'hrsh7th/vim-vsnip',
         'hrsh7th/cmp-nvim-lsp',
         'hrsh7th/cmp-buffer',
       },
@@ -85,10 +91,6 @@ return require('packer').startup(function()
     {
       'windwp/nvim-autopairs',
       config = function() require('custom.autopairs') end,
-    },
-    {
-      'rinx/lspsaga.nvim', -- this is a fork to fix hover_doc not working whilst repo maintainer is OOA.
-      config = function() require('custom.lspsaga') end,
     },
     {
     'folke/trouble.nvim',
