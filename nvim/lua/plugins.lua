@@ -75,6 +75,14 @@ return require('packer').startup(function()
       config = function() require('custom.lspconfig') end,
     },
     {
+      'hrsh7th/nvim-cmp',
+      requires = {
+        'hrsh7th/cmp-nvim-lsp',
+        'hrsh7th/cmp-buffer',
+      },
+      config = function() require('custom.cmp') end,
+    },
+    {
       'windwp/nvim-autopairs',
       config = function() require('custom.autopairs') end,
     },
