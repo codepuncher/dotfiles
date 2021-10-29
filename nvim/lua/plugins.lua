@@ -5,11 +5,11 @@ return require('packer').startup(function(use)
 
   -- Misc
   use {
-    'junegunn/fzf',
-    run = ':call fzf#install()',
+    'nvim-telescope/telescope.nvim',
     requires = {
-      'junegunn/fzf.vim'
+      'nvim-lua/plenary.nvim',
     },
+    config = function () require('custom.telescope') end
   }
   use 'edkolev/tmuxline.vim'
 
