@@ -43,12 +43,14 @@ cmp.setup({
   )
 })
 
+---@diagnostic disable-next-line: undefined-field
 cmp.setup.cmdline('/', {
   sources = {
     { name = 'buffer' }
   }
 })
 
+---@diagnostic disable-next-line: undefined-field
 cmp.setup.cmdline(':', {
   sources = cmp.config.sources({
     { name = 'path' }
