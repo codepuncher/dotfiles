@@ -13,7 +13,8 @@ vim.api.nvim_set_keymap('', '<C-k>', '<C-w>k', { noremap = true })
 ----Switch buffers
 vim.api.nvim_set_keymap('n', '<A-,>', '<Cmd>BufferPrevious<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<A-.>', '<Cmd>BufferNext<CR>', { noremap = true, silent = true })
+---- Toggle tree
+vim.api.nvim_set_keymap('', '<C-e>', [[<Cmd>lua require('custom.nvim-tree').toggle()<CR>]], { noremap = true })
 
 --Tagbar
 vim.api.nvim_set_keymap('n', '<F8>', ':TagbarToggle<CR>', { noremap = false })
-
