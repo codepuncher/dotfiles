@@ -1,9 +1,9 @@
 require'nvim-tree'.setup {
-    auto_close = true,
-    open_on_setup = false,
-    view = {
-        auto_resize = true,
-    },
+  auto_close = true,
+  open_on_setup = false,
+  view = {
+    auto_resize = true,
+  },
 }
 
 local view = require'nvim-tree.view'
