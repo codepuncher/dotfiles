@@ -107,6 +107,7 @@ return require('packer').startup(function()
     },
     {
       'neomake/neomake',
+      config = function () require('custom.neomake') end,
     },
     {
       'preservim/nerdcommenter',
