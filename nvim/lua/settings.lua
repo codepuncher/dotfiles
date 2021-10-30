@@ -49,7 +49,6 @@ nightfox.setup({
   fox = 'nightfox',
 })
 nightfox.load()
-
 vim.g.lightline = {
   colorscheme = 'nightfox',
 }
@@ -57,6 +56,10 @@ vim.g.colorizer_auto_color = 1
 
 --Misc
 vim.o.updatetime = 250 --Update sign column every quarter second
+vim.api.nvim_command [[augroup highlight_yank]]
+    vim.api.nvim_command [[autocmd!]]
+    vim.api.nvim_command [[au TextYankPost * silent! lua vim.highlight.on_yank{higroup="IncSearch", timeout=700}]]
+vim.api.nvim_command [[augroup END]]
 
 --Dev
 vim.g.neomake_php_phpcs_args_standard = 'PSR2'
