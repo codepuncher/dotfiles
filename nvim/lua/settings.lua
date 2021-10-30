@@ -61,7 +61,6 @@ vim.api.nvim_command [[augroup highlight_yank]]
 vim.api.nvim_command [[augroup END]]
 
 ----Dev
-vim.g.neomake_php_phpcs_args_standard = 'PSR2'
 vim.g.tagbar_ctags_bin = '/usr/bin/uctags'
 vim.g.NERDDefaultAlign = 'left'
 vim.g.NERDSpaceDelims = 1
