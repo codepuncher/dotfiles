@@ -133,11 +133,8 @@ return require('packer').startup(function(use)
       run = 'composer install --no-dev -o',
     },
     {
-      'chrisbra/Colorizer',
-      ft = {
-        'css',
-        'scss',
-      },
+      'RRethy/vim-hexokinase',
+      run = 'make hexokinase',
     },
     {
       'jwalton512/vim-blade',
