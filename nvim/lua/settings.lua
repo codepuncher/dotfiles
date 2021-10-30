@@ -44,7 +44,12 @@ vim.o.splitright = true
 --Colours
 vim.opt.termguicolors = true
 vim.cmd [[colorscheme nightfox]]
-require('nightfox').load('nightfox')
+local nightfox = require('nightfox')
+nightfox.setup({
+  fox = 'nightfox',
+})
+nightfox.load()
+
 vim.g.lightline = {
   colorscheme = 'nightfox',
 }
