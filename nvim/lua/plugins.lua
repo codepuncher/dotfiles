@@ -9,30 +9,30 @@ return require('packer').startup(function(use)
     requires = {
       'nvim-lua/plenary.nvim',
     },
-    config = function () require('custom.telescope') end
+    config = function () require('custom.telescope') end,
   }
-  use 'edkolev/tmuxline.vim'
+  use {
+    'edkolev/tmuxline.vim',
+  }
 
   -- Theme/colours
   use {
-    use 'EdenEast/nightfox.nvim',
+    use {
+      'EdenEast/nightfox.nvim',
+    },
     use {
       'nvim-lualine/lualine.nvim',
       requires = {
         'kyazdani42/nvim-web-devicons',
-        opt = true,
       },
       config = function() require('custom.lualine') end,
     },
     use {
-      'romgrk/barbar.nvim',
+      'kyazdani42/nvim-tree.lua',
       requires = {
+        'romgrk/barbar.nvim',
         'kyazdani42/nvim-web-devicons',
       },
-    },
-    use {
-      'kyazdani42/nvim-tree.lua',
-      requires = 'kyazdani42/nvim-web-devicons',
       config = function() require('custom.nvim-tree').toggle() end,
     },
     use 'lukas-reineke/indent-blankline.nvim',
@@ -112,7 +112,7 @@ return require('packer').startup(function(use)
         'scss',
         'php',
         'blade',
-      }
+      },
     },
     {
       'StanAngeloff/php.vim',

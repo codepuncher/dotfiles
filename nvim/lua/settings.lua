@@ -64,4 +64,3 @@ vim.api.nvim_command [[augroup END]]
 vim.g.tagbar_ctags_bin = '/usr/bin/uctags'
 vim.g.NERDDefaultAlign = 'left'
 vim.g.NERDSpaceDelims = 1
-
