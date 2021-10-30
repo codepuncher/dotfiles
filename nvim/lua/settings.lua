@@ -55,6 +55,7 @@ vim.g.lightline = {
 vim.g.Hexokinase_highlighters = { 'virtual' }
 
 --Misc
+vim.o.signcolumn = 'yes'
 vim.o.updatetime = 250 --Update sign column every quarter second
 vim.api.nvim_command [[augroup highlight_yank]]
   vim.api.nvim_command [[autocmd!]]
