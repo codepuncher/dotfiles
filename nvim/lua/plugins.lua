@@ -49,12 +49,7 @@ return require('packer').startup(function(use)
       'tpope/vim-fugitive',
       cmd = {
         'Git',
-        'Gstatus',
-        'Gblame',
-        'Gpush',
-        'Gpull',
       },
-      disable = true,
     },
     {
       'tpope/vim-rhubarb',
