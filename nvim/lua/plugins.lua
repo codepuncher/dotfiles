@@ -88,6 +88,10 @@ return require('packer').startup(function(use)
       config = function() require('custom.autopairs') end,
     },
     {
+      'windwp/nvim-ts-autotag',
+      config = function() require('custom.autotag') end,
+    },
+    {
       'tpope/vim-surround',
     },
     {
