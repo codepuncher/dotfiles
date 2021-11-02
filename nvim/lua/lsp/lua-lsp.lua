@@ -1,16 +1,16 @@
-local user = vim.fn.expand('$USER')
+local home_path = vim.fn.expand('$HOME')
 local system_name
-if vim.fn.has('unix') == 1 then
-  system_name = 'Linux'
-elseif vim.fn.has('mac') == 1 then
+if vim.fn.has('macunix') == 1 then
   system_name = 'macOS'
+elseif vim.fn.has('unix') == 1 then
+  system_name = 'Linux'
 elseif vim.fn.has('win32') == 1 then
   system_name = 'Windows'
 else
   print('Unsupported system for sumneko')
 end
 
-local sumneko_root_path = '/home/' .. user .. '/Tools/lua-language-server'
+local sumneko_root_path = home_path .. '/Tools/lua-language-server'
 local sumneko_binary = sumneko_root_path..'/bin/'..system_name..'/lua-language-server'
 
 local runtime_path = vim.split(package.path, ';')
