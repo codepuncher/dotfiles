@@ -50,3 +50,6 @@ map('n', '<Leader>fh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]]
 
 -- Tagbar
 map('n', '<F8>', ':TagbarToggle<CR>', { noremap = false })
+
+-- Terminal
+vim.api.nvim_set_keymap('t', '<Esc>', '<C-\\><C-n>', { noremap = true })
