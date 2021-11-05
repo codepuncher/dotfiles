@@ -25,6 +25,9 @@ if type composer &>/dev/null; then
   export PATH="$PATH:$(composer config -g home)/vendor/bin"
 fi
 
+# Yarn
+export PATH="$PATH:$HOME/.yarn/bin"
+
 # Homebrew
 if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
