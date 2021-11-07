@@ -41,15 +41,8 @@ vim.o.splitright = true
 
 ----Colours
 vim.opt.termguicolors = true
-vim.cmd [[colorscheme nightfox]]
-local nightfox = require('nightfox')
-nightfox.setup({
-  fox = 'nightfox',
-})
-nightfox.load()
-vim.g.lightline = {
-  colorscheme = 'nightfox',
-}
+vim.g.tokyonight_style = 'night'
+vim.cmd[[colorscheme tokyonight]]
 vim.g.Hexokinase_highlighters = { 'virtual' }
 
 ----Misc
