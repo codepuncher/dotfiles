@@ -18,7 +18,7 @@ return require('packer').startup(function(use)
   -- Theme/colours
   use {
     use {
-      'EdenEast/nightfox.nvim',
+      'folke/tokyonight.nvim',
     },
     use {
       'nvim-lualine/lualine.nvim',
