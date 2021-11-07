@@ -27,13 +27,17 @@ return require('packer').startup(function(use)
       },
       config = function() require('custom.lualine') end,
     },
+    use 'famiu/bufdelete.nvim',
+    use {
+      'akinsho/bufferline.nvim',
+      config = function () require('custom.bufferline') end,
+    },
     use {
       'kyazdani42/nvim-tree.lua',
       requires = {
-        'romgrk/barbar.nvim',
         'kyazdani42/nvim-web-devicons',
       },
-      config = function() require('custom.nvim-tree').toggle() end,
+      config = function () require('custom.nvim-tree') end,
     },
     use 'lukas-reineke/indent-blankline.nvim',
     use {
