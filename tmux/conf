@@ -37,3 +37,6 @@ setw -g window-status-current-format "#[fg=#1f2335,bg=#3b4261,nobold,nounderscor
 set -g status-interval 5
 set -g automatic-rename on
 set -g automatic-rename-format '#{b:pane_current_path}'
+
+# Misc
+setw -g mode-keys vi
