@@ -47,6 +47,9 @@ bind-key k select-pane -U
 bind-key l select-pane -R
 bind-key < select-window -p
 bind-key > select-window -n
+## New panes
+bind-key '"' split-window -c '#{pane_current_path}'
+bind-key % split-window -h -c '#{pane_current_path}'
 
 # Misc
 setw -g mode-keys vi
