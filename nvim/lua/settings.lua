@@ -23,6 +23,11 @@ vim.opt.list = true
 vim.opt.listchars = 'tab:->,trail:·'
 vim.o.joinspaces = false
 
+--Folding
+--vim.opt.fillchars = 'fold'
+--vim.wo.foldmethod = 'expr'
+--vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
+
 ----Numbers
 vim.o.number = true
 vim.o.numberwidth = 5
