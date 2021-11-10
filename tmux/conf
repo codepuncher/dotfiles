@@ -38,6 +38,8 @@ set -g status-interval 5
 set -g automatic-rename on
 set -g automatic-rename-format '#{b:pane_current_path}'
 ## Splitting
+bind-key '"' split-window -c '#{pane_current_path}'
+bind-key % split-window -h -c '#{pane_current_path}'
 bind-key v split-window -h
 bind-key s split-window -v
 ## Switching
@@ -45,13 +47,10 @@ bind-key h select-pane -l
 bind-key j select-pane -D
 bind-key k select-pane -U
 bind-key l select-pane -R
-bind-key < select-window -p
-bind-key > select-window -n
-## New panes
-bind-key '"' split-window -c '#{pane_current_path}'
-bind-key % split-window -h -c '#{pane_current_path}'
+bind-key '<' select-window -p
+bind-key '>' select-window -n
 
-# Misc
+# Copying
 setw -g mode-keys vi
 bind-key -T copy-mode-vi v send -X begin-selection
 bind-key -T copy-mode-vi y send -X copy-pipe-and-cancel "reattach-to-usernamespace pbcopy"
