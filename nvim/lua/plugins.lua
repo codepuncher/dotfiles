@@ -45,6 +45,8 @@ return require('packer').startup(function(use)
       run = ':TSUpdate',
       config = function() require('custom.treesitter') end,
     },
+    use 'nvim-treesitter/nvim-treesitter-refactor',
+    use 'nvim-treesitter/nvim-treesitter-textobjects',
   }
 
   -- Git

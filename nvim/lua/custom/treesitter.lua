@@ -11,6 +11,19 @@ require'nvim-treesitter.configs'.setup {
     enable = false,
     disable = {},
   },
+  refactor = {
+    highlight_definitions = {
+      enable = true,
+    },
+    highlight_current_scope = {
+      enabled = true,
+    },
+  },
+  textobjects = {
+    select = {
+      enable = true,
+    },
+  },
   ensure_installed = {
     'tsx',
     'toml',
