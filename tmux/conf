@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-
-set -g default-terminal "screen-256color"
+set -g default-terminal "${TERM}"
+set -ga terminal-overrides ",*256col*:Tc"
 
 # TokyoNight colors for Tmux
 
@@ -54,3 +53,5 @@ bind-key '>' select-window -n
 setw -g mode-keys vi
 bind-key -T copy-mode-vi v send -X begin-selection
 bind-key -T copy-mode-vi y send -X copy-pipe-and-cancel "reattach-to-usernamespace pbcopy"
+
+# vi: ft=bash
