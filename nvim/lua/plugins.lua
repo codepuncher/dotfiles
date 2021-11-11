@@ -12,14 +12,14 @@ return require('packer').startup(function(use)
       },
       config = function () require('custom.telescope') end,
     },
-  }
-  use {
-    'edkolev/tmuxline.vim',
-  }
-  use {
-    'ceigh/AutoSave.nvim',
-    branch = 'execution_message-fn',
-    config = function () require('custom.autosave') end,
+    use {
+      'edkolev/tmuxline.vim',
+    },
+    use {
+      'ceigh/AutoSave.nvim',
+      branch = 'execution_message-fn', -- TODO: revert to main repo once this is merged.
+      config = function () require('custom.autosave') end,
+    },
   }
 
   -- Theme/colours
