@@ -5,11 +5,16 @@ return require('packer').startup(function(use)
 
   -- Misc
   use {
-    'nvim-telescope/telescope.nvim',
-    requires = {
-      'nvim-lua/plenary.nvim',
+    use {
+      'nvim-telescope/telescope.nvim',
+      requires = {
+        'nvim-lua/plenary.nvim',
+      },
+      config = function () require('custom.telescope') end,
     },
-    config = function () require('custom.telescope') end,
+    use {
+      'nvim-telescope/telescope-project.nvim',
+    },
   }
   use {
     'edkolev/tmuxline.vim',
