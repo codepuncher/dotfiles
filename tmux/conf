@@ -49,6 +49,8 @@ bind-key k select-pane -U
 bind-key l select-pane -R
 bind-key , select-window -p
 bind-key . select-window -n
+bind-key '<' swap-window -t -1\; select-window -t -1
+bind-key '>' swap-window -t +1\; select-window -t +1
 ## Naming
 bind-key r command-prompt 'rename-window %%'
 bind-key R command-prompt 'rename-session %%'
