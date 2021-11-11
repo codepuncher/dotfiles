@@ -12,9 +12,6 @@ return require('packer').startup(function(use)
       },
       config = function () require('custom.telescope') end,
     },
-    use {
-      'nvim-telescope/telescope-project.nvim',
-    },
   }
   use {
     'edkolev/tmuxline.vim',
