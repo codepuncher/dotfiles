@@ -72,9 +72,24 @@ install_packer_nvim() {
   fi
 }
 
+install_tpm() {
+  TMUX_HOME="$HOME/.tmux"
+  TPM_PATH="$TMUX_HOME/plugins/tpm"
+  if [[ -d "$TPM_PATH" ]]; then
+    return
+  fi
+
+  echo "TPM not installed. Installing..."
+  git clone https://github.com/tmux-plugins/tpm \
+    "$TPM_PATH" && 
+    echo "TPM installed. Don't forget to re-source ~/.tmux.conf or restart tmux" || \
+    echo 'TPM installation failed.'
+}
+
 install_tools () {
   install_zinit
   install_packer_nvim
+  install_tpm
 }
 
 install_tools
