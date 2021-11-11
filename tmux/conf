@@ -47,8 +47,8 @@ bind-key h select-pane -L
 bind-key j select-pane -D
 bind-key k select-pane -U
 bind-key l select-pane -R
-bind-key '<' select-window -p
-bind-key '>' select-window -n
+bind-key , select-window -p
+bind-key . select-window -n
 
 # Copying
 setw -g mode-keys vi
