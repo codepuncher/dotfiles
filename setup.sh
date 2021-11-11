@@ -38,7 +38,7 @@ init_links () {
     move_link .bashrc shell/bashrc
     move_link .profile shell/profile
     move_link .zshrc shell/zshrc
-    move_link .tmux.conf tmux/conf
+    move_link .config/tmux tmux
     move_link .config/nvim nvim
     move_link .gitconfig git/gitconfig
     move_link .config/alacritty/alacritty.yml terminals/alacritty.yml
@@ -73,7 +73,7 @@ install_packer_nvim() {
 }
 
 install_tpm() {
-  TMUX_HOME="$HOME/.tmux"
+  TMUX_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/tmux"
   TPM_PATH="$TMUX_HOME/plugins/tpm"
   if [[ -d "$TPM_PATH" ]]; then
     return
@@ -82,7 +82,7 @@ install_tpm() {
   echo "TPM not installed. Installing..."
   git clone https://github.com/tmux-plugins/tpm \
     "$TPM_PATH" && 
-    echo "TPM installed. Don't forget to re-source ~/.tmux.conf or restart tmux" || \
+    echo "TPM installed. Don't forget to press prefix + I when opening tmux for the first time!" || \
     echo 'TPM installation failed.'
 }
 
