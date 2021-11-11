@@ -43,7 +43,7 @@ bind-key % split-window -h -c '#{pane_current_path}'
 bind-key v split-window -h
 bind-key s split-window -v
 ## Switching
-bind-key h select-pane -l
+bind-key h select-pane -L
 bind-key j select-pane -D
 bind-key k select-pane -U
 bind-key l select-pane -R
