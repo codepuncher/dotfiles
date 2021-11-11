@@ -14,6 +14,11 @@ return require('packer').startup(function(use)
   use {
     'edkolev/tmuxline.vim',
   }
+  use {
+    'ceigh/AutoSave.nvim',
+    branch = 'execution_message-fn',
+    config = function () require('custom.autosave') end,
+  }
 
   -- Theme/colours
   use {
