@@ -71,4 +71,6 @@ nvim_lsp.tsserver.setup {
   },
 }
 
+nvim_lsp.bashls.setup{}
+
 require'lsp.lua-lsp'
