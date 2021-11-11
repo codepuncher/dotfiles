@@ -5,12 +5,15 @@ My dotfiles, used on Ubuntu, Arch and macOS systems.
 - ZSH
   - macOS: `brew install zsh && chsh -s $(which zsh)`
   - Ubuntu: `sudo apt install zsh && chsh -s $(which zsh)`
+  - Arch: `sudo pacman -S zsh && chsh -s $(which zsh)`
 - Git 
   - macOS: `brew install git`
   - Ubuntu: `sudo apt install git`
-- Neovim
-  - macOS: `brew install neovim`
+  - Arch: `sudo pacman -S git`
+- Neovim v0.5.1+
+  - macOS: `brew install neovim` or `brew install --HEAD luajit neovim` for latest development version
   - Ubuntu: `sudo apt install neovim`
+  - Arch: `sudo pacman -S neovim` or `sudo pacman -S neovim-nightly-bin` for latest development version
 
 ## Installation
 1. `git clone git@github.com:codepuncher/dotfiles.git ~/.dotfiles`
@@ -34,3 +37,4 @@ My dotfiles, used on Ubuntu, Arch and macOS systems.
 11. [denysdovhan/spaceship-prompt](https://github.com/denysdovhan/spaceship-prompt)
 12. [trellis-cli](https://github.com/roots/trellis-cli) `virtualenv` integration
 13. iTerm2 shell integration (macOS only)
+14. Alacritty config (JetBrains Mono Font, TokyoNight colours)

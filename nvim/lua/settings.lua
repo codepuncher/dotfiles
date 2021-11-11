@@ -26,6 +26,7 @@ vim.o.joinspaces = false
 --Folding
 vim.wo.foldmethod = 'expr'
 vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
+vim.opt.foldlevel = 1
 
 ----Numbers
 vim.o.number = true
