@@ -13,6 +13,13 @@ return require('packer').startup(function(use)
       config = function () require('custom.telescope') end,
     },
     use {
+      'rmagatti/session-lens',
+      requires = {
+        'rmagatti/auto-session',
+        'nvim-telescope/telescope.nvim',
+      },
+    },
+    use {
       'edkolev/tmuxline.vim',
     },
     use {
