@@ -54,7 +54,7 @@ zinit light zsh-users/zsh-autosuggestions
 zinit ice wait"0b" lucid blockf
 zinit light zsh-users/zsh-completions
 zinit ice wait"0c" lucid atinit"zpcompinit;zpcdreplay"
-zinit light zdharma/fast-syntax-highlighting
+zinit light zdharma-continuum/fast-syntax-highlighting
 zinit ice wait"1" lucid
 zinit light lukechilds/zsh-nvm
 zinit snippet OMZP::npm
