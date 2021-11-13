@@ -54,7 +54,7 @@ install_zinit() {
   if [[ ! -f "$ZINIT_HOME/bin/zinit.zsh" ]]; then
     echo "Zinit not installed. Installing..."
     command mkdir -p "$ZINIT_HOME" && command chmod g-rwX "$ZINIT_HOME"
-    command git clone https://github.com/zdharma/zinit "$ZINIT_HOME/bin" && \
+    command git clone https://github.com/zdharma-continuum/zinit "$ZINIT_HOME/bin" && \
       echo "Zinit installed." || \
       echo "Zinit installation failed."
   fi
