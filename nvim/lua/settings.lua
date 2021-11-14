@@ -10,7 +10,7 @@ vim.o.showcmd = true     --display incomplete commands
 vim.o.incsearch = true   --do incremental searching
 vim.o.cursorline = true  --Enable highlighting of the current line
 
-----Tabs and spaces
+--Tabs and spaces
 vim.o.tabstop = 2
 vim.o.shiftwidth = 2
 vim.o.softtabstop = 2
@@ -26,9 +26,10 @@ vim.o.joinspaces = false
 --Folding
 vim.wo.foldmethod = 'expr'
 vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
-vim.opt.foldlevel = 1
+vim.opt.foldlevel = 99
+vim.foldlevelstart = 99
 
-----Numbers
+--Numbers
 vim.o.number = true
 vim.o.numberwidth = 5
 ----On insert, use absolute. On leave, use relative. From: https://jeffkreeftmeijer.com/vim-number/
@@ -38,19 +39,19 @@ vim.api.nvim_command [[augroup numbertoggle]]
   vim.api.nvim_command [[autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif]]
 vim.api.nvim_command [[augroup END]]
 
-----Layout
+--Layout
 vim.o.completeopt = 'menu,menuone,noselect' --Vim popup style
 ----Open new split panes to right and bottom, which feels more natural
 vim.o.splitbelow = true
 vim.o.splitright = true
 
-----Colours
+--Colours
 vim.opt.termguicolors = true
 vim.g.tokyonight_style = 'night'
 vim.cmd[[colorscheme tokyonight]]
 vim.g.Hexokinase_highlighters = { 'virtual' }
 
-----Misc
+--Misc
 vim.o.signcolumn = 'yes'
 vim.o.updatetime = 250 --Update sign column every quarter second
 vim.api.nvim_command [[augroup highlight_yank]]
@@ -58,7 +59,10 @@ vim.api.nvim_command [[augroup highlight_yank]]
   vim.api.nvim_command [[au TextYankPost * silent! lua vim.highlight.on_yank{higroup="IncSearch", timeout=700}]]
 vim.api.nvim_command [[augroup END]]
 
-----Dev
+--Dev
 vim.g.tagbar_ctags_bin = '/usr/bin/uctags'
 vim.g.NERDDefaultAlign = 'left'
 vim.g.NERDSpaceDelims = 1
+
+--Filetypes
+vim.api.nvim_command [[autocmd FileType markdown setlocal shiftwidth=4 softtabstop=4 expandtab]]
