@@ -98,4 +98,23 @@ alias generate_satis_pass='openssl rand -base64 500 | tr -dc a-zA-Z0-9 | fold -w
 alias clear_dns_cache='sudo killall -HUP mDNSResponder'
 alias cat='cat -n'
 
+# Tmux
+tmux_layout() {
+  layout_file="$HOME/.dotfiles/tmux/layouts/$1.sh"
+  echo "$layout_file"
+  if [[ ! -f "$layout_file" ]]; then
+    echo 'Please specify a valid layout file'
+    return
+  fi
+
+  cwd=$(pwd)
+  if [[ -d "$2" ]]; then
+    working_dir="$2"
+  else
+    working_dir="$cwd"
+  fi
+
+  cd "$working_dir" && "$layout_file" && cd "$cwd"
+}
+
 # vi:syntax=sh
