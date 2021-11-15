@@ -70,9 +70,20 @@ nvim_lsp.tsserver.setup {
   },
 }
 
-nvim_lsp.bashls.setup {}
+nvim_lsp.bashls.setup {
+  on_attach = on_attach,
+  filetypes = {
+    'sh',
+    'bash',
+  },
+}
 
-nvim_lsp.svelte.setup {}
+nvim_lsp.svelte.setup {
+  on_attach = on_attach,
+  filetypes = {
+    'svelte',
+  },
+}
 
 nvim_lsp.ltex.setup {
   on_attach = on_attach,
