@@ -13,16 +13,20 @@ return require('packer').startup(function(use)
       config = function () require('custom.telescope') end,
     },
     use {
-      'nvim-telescope/telescope-project.nvim',
+      'rmagatti/session-lens',
+      requires = {
+        'rmagatti/auto-session',
+        'nvim-telescope/telescope.nvim',
+      },
     },
-  }
-  use {
-    'edkolev/tmuxline.vim',
-  }
-  use {
-    'ceigh/AutoSave.nvim',
-    branch = 'execution_message-fn',
-    config = function () require('custom.autosave') end,
+    use {
+      'edkolev/tmuxline.vim',
+    },
+    use {
+      'ceigh/AutoSave.nvim',
+      branch = 'execution_message-fn', -- TODO: revert to main repo once this is merged.
+      config = function () require('custom.autosave') end,
+    },
   }
 
   -- Theme/colours
@@ -92,10 +96,12 @@ return require('packer').startup(function(use)
     {
       'hrsh7th/nvim-cmp',
       requires = {
-        'hrsh7th/cmp-vsnip',
-        'hrsh7th/vim-vsnip',
         'hrsh7th/cmp-nvim-lsp',
         'hrsh7th/cmp-buffer',
+        'hrsh7th/cmp-path',
+        -- Snippets
+        'hrsh7th/cmp-vsnip',
+        'hrsh7th/vim-vsnip',
       },
       config = function() require('custom.cmp') end,
     },
