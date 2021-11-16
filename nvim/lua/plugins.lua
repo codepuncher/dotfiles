@@ -141,10 +141,6 @@ return require('packer').startup(function(use)
       },
     },
     {
-      'StanAngeloff/php.vim',
-      ft = 'php',
-    },
-    {
       'phpactor/phpactor',
       ft = 'php',
       run = 'composer install --no-dev -o',
@@ -156,10 +152,6 @@ return require('packer').startup(function(use)
     {
       'jwalton512/vim-blade',
       ft = 'blade',
-    },
-    {
-      'preservim/tagbar',
-      ft = 'php',
     },
     {
       'mattn/emmet-vim',
