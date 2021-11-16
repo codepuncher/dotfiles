@@ -46,9 +46,7 @@ nvim_lsp.phpactor.setup {
 nvim_lsp.tailwindcss.setup {
   on_attach = on_attach,
   filetypes = {
-    'blade',
     'html',
-    'php',
     'css',
     'sass',
     'scss',
