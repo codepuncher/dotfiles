@@ -94,4 +94,93 @@ nvim_lsp.ltex.setup {
   },
 }
 
+nvim_lsp.diagnosticls.setup {
+  on_attach = on_attach,
+  filetypes = {
+    'javascript',
+    'javascriptreact',
+    'typescript',
+    'typescriptreact',
+    'css',
+    'scss',
+    'json',
+    'markdown',
+    'pandoc',
+  },
+  init_options = {
+    filetypes = {
+      javascript = 'eslint',
+      typescript = 'eslint',
+      javascriptreact = 'eslint',
+      typescriptreact = 'eslint',
+    },
+    linters = {
+      eslint = {
+        sourceName = 'eslint_d',
+        rootPatterns = {
+          'package.json',
+          '.eslintrc.js',
+          '.git',
+        },
+        command = 'eslint_d',
+        debounce = 100,
+        args = {
+          '--stdin',
+          '--stdin-filename',
+          '%filepath',
+          '--format',
+          'json',
+        },
+        parseJson = {
+          errorsRoot = '[0].messages',
+          line = 'line',
+          column = 'column',
+          endLine = 'endLine',
+          endColumn = 'endColumn',
+          message = '[eslint] ${message} [${ruleId}]',
+          security = 'severity',
+        },
+        securities = {
+          [2] = 'error',
+          [1] = 'warning',
+        },
+      },
+    },
+    formatters = {
+      eslint_d = {
+        command = 'eslint_d',
+        args = {
+          '--stdin',
+          '--stdin-filename',
+          '%filename',
+          '--fix-to-stdout',
+        },
+        rootPatterns = {
+          'package.json',
+          '.eslintrc.js',
+          '.git',
+        },
+      },
+      prettier = {
+        command = 'prettier',
+        args = {
+          '--stdin-filepath',
+          '%filename',
+        },
+      },
+    },
+    formatFiletypes = {
+      css = 'prettier',
+      javascript = 'eslint_d',
+      javascriptreact = 'eslint_d',
+      scss = 'prettier',
+      less = 'prettier',
+      typescript = 'eslint_d',
+      typescriptreact = 'eslint_d',
+      json = 'prettier',
+      markdown = 'prettier',
+    },
+  },
+}
+
 require'lsp.lua-lsp'
