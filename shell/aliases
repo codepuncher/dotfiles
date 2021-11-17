@@ -117,4 +117,9 @@ tmux_layout() {
   cd "$working_dir" && "$layout_file" && cd "$cwd"
 }
 
+# Previews
+mdp() {
+  pandoc "$1" | lynx -stdin
+}
+
 # vi:syntax=sh
