@@ -90,7 +90,7 @@ return require('packer').startup(function(use)
       config = function() require('lsp.lspconfig') end,
     },
     {
-      'rinx/lspsaga.nvim', -- this is a fork to fix hover_doc not working whilst repo maintainer is OOA.
+      'tami5/lspsaga.nvim', -- this is a fork to fix hover_doc and unsupported textDocument/codeAction not working whilst repo maintainer is OOA.
       config = function() require('lsp.lspsaga') end,
     },
     {
