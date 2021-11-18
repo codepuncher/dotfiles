@@ -43,8 +43,10 @@ map('n', 'ç', '<Cmd>Bdelete<CR>', noremapSilent)
 map('', '<C-e>', [[<Cmd>lua require('nvim-tree').toggle()<CR>]], { noremap = true })
 
 -- Telescope
-map('n', '<Leader>ff', [[<cmd>lua require('telescope.builtin').find_files()<CR>]], { noremap = true })
-map('n', '<Leader>fg', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], { noremap = true })
+map('n', '<Leader>ff', [[<cmd>lua require('telescope.builtin').find_files()<CR>]], { noremap = true }) -- With ignore
+map('n', '<Leader>FF', [[<cmd>lua require('custom.telescope').find_files()<CR>]], { noremap = true }) -- Without ignore
+map('n', '<Leader>fg', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], { noremap = true }) -- With ignore
+map('n', '<Leader>FG', [[<cmd>lua require('custom.telescope').live_grep()<CR>]], { noremap = true }) -- Without ignore
 map('n', '<Leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], { noremap = true })
 map('n', '<Leader>fh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], { noremap = true })
 

@@ -54,10 +54,6 @@ nvim_lsp.tailwindcss.setup {
   on_attach = on_attach,
   filetypes = {
     'html',
-    'css',
-    'sass',
-    'scss',
-    -- 'javascript',
     'javascriptreact',
     'typescript',
     'typescriptreact',
@@ -131,15 +127,28 @@ nvim_lsp.efm.setup {
     languages = {
       javascript = {
         eslint,
-        prettier,
       },
       typescript = {
         eslint,
         prettier,
       },
-      scss = {
-        prettier,
-      },
+    },
+  },
+}
+
+local stylelint_filetypes = {
+  'css',
+  'sass',
+  'scss',
+  'postcss',
+}
+nvim_lsp.stylelint_lsp.setup {
+  filetypes = stylelint_filetypes,
+  settings = {
+    stylelintplus = {
+      autoFixOnSave = true,
+      autoFixOnFormat = true,
+      filetypes = stylelint_filetypes,
     },
   },
 }
