@@ -3,6 +3,7 @@ if not vim.fn.exists('g:lspconfig') then
 end
 
 local nvim_lsp = require('lspconfig')
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 local on_attach = function(client, bufnr)
   local function map(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
@@ -37,8 +38,10 @@ local on_attach = function(client, bufnr)
 end
 
 local eslint = require('lsp.efm.eslint')
+local prettier = require('lsp.efm.prettier')
 
 nvim_lsp.phpactor.setup {
+  capabilities = capabilities,
   on_attach = on_attach,
   filetypes = {
     'php',
@@ -47,6 +50,7 @@ nvim_lsp.phpactor.setup {
 }
 
 nvim_lsp.tailwindcss.setup {
+  capabilities = capabilities,
   on_attach = on_attach,
   filetypes = {
     'html',
@@ -62,9 +66,13 @@ nvim_lsp.tailwindcss.setup {
 }
 
 nvim_lsp.tsserver.setup {
-  on_attach = on_attach,
+  capabilities = capabilities,
+  on_attach = function (client, bufnr)
+    client.resolved_capabilities.document_formatting = false
+    on_attach(client, bufnr)
+  end,
   filetypes = {
-    -- 'javascript',
+    'javascript',
     'typescript',
     'typescriptreact',
     'typescript.tsx',
@@ -72,6 +80,7 @@ nvim_lsp.tsserver.setup {
 }
 
 nvim_lsp.bashls.setup {
+  capabilities = capabilities,
   on_attach = on_attach,
   filetypes = {
     'sh',
@@ -80,6 +89,7 @@ nvim_lsp.bashls.setup {
 }
 
 nvim_lsp.svelte.setup {
+  capabilities = capabilities,
   on_attach = on_attach,
   filetypes = {
     'svelte',
@@ -87,6 +97,7 @@ nvim_lsp.svelte.setup {
 }
 
 nvim_lsp.ltex.setup {
+  capabilities = capabilities,
   on_attach = on_attach,
   settings = {
     ltex = {
@@ -96,6 +107,7 @@ nvim_lsp.ltex.setup {
 }
 
 nvim_lsp.efm.setup {
+  capabilities = capabilities,
   on_attach = on_attach,
   init_options = {
     documentFormatting = true,
@@ -119,6 +131,14 @@ nvim_lsp.efm.setup {
     languages = {
       javascript = {
         eslint,
+        prettier,
+      },
+      typescript = {
+        eslint,
+        prettier,
+      },
+      scss = {
+        prettier,
       },
     },
   },
