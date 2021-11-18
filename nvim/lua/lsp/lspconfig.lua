@@ -19,7 +19,7 @@ local on_attach = function(client, bufnr)
   map('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
   map('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
   map('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  map('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  map('n', '<space>rn', '<cmd>Lspsaga rename<CR>', opts)
   map('n', '<space>ca', '<cmd>Lspsaga code_action<CR>', opts)
   map('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   map('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
@@ -36,6 +36,8 @@ local on_attach = function(client, bufnr)
   end
 end
 
+local eslint = require('lsp.efm.eslint')
+
 nvim_lsp.phpactor.setup {
   on_attach = on_attach,
   filetypes = {
@@ -51,7 +53,7 @@ nvim_lsp.tailwindcss.setup {
     'css',
     'sass',
     'scss',
-    'javascript',
+    -- 'javascript',
     'javascriptreact',
     'typescript',
     'typescriptreact',
@@ -62,7 +64,7 @@ nvim_lsp.tailwindcss.setup {
 nvim_lsp.tsserver.setup {
   on_attach = on_attach,
   filetypes = {
-    'javascript',
+    -- 'javascript',
     'typescript',
     'typescriptreact',
     'typescript.tsx',
@@ -89,6 +91,35 @@ nvim_lsp.ltex.setup {
   settings = {
     ltex = {
       language = 'en',
+    },
+  },
+}
+
+nvim_lsp.efm.setup {
+  on_attach = on_attach,
+  init_options = {
+    documentFormatting = true,
+  },
+  settings = {
+    rootMarkers = {
+      '.git',
+      'package.json',
+      '.eslintrc.cjs',
+      '.eslintrc',
+      '.eslintrc.json',
+      '.eslintrc.js',
+      '.prettierrc',
+      '.prettierrc.js',
+      '.prettierrc.json',
+      '.prettierrc.yml',
+      '.prettierrc.yaml',
+      '.prettier.config.js',
+      '.prettier.config.cjs',
+    },
+    languages = {
+      javascript = {
+        eslint,
+      },
     },
   },
 }

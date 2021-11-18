@@ -36,6 +36,11 @@ if type brew &>/dev/null; then
   compinit
 fi
 
+# Golang
+if type go &>/dev/null; then
+  export PATH="$PATH:$(go env GOPATH)/bin"
+fi
+
 # Load sensitive variables such as credentials and tokens
 if [ -f ~/.shell_env ]; then
   source ~/.shell_env
