@@ -39,8 +39,8 @@ alias yrb='y run build'
 alias yrbp='y run build:production'
 
 # WordPress
-alias export_staging='wp @staging db export - > "staging_db_$(date +%F_$R).sql"'
-alias export_production='wp @production db export - > "production_db_$(date +%F_$R).sql"'
+alias export_staging='wp @staging db export - > "staging_db_$(date +%F).sql"'
+alias export_production='wp @production db export - > "production_db_$(date +%F).sql"'
 alias t='trellis'
 alias trellis_copy_basic_auth_pass='trellis vault view staging | grep -o "http_basic_auth_password: .*" | cut -f2- -d: | cut -c2- | pbcopy'
 wp_copy_user_id() {
