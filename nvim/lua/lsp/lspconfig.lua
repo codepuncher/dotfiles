@@ -54,10 +54,6 @@ nvim_lsp.tailwindcss.setup {
   on_attach = on_attach,
   filetypes = {
     'html',
-    'javascriptreact',
-    'typescript',
-    'typescriptreact',
-    'vue',
   }
 }
 
