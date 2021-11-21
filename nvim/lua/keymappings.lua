@@ -1,6 +1,9 @@
 local map = vim.api.nvim_set_keymap;
 local noremapSilent = { noremap = true, silent = true }
 
+-- Files
+map('n', 'zz', ':update<CR>', noremapSilent)
+
 -- Navigation
 ---- Switch windows
 map('', '<C-l>', '<C-w>l', { noremap = true })
