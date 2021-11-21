@@ -50,9 +50,6 @@ map('n', '<Leader>FG', [[<cmd>lua require('custom.telescope').live_grep()<CR>]],
 map('n', '<Leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], { noremap = true })
 map('n', '<Leader>fh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], { noremap = true })
 
--- Tagbar
-map('n', '<F8>', ':TagbarToggle<CR>', { noremap = false })
-
 -- Terminal
 map('t', '<Esc>', '<C-\\><C-n>', { noremap = true })
 
