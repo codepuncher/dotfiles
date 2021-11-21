@@ -149,4 +149,6 @@ nvim_lsp.stylelint_lsp.setup {
   },
 }
 
+nvim_lsp.vuels.setup {}
+
 require'lsp.lua-lsp'
