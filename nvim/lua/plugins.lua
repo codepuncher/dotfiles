@@ -136,11 +136,6 @@ return require('packer').startup(function(use)
       },
     },
     {
-      'phpactor/phpactor',
-      ft = 'php',
-      run = 'composer install --no-dev -o',
-    },
-    {
       'RRethy/vim-hexokinase',
       run = 'make hexokinase',
     },
