@@ -119,16 +119,6 @@ return require('packer').startup(function(use)
     },
     {
       'editorconfig/editorconfig-vim',
-      ft = {
-        'js',
-        'ts',
-        'vue',
-        'svelte',
-        'css',
-        'scss',
-        'php',
-        'blade',
-      },
     },
     {
       'RRethy/vim-hexokinase',
