@@ -139,6 +139,8 @@ local stylelint_filetypes = {
   'postcss',
 }
 nvim_lsp.stylelint_lsp.setup {
+  capabilities = capabilities,
+  on_attach = on_attach,
   filetypes = stylelint_filetypes,
   settings = {
     stylelintplus = {
@@ -150,5 +152,10 @@ nvim_lsp.stylelint_lsp.setup {
 }
 
 nvim_lsp.vuels.setup {}
+
+nvim_lsp.cssls.setup {
+  capabilities = capabilities,
+  on_attach = on_attach,
+}
 
 require'lsp.lua-lsp'
