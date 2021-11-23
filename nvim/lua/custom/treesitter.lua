@@ -41,6 +41,7 @@ require'nvim-treesitter.configs'.setup {
     'scss',
     'css',
     'vim',
+    'vue',
     'svelte',
   },
 }
