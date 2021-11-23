@@ -94,6 +94,9 @@ return require('packer').startup(function(use)
       config = function() require('custom.cmp') end,
     },
     {
+      'onsails/lspkind-nvim',
+    },
+    {
       'windwp/nvim-autopairs',
       config = function() require('custom.autopairs') end,
     },

@@ -41,7 +41,6 @@ map('n', '¶', '<Cmd>BufferLineGoToBuffer 7<CR>', noremapSilent)
 map('n', '•', '<Cmd>BufferLineGoToBuffer 8<CR>', noremapSilent)
 map('n', 'ª', '<Cmd>BufferLineGoToBuffer 9<CR>', noremapSilent)
 map('n', 'ç', '<Cmd>Bdelete<CR>', noremapSilent)
-
 ---- Toggle tree
 map('', '<C-e>', [[<Cmd>lua require('nvim-tree').toggle()<CR>]], { noremap = true })
 

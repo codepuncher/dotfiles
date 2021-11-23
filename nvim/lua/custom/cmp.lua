@@ -1,4 +1,5 @@
-local cmp = require 'cmp'
+local cmp = require('cmp')
+local lspkind = require('lspkind')
 
 local function tab(fallback)
   if cmp.visible() then
@@ -40,17 +41,21 @@ cmp.setup({
     {
       { name = 'buffer' },
     }
-  )
+  ),
+  formatting = {
+    format = lspkind.cmp_format({
+      with_text = true,
+      maxwidth = 50,
+    }),
+  },
 })
 
----@diagnostic disable-next-line: undefined-field
 cmp.setup.cmdline('/', {
   sources = {
     { name = 'buffer' }
   }
 })
 
----@diagnostic disable-next-line: undefined-field
 cmp.setup.cmdline(':', {
   sources = cmp.config.sources({
     { name = 'path' }
