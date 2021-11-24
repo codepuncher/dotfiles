@@ -38,6 +38,7 @@ local on_attach = function(client, bufnr)
 end
 
 local eslint = require('lsp.efm.eslint')
+local luaFormat = require('lsp.efm.lua-format')
 local prettier = require('lsp.efm.prettier')
 local phpcs = require('lsp.efm.phpcs')
 
@@ -124,6 +125,9 @@ nvim_lsp.efm.setup {
     languages = {
       javascript = {
         eslint,
+      },
+      lua = {
+        luaFormat,
       },
       typescript = {
         eslint,
