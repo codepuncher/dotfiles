@@ -1,5 +1,5 @@
 return {
-  lintCommand = './vendor/bin/phpcs --standard=PSR12 --report=emacs -s - ${INPUT}',
+  lintCommand = [[$([ -n "$(command -v vendor/bin/phpcs)" ] && echo "vendor/bin/phpcs" || echo "phpcs") --standard=PSR12 --report=emacs -s - ${INPUT}]],
   lintIgnoreExitCode = true,
   lintStdin = true,
   -- lintFormats = {
