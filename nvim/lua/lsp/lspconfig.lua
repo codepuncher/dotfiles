@@ -39,6 +39,7 @@ end
 
 local eslint = require('lsp.efm.eslint')
 local prettier = require('lsp.efm.prettier')
+local phpcs = require('lsp.efm.phpcs')
 
 nvim_lsp.phpactor.setup {
   capabilities = capabilities,
@@ -127,6 +128,9 @@ nvim_lsp.efm.setup {
       typescript = {
         eslint,
         prettier,
+      },
+      php = {
+        phpcs,
       },
     },
   },
