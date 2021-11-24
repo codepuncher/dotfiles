@@ -42,6 +42,19 @@ local luaFormat = require('lsp.efm.lua-format')
 local prettier = require('lsp.efm.prettier')
 local phpcs = require('lsp.efm.phpcs')
 
+nvim_lsp.efm.setup {
+    capabilities = capabilities,
+    on_attach = on_attach,
+    init_options = {documentFormatting = true},
+    settings = {
+        rootMarkers = {
+            '.git', 'package.json', '.eslintrc.cjs', '.eslintrc', '.eslintrc.json', '.eslintrc.js', '.prettierrc', '.prettierrc.js',
+            '.prettierrc.json', '.prettierrc.yml', '.prettierrc.yaml', '.prettier.config.js', '.prettier.config.cjs'
+        },
+        languages = {javascript = {eslint}, lua = {luaFormat}, typescript = {eslint, prettier}, php = {phpcs}}
+    }
+}
+
 nvim_lsp.phpactor.setup {
     capabilities = capabilities,
     on_attach = on_attach,
@@ -65,19 +78,6 @@ nvim_lsp.bashls.setup {capabilities = capabilities, on_attach = on_attach, filet
 nvim_lsp.svelte.setup {capabilities = capabilities, on_attach = on_attach, filetypes = {'svelte'}}
 
 nvim_lsp.ltex.setup {capabilities = capabilities, on_attach = on_attach, settings = {ltex = {language = 'en'}}}
-
-nvim_lsp.efm.setup {
-    capabilities = capabilities,
-    on_attach = on_attach,
-    init_options = {documentFormatting = true},
-    settings = {
-        rootMarkers = {
-            '.git', 'package.json', '.eslintrc.cjs', '.eslintrc', '.eslintrc.json', '.eslintrc.js', '.prettierrc', '.prettierrc.js',
-            '.prettierrc.json', '.prettierrc.yml', '.prettierrc.yaml', '.prettier.config.js', '.prettier.config.cjs'
-        },
-        languages = {javascript = {eslint}, lua = {luaFormat}, typescript = {eslint, prettier}, php = {phpcs}}
-    }
-}
 
 local stylelint_filetypes = {'css', 'sass', 'scss', 'postcss'}
 nvim_lsp.stylelint_lsp.setup {
