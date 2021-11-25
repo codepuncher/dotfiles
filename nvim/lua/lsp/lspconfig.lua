@@ -1,4 +1,6 @@
-if not vim.fn.exists('g:lspconfig') then return end
+if not vim.fn.exists('g:lspconfig') then
+    return
+end
 
 local nvim_lsp = require('lspconfig')
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
@@ -51,7 +53,7 @@ nvim_lsp.efm.setup {
             '.git', 'package.json', '.eslintrc.cjs', '.eslintrc', '.eslintrc.json', '.eslintrc.js', '.prettierrc', '.prettierrc.js',
             '.prettierrc.json', '.prettierrc.yml', '.prettierrc.yaml', '.prettier.config.js', '.prettier.config.cjs'
         },
-        languages = {javascript = {eslint}, lua = {luaFormat}, typescript = {eslint, prettier}, php = {phpcs}}
+        languages = {javascript = {eslint}, lua = {luaFormat}, typescript = {eslint, prettier}, php = {phpcs}, vue = {prettier}}
     }
 }
 
