@@ -47,6 +47,7 @@ vim.o.splitright = true
 
 -- Colours
 vim.opt.termguicolors = true
+vim.g.tokyonight_transparent = true
 vim.g.tokyonight_style = 'night'
 vim.cmd [[colorscheme tokyonight]]
 vim.g.Hexokinase_highlighters = {'virtual'}
