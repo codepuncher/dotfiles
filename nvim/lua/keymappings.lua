@@ -62,3 +62,7 @@ map('n', '<leader>xd', '<cmd>Trouble lsp_document_diagnostics<cr>', noremapSilen
 map('n', '<leader>xl', '<cmd>Trouble loclist<cr>', noremapSilent)
 map('n', '<leader>xq', '<cmd>Trouble quickfix<cr>', noremapSilent)
 map('n', 'gR', '<cmd>Trouble lsp_references<cr>', noremapSilent)
+
+-- (In/De)crement numbers
+map('n', '+', '<C-a>', { noremap = true })
+map('n', '-', '<C-x>', { noremap = true })
