@@ -122,4 +122,7 @@ mdp() {
   pandoc "$1" | lynx -stdin
 }
 
+# Laravel
+alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
+
 # vi:syntax=sh
