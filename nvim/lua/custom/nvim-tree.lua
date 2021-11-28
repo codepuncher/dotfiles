@@ -1,7 +1,7 @@
 require('nvim-tree').setup {
     auto_close = true,
     open_on_setup = false,
-    diagnostics = {enable = true},
+    -- diagnostics = {enable = true},
     update_focused_file = {enable = true, update_cwd = false, ignore_list = {}},
     view = {auto_resize = true, side = 'left', width = 50}
 }
