@@ -51,6 +51,7 @@ map('n', '<Leader>fg', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]]
 map('n', '<Leader>FG', [[<cmd>lua require('custom.telescope').live_grep()<CR>]], { noremap = true }) -- Without ignore
 map('n', '<Leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], { noremap = true })
 map('n', '<Leader>fh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], { noremap = true })
+map('n', '<Leader>fr', [[<cmd>lua require('telescope.builtin').lsp_references()<CR>]], {noremap = true})
 
 -- Terminal
 map('t', '<Esc>', '<C-\\><C-n>', { noremap = true })
