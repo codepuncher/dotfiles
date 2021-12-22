@@ -69,3 +69,9 @@ map('n', 'gR', '<cmd>Trouble lsp_references<cr>', noremapSilent)
 -- (In/De)crement numbers
 map('n', '+', '<C-a>', noremap)
 map('n', '-', '<C-x>', noremap)
+
+-- Fugitive
+map('n', '<Leader>gd', '<Cmd>Git diff<CR>', noremap)
+map('n', '<Leader>gs', '<Cmd>Git status<CR>', noremap)
+map('n', '<Leader>gh', '<Cmd>diffget //3<CR>', noremap)
+map('n', '<Leader>gl', '<Cmd>diffget //2<CR>', noremap)
