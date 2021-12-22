@@ -3,6 +3,7 @@ require('nvim-tree').setup {
     open_on_setup = false,
     -- diagnostics = {enable = true},
     update_focused_file = {enable = true, update_cwd = false, ignore_list = {}},
+    git = {ignore = false},
     view = {auto_resize = true, side = 'left', width = 50}
 }
 
