@@ -1,15 +1,16 @@
 local map = vim.api.nvim_set_keymap;
-local noremapSilent = { noremap = true, silent = true }
+local noremap = {noremap = true}
+local noremapSilent = {noremap = true, silent = true}
 
 -- Files
 map('n', '<Leader>w', ':update<CR>', noremapSilent)
 
 -- Navigation
 ---- Switch windows
-map('', '<C-l>', '<C-w>l', { noremap = true })
-map('', '<C-h>', '<C-w>h', { noremap = true })
-map('', '<C-j>', '<C-w>j', { noremap = true })
-map('', '<C-k>', '<C-w>k', { noremap = true })
+map('', '<C-l>', '<C-w>l', noremap)
+map('', '<C-h>', '<C-w>h', noremap)
+map('', '<C-j>', '<C-w>j', noremap)
+map('', '<C-k>', '<C-w>k', noremap)
 ---- Barbar
 ------ Linux
 map('n', '<A-,>', '<Cmd>BufferLineCyclePrev<CR>', noremapSilent)
@@ -42,20 +43,20 @@ map('n', '•', '<Cmd>BufferLineGoToBuffer 8<CR>', noremapSilent)
 map('n', 'ª', '<Cmd>BufferLineGoToBuffer 9<CR>', noremapSilent)
 map('n', 'ç', '<Cmd>Bdelete<CR>', noremapSilent)
 ---- Toggle tree
-map('', '<C-e>', [[<Cmd>lua require('nvim-tree').toggle()<CR>]], { noremap = true })
+map('', '<C-e>', [[<Cmd>lua require('nvim-tree').toggle()<CR>]], noremap)
 
 -- Telescope
-map('n', '<Leader>ff', [[<cmd>lua require('telescope.builtin').find_files()<CR>]], { noremap = true }) -- With ignore
-map('n', '<Leader>FF', [[<cmd>lua require('custom.telescope').find_files()<CR>]], { noremap = true }) -- Without ignore
-map('n', '<Leader>fg', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], { noremap = true }) -- With ignore
-map('n', '<Leader>FG', [[<cmd>lua require('custom.telescope').live_grep()<CR>]], { noremap = true }) -- Without ignore
-map('n', '<Leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], { noremap = true })
-map('n', '<Leader>fh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], { noremap = true })
-map('n', '<Leader>fr', [[<cmd>lua require('telescope.builtin').lsp_references()<CR>]], {noremap = true})
-map('n', '<Leader>fgs', [[<cmd>lua require('telescope.builtin').git_status()<CR>]], {noremap = true})
+map('n', '<Leader>ff', [[<cmd>lua require('telescope.builtin').find_files()<CR>]], noremap) -- With ignore
+map('n', '<Leader>FF', [[<cmd>lua require('custom.telescope').find_files()<CR>]], noremap) -- Without ignore
+map('n', '<Leader>fg', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], noremap) -- With ignore
+map('n', '<Leader>FG', [[<cmd>lua require('custom.telescope').live_grep()<CR>]], noremap) -- Without ignore
+map('n', '<Leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], noremap)
+map('n', '<Leader>fh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], noremap)
+map('n', '<Leader>fr', [[<cmd>lua require('telescope.builtin').lsp_references()<CR>]], noremap)
+map('n', '<Leader>fgs', [[<cmd>lua require('telescope.builtin').git_status()<CR>]], noremap)
 
 -- Terminal
-map('t', '<Esc>', '<C-\\><C-n>', { noremap = true })
+map('t', '<Esc>', '<C-\\><C-n>', noremap)
 
 -- Trouble
 map('n', '<leader>xx', '<cmd>Trouble<cr>', noremapSilent)
@@ -66,5 +67,11 @@ map('n', '<leader>xq', '<cmd>Trouble quickfix<cr>', noremapSilent)
 map('n', 'gR', '<cmd>Trouble lsp_references<cr>', noremapSilent)
 
 -- (In/De)crement numbers
-map('n', '+', '<C-a>', { noremap = true })
-map('n', '-', '<C-x>', { noremap = true })
+map('n', '+', '<C-a>', noremap)
+map('n', '-', '<C-x>', noremap)
+
+-- Fugitive
+map('n', '<Leader>gd', '<Cmd>Git diff<CR>', noremap)
+map('n', '<Leader>gs', '<Cmd>Git status<CR>', noremap)
+map('n', '<Leader>gh', '<Cmd>diffget //3<CR>', noremap)
+map('n', '<Leader>gl', '<Cmd>diffget //2<CR>', noremap)
