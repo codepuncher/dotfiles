@@ -42,6 +42,7 @@ init_links () {
     move_link .config/nvim nvim
     move_link .gitconfig git/gitconfig
     move_link .config/alacritty/alacritty.yml terminals/alacritty.yml
+    move_link .config/spotifyd/spotifyd.conf media/spotifyd.conf
     echo "Symlinking complete"
   else
     echo "Symlinking cancelled by user"
