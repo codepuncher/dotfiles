@@ -40,7 +40,7 @@ local on_attach = function(client, bufnr)
 end
 
 local eslint = require('lsp.efm.eslint')
-local luaFormat = require('lsp.efm.lua-format')
+local stylua = require('lsp.efm.stylua')
 local prettier = require('lsp.efm.prettier')
 local phpcs = require('lsp.efm.phpcs')
 
@@ -53,7 +53,7 @@ nvim_lsp.efm.setup {
             '.git', 'package.json', '.eslintrc.cjs', '.eslintrc', '.eslintrc.json', '.eslintrc.js', '.prettierrc', '.prettierrc.js',
             '.prettierrc.json', '.prettierrc.yml', '.prettierrc.yaml', '.prettier.config.js', '.prettier.config.cjs'
         },
-        languages = {javascript = {eslint}, lua = {luaFormat}, typescript = {eslint, prettier}, php = {phpcs}, vue = {prettier}}
+        languages = {javascript = {eslint}, lua = {stylua}, typescript = {eslint, prettier}, php = {phpcs}, vue = {prettier}}
     }
 }
 
