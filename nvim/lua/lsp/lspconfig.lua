@@ -61,7 +61,7 @@ nvim_lsp.phpactor.setup {
     capabilities = capabilities,
     on_attach = on_attach,
     filetypes = {'php'},
-    root_dir = nvim_lsp.util.root_pattern('composer.json', '.git', 'functions.php')
+    root_dir = nvim_lsp.util.root_pattern('composer.json', '.git', 'functions.php', 'wp-config.php')
 }
 
 nvim_lsp.tailwindcss.setup {capabilities = capabilities, on_attach = on_attach, filetypes = {'html'}}
