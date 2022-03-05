@@ -5,18 +5,22 @@ return require('packer').startup(function(use)
 
   -- Misc
   use({
+    -- Dependency for many plugins.
+    'nvim-lua/plenary.nvim',
+    -- Dependency for many plugins.
+    'kyazdani42/nvim-web-devicons',
+    'famiu/bufdelete.nvim',
     {
       'nvim-telescope/telescope.nvim',
       requires = {
-        'nvim-lua/plenary.nvim',
-        use({ 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }),
+        use({
+          'nvim-telescope/telescope-fzf-native.nvim',
+          run = 'make',
+        }),
       },
       config = function()
         require('custom.telescope')
       end,
-    },
-    {
-      'edkolev/tmuxline.vim',
     },
   })
 
@@ -26,15 +30,14 @@ return require('packer').startup(function(use)
       'folke/tokyonight.nvim',
     },
     {
+      'edkolev/tmuxline.vim',
+    },
+    {
       'nvim-lualine/lualine.nvim',
-      requires = {
-        'kyazdani42/nvim-web-devicons',
-      },
       config = function()
         require('custom.lualine')
       end,
     },
-    'famiu/bufdelete.nvim',
     {
       'akinsho/bufferline.nvim',
       config = function()
@@ -43,9 +46,6 @@ return require('packer').startup(function(use)
     },
     {
       'kyazdani42/nvim-tree.lua',
-      requires = {
-        'kyazdani42/nvim-web-devicons',
-      },
       config = function()
         require('custom.nvim-tree')
       end,
@@ -68,16 +68,14 @@ return require('packer').startup(function(use)
       'tpope/vim-fugitive',
       cmd = {
         'Git',
+        'Git add',
+        'Git commit',
+        'Git push',
+        'Git status',
       },
-    },
-    {
-      'tpope/vim-rhubarb',
     },
     {
       'lewis6991/gitsigns.nvim',
-      requires = {
-        'nvim-lua/plenary.nvim',
-      },
       config = function()
         require('gitsigns').setup()
       end,
@@ -93,7 +91,7 @@ return require('packer').startup(function(use)
       end,
     },
     {
-      -- this is a fork to fix hover_doc and unsupported textDocument/codeAction not working whilst repo maintainer is OOA.
+      -- this fork is for whilst repo maintainer is OOA.
       'tami5/lspsaga.nvim',
       config = function()
         require('lsp.lspsaga')
@@ -135,13 +133,8 @@ return require('packer').startup(function(use)
     {
       'folke/trouble.nvim',
       requires = 'kyazdani42/nvim-web-devicons',
-      -- TODO: fix the config not loading without :source xxx
       config = function()
-        require('trouble').setup({
-          auto_open = true,
-          auto_close = true,
-          auto_preview = true,
-        })
+        require('custom.trouble')
       end,
     },
     {
@@ -153,6 +146,13 @@ return require('packer').startup(function(use)
     {
       'RRethy/vim-hexokinase',
       run = 'make hexokinase',
+      ft = {
+        'php',
+        'html',
+        'js',
+        'css',
+        'scss',
+      },
     },
     {
       'jwalton512/vim-blade',
