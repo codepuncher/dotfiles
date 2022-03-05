@@ -1,6 +1,6 @@
-local map = vim.api.nvim_set_keymap;
-local noremap = {noremap = true}
-local noremapSilent = {noremap = true, silent = true}
+local map = vim.api.nvim_set_keymap
+local noremap = { noremap = true }
+local noremapSilent = { noremap = true, silent = true }
 
 -- Files
 map('n', '<Leader>w', ':update<CR>', noremapSilent)
@@ -46,12 +46,12 @@ map('n', 'ç', '<Cmd>Bdelete<CR>', noremapSilent)
 map('', '<C-e>', [[<Cmd>lua require('nvim-tree').toggle()<CR>]], noremap)
 ---- Lines
 ---- TODO: Migrate to Lua
-vim.api.nvim_command [[vnoremap J :m '>+1<CR>gv=gv]]
-vim.api.nvim_command [[vnoremap K :m '<-2<CR>gv=gv]]
-vim.api.nvim_command [[nnoremap <Leader>j :m .+1<CR>==]]
-vim.api.nvim_command [[nnoremap <Leader>k :m .-2<CR>==]]
-vim.api.nvim_command [[inoremap <C-j> <Esc>:m .+1<CR>==a]]
-vim.api.nvim_command [[inoremap <C-k> <Esc>:m .-2<CR>==a]]
+vim.api.nvim_command([[vnoremap J :m '>+1<CR>gv=gv]])
+vim.api.nvim_command([[vnoremap K :m '<-2<CR>gv=gv]])
+vim.api.nvim_command([[nnoremap <Leader>j :m .+1<CR>==]])
+vim.api.nvim_command([[nnoremap <Leader>k :m .-2<CR>==]])
+vim.api.nvim_command([[inoremap <C-j> <Esc>:m .+1<CR>==a]])
+vim.api.nvim_command([[inoremap <C-k> <Esc>:m .-2<CR>==a]])
 
 -- Telescope
 map('n', '<Leader>ff', [[<cmd>lua require('telescope.builtin').find_files()<CR>]], noremap) -- With ignore
