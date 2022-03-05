@@ -1,116 +1,145 @@
 if not vim.fn.exists('g:lspconfig') then
-    return
+  return
 end
 
 local nvim_lsp = require('lspconfig')
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 local on_attach = function(client, bufnr)
-    local function map(...)
-        vim.api.nvim_buf_set_keymap(bufnr, ...)
-    end
+  local function map(...)
+    vim.api.nvim_buf_set_keymap(bufnr, ...)
+  end
 
-    --- Mappings.
-    local opts = {noremap = true, silent = true}
+  --- Mappings.
+  local opts = { noremap = true, silent = true }
 
-    map('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-    map('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-    map('n', 'K', '<cmd>Lspsaga hover_doc<CR>', opts)
-    map('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-    map('n', '<C-k>', '<cmd>Lspsaga signature_help<CR>', opts)
-    map('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-    map('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-    map('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-    map('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-    map('n', '<space>rn', '<cmd>Lspsaga rename<CR>', opts)
-    map('n', '<space>ca', '<cmd>Lspsaga code_action<CR>', opts)
-    map('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-    map('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-    map('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-    map('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-    map('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-    map('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+  map('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  map('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  map('n', 'K', '<cmd>Lspsaga hover_doc<CR>', opts)
+  map('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  map('n', '<C-k>', '<cmd>Lspsaga signature_help<CR>', opts)
+  map('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  map('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  map('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  map('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  map('n', '<space>rn', '<cmd>Lspsaga rename<CR>', opts)
+  map('n', '<space>ca', '<cmd>Lspsaga code_action<CR>', opts)
+  map('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  map('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+  map('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+  map('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+  map('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+  map('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
-    if client.resolved_capabilities.document_formatting then
-        vim.api.nvim_command [[augroup Format]]
-        vim.api.nvim_command [[autocmd! * <buffer>]]
-        vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_seq_sync()]]
-        vim.api.nvim_command [[augroup END]]
-    end
+  if client.resolved_capabilities.document_formatting then
+    vim.api.nvim_command([[augroup Format]])
+    vim.api.nvim_command([[autocmd! * <buffer>]])
+    vim.api.nvim_command([[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_seq_sync()]])
+    vim.api.nvim_command([[augroup END]])
+  end
 end
 
 local eslint = require('lsp.efm.eslint')
-local luaFormat = require('lsp.efm.lua-format')
+local stylua = require('lsp.efm.stylua')
 local prettier = require('lsp.efm.prettier')
 local phpcs = require('lsp.efm.phpcs')
 
-nvim_lsp.efm.setup {
-    capabilities = capabilities,
-    on_attach = on_attach,
-    init_options = {documentFormatting = true},
-    settings = {
-        rootMarkers = {
-            '.git', 'package.json', '.eslintrc.cjs', '.eslintrc', '.eslintrc.json', '.eslintrc.js', '.prettierrc', '.prettierrc.js',
-            '.prettierrc.json', '.prettierrc.yml', '.prettierrc.yaml', '.prettier.config.js', '.prettier.config.cjs'
+nvim_lsp.efm.setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  init_options = { documentFormatting = true },
+  settings = {
+    rootMarkers = {
+      '.git',
+      'package.json',
+      '.eslintrc.cjs',
+      '.eslintrc',
+      '.eslintrc.json',
+      '.eslintrc.js',
+      '.prettierrc',
+      '.prettierrc.js',
+      '.prettierrc.json',
+      '.prettierrc.yml',
+      '.prettierrc.yaml',
+      '.prettier.config.js',
+      '.prettier.config.cjs',
+    },
+    languages = {
+      javascript = { eslint },
+      lua = { stylua },
+      typescript = { eslint, prettier },
+      php = { phpcs },
+      vue = { prettier },
+    },
+  },
+})
+
+nvim_lsp.phpactor.setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  filetypes = { 'php' },
+  root_dir = nvim_lsp.util.root_pattern('composer.json', '.git', 'functions.php', 'wp-config.php'),
+})
+
+nvim_lsp.tailwindcss.setup({ capabilities = capabilities, on_attach = on_attach, filetypes = { 'html' } })
+
+nvim_lsp.tsserver.setup({
+  capabilities = capabilities,
+  on_attach = function(client, bufnr)
+    client.resolved_capabilities.document_formatting = false
+    on_attach(client, bufnr)
+  end,
+  filetypes = { 'javascript', 'typescript', 'typescriptreact', 'typescript.tsx' },
+})
+
+nvim_lsp.bashls.setup({ capabilities = capabilities, on_attach = on_attach, filetypes = { 'sh', 'bash' } })
+
+nvim_lsp.svelte.setup({ capabilities = capabilities, on_attach = on_attach, filetypes = { 'svelte' } })
+
+nvim_lsp.ltex.setup({ capabilities = capabilities, on_attach = on_attach, settings = { ltex = { language = 'en' } } })
+
+local stylelint_filetypes = { 'css', 'sass', 'scss', 'postcss' }
+nvim_lsp.stylelint_lsp.setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  filetypes = stylelint_filetypes,
+  settings = { stylelintplus = { autoFixOnSave = true, autoFixOnFormat = true, filetypes = stylelint_filetypes } },
+})
+
+nvim_lsp.vuels.setup({ capabilities = capabilities, on_attach = on_attach })
+
+nvim_lsp.cssls.setup({ capabilities = capabilities, on_attach = on_attach })
+
+nvim_lsp.jsonls.setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  cmd = { 'vscode-json-language-server', '--stdio' },
+  settings = {
+    json = {
+      -- Schemas https://www.schemastore.org
+      schemas = {
+        { fileMatch = { 'package.json' }, url = 'https://json.schemastore.org/package.json' },
+        { fileMatch = { 'tsconfig*.json' }, url = 'https://json.schemastore.org/tsconfig.json' },
+        {
+          fileMatch = { '.prettierrc', '.prettierrc.json', 'prettier.config.json' },
+          url = 'https://json.schemastore.org/prettierrc.json',
         },
-        languages = {javascript = {eslint}, lua = {luaFormat}, typescript = {eslint, prettier}, php = {phpcs}, vue = {prettier}}
-    }
-}
+        { fileMatch = { '.eslintrc', '.eslintrc.json' }, url = 'https://json.schemastore.org/eslintrc.json' },
+        {
+          fileMatch = { '.babelrc', '.babelrc.json', 'babel.config.json' },
+          url = 'https://json.schemastore.org/babelrc.json',
+        },
+        {
+          fileMatch = { '.stylelintrc', '.stylelintrc.json', 'stylelint.config.json' },
+          url = 'http://json.schemastore.org/stylelintrc.json',
+        },
+        {
+          fileMatch = { 'composer.json' },
+          url = 'https://raw.githubusercontent.com/composer/composer/master/res/composer-schema.json',
+        },
+      },
+    },
+  },
+})
 
-nvim_lsp.phpactor.setup {
-    capabilities = capabilities,
-    on_attach = on_attach,
-    filetypes = {'php'},
-    root_dir = nvim_lsp.util.root_pattern('composer.json', '.git', 'functions.php', 'wp-config.php')
-}
-
-nvim_lsp.tailwindcss.setup {capabilities = capabilities, on_attach = on_attach, filetypes = {'html'}}
-
-nvim_lsp.tsserver.setup {
-    capabilities = capabilities,
-    on_attach = function(client, bufnr)
-        client.resolved_capabilities.document_formatting = false
-        on_attach(client, bufnr)
-    end,
-    filetypes = {'javascript', 'typescript', 'typescriptreact', 'typescript.tsx'}
-}
-
-nvim_lsp.bashls.setup {capabilities = capabilities, on_attach = on_attach, filetypes = {'sh', 'bash'}}
-
-nvim_lsp.svelte.setup {capabilities = capabilities, on_attach = on_attach, filetypes = {'svelte'}}
-
-nvim_lsp.ltex.setup {capabilities = capabilities, on_attach = on_attach, settings = {ltex = {language = 'en'}}}
-
-local stylelint_filetypes = {'css', 'sass', 'scss', 'postcss'}
-nvim_lsp.stylelint_lsp.setup {
-    capabilities = capabilities,
-    on_attach = on_attach,
-    filetypes = stylelint_filetypes,
-    settings = {stylelintplus = {autoFixOnSave = true, autoFixOnFormat = true, filetypes = stylelint_filetypes}}
-}
-
-nvim_lsp.vuels.setup {capabilities = capabilities, on_attach = on_attach}
-
-nvim_lsp.cssls.setup {capabilities = capabilities, on_attach = on_attach}
-
-nvim_lsp.jsonls.setup {
-    capabilities = capabilities,
-    on_attach = on_attach,
-    cmd = {'vscode-json-language-server', '--stdio'},
-    settings = {
-        json = {
-            -- Schemas https://www.schemastore.org
-            schemas = {
-                {fileMatch = {'package.json'}, url = 'https://json.schemastore.org/package.json'},
-                {fileMatch = {'tsconfig*.json'}, url = 'https://json.schemastore.org/tsconfig.json'},
-                {fileMatch = {'.prettierrc', '.prettierrc.json', 'prettier.config.json'}, url = 'https://json.schemastore.org/prettierrc.json'},
-                {fileMatch = {'.eslintrc', '.eslintrc.json'}, url = 'https://json.schemastore.org/eslintrc.json'},
-                {fileMatch = {'.babelrc', '.babelrc.json', 'babel.config.json'}, url = 'https://json.schemastore.org/babelrc.json'},
-                {fileMatch = {'.stylelintrc', '.stylelintrc.json', 'stylelint.config.json'}, url = 'http://json.schemastore.org/stylelintrc.json'},
-                {fileMatch = {'composer.json'}, url = 'https://raw.githubusercontent.com/composer/composer/master/res/composer-schema.json'}
-            }
-        }
-    }
-}
-
-require 'lsp.lua-lsp'
+require('lsp.lua-lsp')

@@ -9,5 +9,5 @@ require('nvim-ts-autotag').setup({
     'typescriptreact',
     'svelte',
     'vue',
-  }
+  },
 })

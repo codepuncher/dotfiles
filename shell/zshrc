@@ -38,12 +38,18 @@ fi
 
 # Golang
 if type go &>/dev/null; then
-  export PATH="$PATH:$(go env GOPATH)/bin"
+  export GOPATH="$(go env GOPATH)"
+  export PATH="$PATH:$GOPATH/bin"
 fi
 
 # Luarocks
 if type luarocks &>/dev/null; then
   export PATH="$PATH:$HOME/.luarocks/bin"
+fi
+
+# Cargo
+if type cargo &>/dev/null; then
+  export PATH="$PATH:$HOME/.cargo/bin"
 fi
 
 # Load sensitive variables such as credentials and tokens

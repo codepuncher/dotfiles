@@ -1,0 +1,22 @@
+name: Lint
+
+on: push
+
+jobs:
+  shell:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run Shellcheck
+        uses: azohra/shell-linter@latest
+
+  lua:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Stylua
+        uses: JohnnyMorganz/stylua-action@1.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --quote-style AutoPreferSingle --indent-type Spaces --indent-width 2 --check .
