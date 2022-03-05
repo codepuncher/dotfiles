@@ -35,8 +35,12 @@ vim.o.numberwidth = 5
 ---- On insert, use absolute. On leave, use relative. From: https://jeffkreeftmeijer.com/vim-number/
 vim.api.nvim_command([[augroup numbertoggle]])
 vim.api.nvim_command([[autocmd!]])
-vim.api.nvim_command([[autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif]])
-vim.api.nvim_command([[autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif]])
+vim.api.nvim_command(
+  [[autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif]]
+)
+vim.api.nvim_command(
+  [[autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif]]
+)
 vim.api.nvim_command([[augroup END]])
 
 -- Layout
