@@ -39,4 +39,5 @@ colors:
     - { index: 16, color: '0xff9e64' }
     - { index: 17, color: '0xdb4b4b' }
 
-background_opacity: 0.95
+window:
+  opacity: 0.95
