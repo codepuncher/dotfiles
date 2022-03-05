@@ -11,18 +11,18 @@ else
 end
 
 local sumneko_root_path = home_path .. '/Tools/lua-language-server'
-local sumneko_binary = sumneko_root_path..'/bin/'..system_name..'/lua-language-server'
+local sumneko_binary = sumneko_root_path .. '/bin/' .. system_name .. '/lua-language-server'
 
 local runtime_path = vim.split(package.path, ';')
 table.insert(runtime_path, 'lua/?.lua')
 table.insert(runtime_path, 'lua/?/init.lua')
 
-require'lspconfig'.sumneko_lua.setup {
+require('lspconfig').sumneko_lua.setup({
   cmd = {
     sumneko_binary,
     '-E',
     sumneko_root_path .. '/main.lua',
-  };
+  },
   settings = {
     Lua = {
       runtime = {
@@ -47,4 +47,4 @@ require'lspconfig'.sumneko_lua.setup {
       },
     },
   },
-}
+})
