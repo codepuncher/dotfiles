@@ -138,7 +138,10 @@ return require('packer').startup(function(use)
       end,
     },
     {
-      'preservim/nerdcommenter',
+      'numToStr/Comment.nvim',
+      config = function()
+        require('Comment').setup()
+      end,
     },
     {
       'editorconfig/editorconfig-vim',
