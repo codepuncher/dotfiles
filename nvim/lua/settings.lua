@@ -65,11 +65,6 @@ vim.api.nvim_command([[autocmd!]])
 vim.api.nvim_command([[au TextYankPost * silent! lua vim.highlight.on_yank{higroup="IncSearch", timeout=700}]])
 vim.api.nvim_command([[augroup END]])
 
--- Dev
-vim.g.tagbar_ctags_bin = '/usr/bin/uctags'
-vim.g.NERDDefaultAlign = 'left'
-vim.g.NERDSpaceDelims = 1
-
 -- Filetypes
 vim.api.nvim_command([[autocmd FileType markdown setlocal shiftwidth=4 softtabstop=4 expandtab]])
 vim.api.nvim_command([[autocmd FileType lua setlocal shiftwidth=4 softtabstop=4 expandtab]])
