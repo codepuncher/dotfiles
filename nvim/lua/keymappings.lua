@@ -80,8 +80,12 @@ map('n', '-', '<C-x>', noremap)
 
 -- Fugitive
 map('n', '<Leader>gd', '<Cmd>Git diff<CR>', noremap)
-map('n', '<Leader>gs', '<Cmd>Git status<CR>', noremap)
+map('n', '<Leader>gs', '<Cmd>Git<CR>', noremap)
 map('n', '<Leader>gh', '<Cmd>diffget //3<CR>', noremap)
 map('n', '<Leader>gl', '<Cmd>diffget //2<CR>', noremap)
 map('n', '<Leader>gca', '<Cmd>Git commit -a<CR>', noremap)
+map('n', '<Leader>ga', '<Cmd>Git add % <bar> echo \'Staged \' . @%<CR>', noremap)
 map('n', '<Leader>gp', '<Cmd>Git push<CR>', noremap)
+
+-- Symbols Outline
+map('n', '<Leader>CS', '<Cmd>SymbolsOutline<CR>', noremap)
