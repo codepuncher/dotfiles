@@ -26,14 +26,20 @@ alias c='composer'
 alias cda='c dump-autoload'
 alias ci='c install'
 alias cr='c require'
+alias cgr='c global require'
 alias crd='cr --dev'
 alias crm='c remove'
+alias cgrm='c global remove'
 alias cu='c update'
+alias cgu='c update'
 
 # Node
 alias y='yarn'
+alias yg='y global'
 alias ya='y add'
+alias yga='yg add'
 alias yad='ya -D'
+alias ygad='yga -D'
 alias yrm='y remove'
 alias yrb='y run build'
 alias yrbp='y run build:production'
@@ -42,10 +48,26 @@ alias yrbp='y run build:production'
 alias export_staging='wp @staging db export - > "staging_db_$(date +%F).sql"'
 alias export_production='wp @production db export - > "production_db_$(date +%F).sql"'
 alias t='trellis'
-alias trellis_copy_basic_auth_pass='trellis vault view staging | grep -o "http_basic_auth_password: .*" | cut -f2- -d: | cut -c2- | pbcopy'
+trellis_copy_basic_auth_pass() {
+  [ -z "$1" ] && ENVIRONMENT='staging' || ENVIRONMENT="$1"
+  if [ ! -f "hosts/$ENVIRONMENT" ]; then
+    echo 'Invalid environment provided'
+    return 1
+  fi
+
+  AUTH_PASS=$(trellis vault view "$ENVIRONMENT" | grep -o "http_basic_auth_password: .*" | cut -f2- -d: | cut -c2-)
+  echo "$AUTH_PASS"
+  echo "$AUTH_PASS" | pbcopy
+}
 wp_copy_user_id() {
   [ -z "$1" ] && email='wordpress@itineris.co.uk' || email="$1"
   wp user get "$email" --field=ID --format=csv | head -n1 | tr -d '\n' | pbcopy
+}
+wp_reset_local_user_pass() {
+  USER_ID=$(wp_copy_user_id)
+  echo "$USER_ID"
+
+  wp user update "$USER_ID" --user_pass=admin
 }
 generate_vault_pass() {
   vault_pass=$(LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 512; echo '')
