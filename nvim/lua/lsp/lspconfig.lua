@@ -57,11 +57,11 @@ nvim_lsp.efm.setup {
     }
 }
 
-nvim_lsp.phpactor.setup {
+nvim_lsp.intelephense.setup {
     capabilities = capabilities,
     on_attach = on_attach,
-    filetypes = {'php'},
-    root_dir = nvim_lsp.util.root_pattern('composer.json', '.git', 'functions.php', 'wp-config.php')
+    filetypes = {'php', 'blade'},
+    settings = {format = {enable = false}, intelephense = {format = {enable = false}}}
 }
 
 nvim_lsp.tailwindcss.setup {capabilities = capabilities, on_attach = on_attach, filetypes = {'html', 'css'}}
