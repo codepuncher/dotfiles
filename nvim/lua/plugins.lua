@@ -50,6 +50,10 @@ return require('packer').startup(function(use)
     },
     use 'nvim-treesitter/nvim-treesitter-refactor',
     use 'nvim-treesitter/nvim-treesitter-textobjects',
+    use {
+        'simrat39/symbols-outline.nvim',
+        config = function() require('custom.symbols-outline') end,
+    },
   }
 
   -- Git
