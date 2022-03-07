@@ -2,7 +2,7 @@ if not vim.fn.exists('g:loaded_nvim_treesitter') then
   return
 end
 
-require'nvim-treesitter.configs'.setup {
+require('nvim-treesitter.configs').setup({
   highlight = {
     enable = true,
     disable = {},
@@ -44,4 +44,4 @@ require'nvim-treesitter.configs'.setup {
     'vue',
     'svelte',
   },
-}
+})

@@ -33,11 +33,15 @@ vim.foldlevelstart = 99
 vim.o.number = true
 vim.o.numberwidth = 5
 ---- On insert, use absolute. On leave, use relative. From: https://jeffkreeftmeijer.com/vim-number/
-vim.api.nvim_command [[augroup numbertoggle]]
-vim.api.nvim_command [[autocmd!]]
-vim.api.nvim_command [[autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif]]
-vim.api.nvim_command [[autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif]]
-vim.api.nvim_command [[augroup END]]
+vim.api.nvim_command([[augroup numbertoggle]])
+vim.api.nvim_command([[autocmd!]])
+vim.api.nvim_command(
+  [[autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif]]
+)
+vim.api.nvim_command(
+  [[autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif]]
+)
+vim.api.nvim_command([[augroup END]])
 
 -- Layout
 vim.o.completeopt = 'menu,menuone,noselect' -- Vim popup style
@@ -50,22 +54,17 @@ vim.opt.termguicolors = true
 vim.g.tokyonight_transparent = true
 vim.g.tokyonight_transparent_sidebar = true
 vim.g.tokyonight_style = 'night'
-vim.cmd [[colorscheme tokyonight]]
-vim.g.Hexokinase_highlighters = {'virtual'}
+vim.cmd([[colorscheme tokyonight]])
+vim.g.Hexokinase_highlighters = { 'virtual' }
 
 -- Misc
 vim.o.signcolumn = 'yes'
 vim.o.updatetime = 250 -- Update sign column every quarter second
-vim.api.nvim_command [[augroup highlight_yank]]
-vim.api.nvim_command [[autocmd!]]
-vim.api.nvim_command [[au TextYankPost * silent! lua vim.highlight.on_yank{higroup="IncSearch", timeout=700}]]
-vim.api.nvim_command [[augroup END]]
-
--- Dev
-vim.g.tagbar_ctags_bin = '/usr/bin/uctags'
-vim.g.NERDDefaultAlign = 'left'
-vim.g.NERDSpaceDelims = 1
+vim.api.nvim_command([[augroup highlight_yank]])
+vim.api.nvim_command([[autocmd!]])
+vim.api.nvim_command([[au TextYankPost * silent! lua vim.highlight.on_yank{higroup="IncSearch", timeout=700}]])
+vim.api.nvim_command([[augroup END]])
 
 -- Filetypes
-vim.api.nvim_command [[autocmd FileType markdown setlocal shiftwidth=4 softtabstop=4 expandtab]]
-vim.api.nvim_command [[autocmd FileType lua setlocal shiftwidth=4 softtabstop=4 expandtab]]
+vim.api.nvim_command([[autocmd FileType markdown setlocal shiftwidth=4 softtabstop=4 expandtab]])
+vim.api.nvim_command([[autocmd FileType lua setlocal shiftwidth=4 softtabstop=4 expandtab]])

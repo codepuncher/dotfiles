@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# Virtual sinks
+OUTPUT_SINK_NAME='virtualOutput'
+OUTPUT_SINK_DESCRIPTION='Mic+Game'
+INPUT_SINK_NAME='virtualInput'
+INPUT_SINK_DESCRIPTION='Mic+Game'
+
+# Real sources
+INPUT_SOURCE='alsa_input.usb-SteelSeries_Arctis_Pro_Wireless-00.mono-chat'
+OUTPUT_SOURCE='alsa_output.usb-SteelSeries_Arctis_Pro_Wireless-00.stereo-game.monitor'
+
+# Create a virtual sink
+pactl load-module module-null-sink sink_name="$OUTPUT_SINK_NAME" sink_properties=device.description="$OUTPUT_SINK_DESCRIPTION"
+
+# Feed the microphone input into the sink
+pactl load-module module-loopback sink_dont_move=true sink="$OUTPUT_SINK_NAME" source="$INPUT_SOURCE"
+
+# Create a virtual microphone input that monitors the virtual sink
+pactl load-module module-remap-source source_name="$INPUT_SINK_NAME" master="${OUTPUT_SINK_NAME}.monitor" source_properties=device.description="$INPUT_SINK_DESCRIPTION"
+
+# Loop the game audio output into our virtual sink
+pactl load-module module-loopback sink_dont_move=true sink="$OUTPUT_SINK_NAME" source="$OUTPUT_SOURCE"
+

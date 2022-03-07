@@ -1,90 +1,106 @@
-vim.cmd [[packadd packer.nvim]]
+vim.cmd([[packadd packer.nvim]])
 
 return require('packer').startup(function(use)
-  use 'wbthomason/packer.nvim'
+  use('wbthomason/packer.nvim')
 
   -- Misc
-  use {
-    use {
+  use({
+    -- Dependency for many plugins.
+    'nvim-lua/plenary.nvim',
+    -- Dependency for many plugins.
+    'kyazdani42/nvim-web-devicons',
+    'famiu/bufdelete.nvim',
+    {
       'nvim-telescope/telescope.nvim',
       requires = {
-        'nvim-lua/plenary.nvim',
-        use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+        use({
+          'nvim-telescope/telescope-fzf-native.nvim',
+          run = 'make',
+        }),
       },
-      config = function () require('custom.telescope') end,
+      config = function()
+        require('custom.telescope')
+      end,
     },
-    use {
-      'edkolev/tmuxline.vim',
-    },
-  }
+  })
 
   -- Theme/colours
-  use {
-    use {
+  use({
+    {
       'folke/tokyonight.nvim',
     },
-    use {
+    {
+      'edkolev/tmuxline.vim',
+    },
+    {
       'nvim-lualine/lualine.nvim',
-      requires = {
-        'kyazdani42/nvim-web-devicons',
-      },
-      config = function() require('custom.lualine') end,
+      config = function()
+        require('custom.lualine')
+      end,
     },
-    use 'famiu/bufdelete.nvim',
-    use {
+    {
       'akinsho/bufferline.nvim',
-      config = function () require('custom.bufferline') end,
+      config = function()
+        require('custom.bufferline')
+      end,
     },
-    use {
+    {
       'kyazdani42/nvim-tree.lua',
-      requires = {
-        'kyazdani42/nvim-web-devicons',
-      },
-      config = function () require('custom.nvim-tree') end,
+      config = function()
+        require('custom.nvim-tree')
+      end,
     },
-    use 'lukas-reineke/indent-blankline.nvim',
-    use {
+    'lukas-reineke/indent-blankline.nvim',
+    {
       'nvim-treesitter/nvim-treesitter',
       run = ':TSUpdate',
-      config = function() require('custom.treesitter') end,
+      config = function()
+        require('custom.treesitter')
+      end,
     },
-    use 'nvim-treesitter/nvim-treesitter-refactor',
-    use 'nvim-treesitter/nvim-treesitter-textobjects',
+    'nvim-treesitter/nvim-treesitter-refactor',
+    'nvim-treesitter/nvim-treesitter-textobjects',
     use {
         'simrat39/symbols-outline.nvim',
         config = function() require('custom.symbols-outline') end,
     },
-  }
+
+  })
 
   -- Git
-  use {
+  use({
     {
       'tpope/vim-fugitive',
       cmd = {
         'Git',
+        'Git add',
+        'Git commit',
+        'Git push',
+        'Git status',
       },
-    },
-    {
-      'tpope/vim-rhubarb',
     },
     {
       'lewis6991/gitsigns.nvim',
-      requires = {
-        'nvim-lua/plenary.nvim',
-      },
-      config = function() require('gitsigns').setup() end,
+      config = function()
+        require('gitsigns').setup()
+      end,
     },
-  }
+  })
 
   -- Dev
-  use {
+  use({
     {
       'neovim/nvim-lspconfig',
-      config = function() require('lsp.lspconfig') end,
+      config = function()
+        require('lsp.lspconfig')
+      end,
     },
     {
-      'tami5/lspsaga.nvim', -- this is a fork to fix hover_doc and unsupported textDocument/codeAction not working whilst repo maintainer is OOA.
-      config = function() require('lsp.lspsaga') end,
+      -- this fork is for whilst repo maintainer is OOA.
+      'tami5/lspsaga.nvim',
+      config = function()
+        require('lsp.lspsaga')
+      end,
     },
     {
       'hrsh7th/nvim-cmp',
@@ -97,34 +113,40 @@ return require('packer').startup(function(use)
         'hrsh7th/vim-vsnip',
         'rafamadriz/friendly-snippets',
       },
-      config = function() require('custom.cmp') end,
+      config = function()
+        require('custom.cmp')
+      end,
     },
     {
       'onsails/lspkind-nvim',
     },
     {
       'windwp/nvim-autopairs',
-      config = function() require('custom.autopairs') end,
+      config = function()
+        require('custom.autopairs')
+      end,
     },
     {
       'windwp/nvim-ts-autotag',
-      config = function() require('custom.autotag') end,
+      config = function()
+        require('custom.autotag')
+      end,
     },
     {
       'tpope/vim-surround',
     },
     {
-    'folke/trouble.nvim',
+      'folke/trouble.nvim',
       requires = 'kyazdani42/nvim-web-devicons',
-      -- TODO: fix the config not loading without :source xxx
-      config = function() require('trouble').setup{
-        auto_open = true,
-        auto_close = true,
-        auto_preview = true,
-      } end,
+      config = function()
+        require('custom.trouble')
+      end,
     },
     {
-      'preservim/nerdcommenter',
+      'numToStr/Comment.nvim',
+      config = function()
+        require('Comment').setup()
+      end,
     },
     {
       'editorconfig/editorconfig-vim',
@@ -132,6 +154,13 @@ return require('packer').startup(function(use)
     {
       'RRethy/vim-hexokinase',
       run = 'make hexokinase',
+      ft = {
+        'php',
+        'html',
+        'js',
+        'css',
+        'scss',
+      },
     },
     {
       'jwalton512/vim-blade',
@@ -145,5 +174,5 @@ return require('packer').startup(function(use)
         'blade',
       },
     },
-  }
+  })
 end)
