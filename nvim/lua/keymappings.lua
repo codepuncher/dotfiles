@@ -84,7 +84,7 @@ map('n', '<Leader>gs', '<Cmd>Git<CR>', noremap)
 map('n', '<Leader>gh', '<Cmd>diffget //3<CR>', noremap)
 map('n', '<Leader>gl', '<Cmd>diffget //2<CR>', noremap)
 map('n', '<Leader>gca', '<Cmd>Git commit -a<CR>', noremap)
-map('n', '<Leader>ga', '<Cmd>Git add % <bar> echo \'Staged \' . @%<CR>', noremap)
+map('n', '<Leader>ga', "<Cmd>Git add % <bar> echo 'Staged ' . @%<CR>", noremap)
 map('n', '<Leader>gp', '<Cmd>Git push<CR>', noremap)
 
 -- Symbols Outline

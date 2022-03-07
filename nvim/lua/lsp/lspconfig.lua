@@ -74,58 +74,70 @@ nvim_lsp.efm.setup({
   },
 })
 
-nvim_lsp.intelephense.setup {
-    capabilities = capabilities,
-    on_attach = on_attach,
-    filetypes = {'php', 'blade'},
-    settings = {format = {enable = false}, intelephense = {format = {enable = false}}}
-}
+nvim_lsp.intelephense.setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  filetypes = { 'php', 'blade' },
+  settings = { format = { enable = false }, intelephense = { format = { enable = false } } },
+})
 
-nvim_lsp.tailwindcss.setup {capabilities = capabilities, on_attach = on_attach, filetypes = {'html', 'css'}}
+nvim_lsp.tailwindcss.setup({ capabilities = capabilities, on_attach = on_attach, filetypes = { 'html', 'css' } })
 
-nvim_lsp.tsserver.setup {
-    capabilities = capabilities,
-    on_attach = function(client, bufnr)
-        client.resolved_capabilities.document_formatting = false
-        on_attach(client, bufnr)
-    end,
-    filetypes = {'javascript', 'typescript', 'typescriptreact', 'typescript.tsx'}
-}
+nvim_lsp.tsserver.setup({
+  capabilities = capabilities,
+  on_attach = function(client, bufnr)
+    client.resolved_capabilities.document_formatting = false
+    on_attach(client, bufnr)
+  end,
+  filetypes = { 'javascript', 'typescript', 'typescriptreact', 'typescript.tsx' },
+})
 
-nvim_lsp.bashls.setup {capabilities = capabilities, on_attach = on_attach, filetypes = {'sh', 'bash'}}
+nvim_lsp.bashls.setup({ capabilities = capabilities, on_attach = on_attach, filetypes = { 'sh', 'bash' } })
 
-nvim_lsp.svelte.setup {capabilities = capabilities, on_attach = on_attach, filetypes = {'svelte'}}
+nvim_lsp.svelte.setup({ capabilities = capabilities, on_attach = on_attach, filetypes = { 'svelte' } })
 
-nvim_lsp.ltex.setup {capabilities = capabilities, on_attach = on_attach, settings = {ltex = {language = 'en'}}}
+nvim_lsp.ltex.setup({ capabilities = capabilities, on_attach = on_attach, settings = { ltex = { language = 'en' } } })
 
-local stylelint_filetypes = {'sass', 'scss', 'postcss'}
-nvim_lsp.stylelint_lsp.setup {
-    capabilities = capabilities,
-    on_attach = on_attach,
-    filetypes = stylelint_filetypes,
-    settings = {stylelintplus = {autoFixOnSave = true, autoFixOnFormat = true, filetypes = stylelint_filetypes}}
-}
+local stylelint_filetypes = { 'sass', 'scss', 'postcss' }
+nvim_lsp.stylelint_lsp.setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  filetypes = stylelint_filetypes,
+  settings = { stylelintplus = { autoFixOnSave = true, autoFixOnFormat = true, filetypes = stylelint_filetypes } },
+})
 
-nvim_lsp.vuels.setup {capabilities = capabilities, on_attach = on_attach}
+nvim_lsp.vuels.setup({ capabilities = capabilities, on_attach = on_attach })
 
-nvim_lsp.jsonls.setup {
-    capabilities = capabilities,
-    on_attach = on_attach,
-    cmd = {'vscode-json-language-server', '--stdio'},
-    settings = {
-        json = {
-            -- Schemas https://www.schemastore.org
-            schemas = {
-                {fileMatch = {'package.json'}, url = 'https://json.schemastore.org/package.json'},
-                {fileMatch = {'tsconfig*.json'}, url = 'https://json.schemastore.org/tsconfig.json'},
-                {fileMatch = {'.prettierrc', '.prettierrc.json', 'prettier.config.json'}, url = 'https://json.schemastore.org/prettierrc.json'},
-                {fileMatch = {'.eslintrc', '.eslintrc.json'}, url = 'https://json.schemastore.org/eslintrc.json'},
-                {fileMatch = {'.babelrc', '.babelrc.json', 'babel.config.json'}, url = 'https://json.schemastore.org/babelrc.json'},
-                {fileMatch = {'.stylelintrc', '.stylelintrc.json', 'stylelint.config.json'}, url = 'http://json.schemastore.org/stylelintrc.json'},
-                {fileMatch = {'composer.json'}, url = 'https://raw.githubusercontent.com/composer/composer/master/res/composer-schema.json'}
-            }
-        }
-    }
-}
+nvim_lsp.jsonls.setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  cmd = { 'vscode-json-language-server', '--stdio' },
+  settings = {
+    json = {
+      -- Schemas https://www.schemastore.org
+      schemas = {
+        { fileMatch = { 'package.json' }, url = 'https://json.schemastore.org/package.json' },
+        { fileMatch = { 'tsconfig*.json' }, url = 'https://json.schemastore.org/tsconfig.json' },
+        {
+          fileMatch = { '.prettierrc', '.prettierrc.json', 'prettier.config.json' },
+          url = 'https://json.schemastore.org/prettierrc.json',
+        },
+        { fileMatch = { '.eslintrc', '.eslintrc.json' }, url = 'https://json.schemastore.org/eslintrc.json' },
+        {
+          fileMatch = { '.babelrc', '.babelrc.json', 'babel.config.json' },
+          url = 'https://json.schemastore.org/babelrc.json',
+        },
+        {
+          fileMatch = { '.stylelintrc', '.stylelintrc.json', 'stylelint.config.json' },
+          url = 'http://json.schemastore.org/stylelintrc.json',
+        },
+        {
+          fileMatch = { 'composer.json' },
+          url = 'https://raw.githubusercontent.com/composer/composer/master/res/composer-schema.json',
+        },
+      },
+    },
+  },
+})
 
 require('lsp.lua-lsp')

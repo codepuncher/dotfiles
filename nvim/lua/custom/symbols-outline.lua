@@ -1,1 +1,1 @@
-require('symbols-outline').setup {}
+require('symbols-outline').setup({})
