@@ -92,7 +92,10 @@ nvim_lsp.efm.setup({
 
 nvim_lsp.intelephense.setup({
   capabilities = capabilities,
-  on_attach = on_attach,
+  on_attach = function(client, bufnr)
+    client.resolved_capabilities.document_formatting = false
+    on_attach(client, bufnr)
+  end,
   init_options = {
     documentFormatting = false,
   },
