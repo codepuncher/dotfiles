@@ -5,5 +5,5 @@ end_date_day_of_year=$(date -j -f "%Y-%m-%d" "$end_date" +%j)
 end_date_day_of_year=${end_date_day_of_year//0/}
 today_day_of_year=$(date +%j)
 today_day_of_year=${today_day_of_year//0/}
-days_remaining=$(($end_date_day_of_year - $today_day_of_year))
+days_remaining=$(("$end_date_day_of_year" - "$today_day_of_year"))
 echo "$days_remaining"
