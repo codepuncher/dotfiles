@@ -2,7 +2,9 @@ local telescope = require('telescope')
 local M = {}
 
 telescope.setup({
-  defaults = { prompt_prefix = '🔍' },
+  defaults = {
+    prompt_prefix = '🔍',
+  },
   extensions = {
     fzf = {
       fuzzy = true, -- false will only do exact matching
@@ -15,6 +17,7 @@ telescope.setup({
 })
 
 telescope.load_extension('fzf')
+telescope.load_extension('gh')
 
 M.find_files = function()
   local opts = { no_ignore = true }

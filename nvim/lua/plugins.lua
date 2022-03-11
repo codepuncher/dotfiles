@@ -13,10 +13,11 @@ return require('packer').startup(function(use)
     {
       'nvim-telescope/telescope.nvim',
       requires = {
-        use({
+        {
           'nvim-telescope/telescope-fzf-native.nvim',
           run = 'make',
-        }),
+        },
+        'nvim-telescope/telescope-github.nvim',
       },
       config = function()
         require('custom.telescope')
