@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
 end_date=${1:-'2022-03-27'}
-end_date_day_of_year=$(date -j -f "%Y-%m-%d" "$end_date" +%j)
+if [[ "${OSTYPE:0:6}" =~ ^linux.* ]] ; then
+  end_date_day_of_year=$(date -d "$end_date" +%j)
+elif [[ "${OSTYPE:0:6}" = 'darwin' ]] ; then
+  end_date_day_of_year=$(date -j -f "%Y-%m-%d" "$end_date" +%j)
+fi
 end_date_day_of_year=${end_date_day_of_year/#0/}
 today_day_of_year=$(date +%j)
 today_day_of_year=${today_day_of_year/#0/}
