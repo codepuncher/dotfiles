@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+pwd=$(tmux display-message -p -F "#{pane_current_path}")
+cwd="${pwd##*/}"
+
+if [[ "$cwd" == 'bedrock' || "$cwd" == 'trellis' ]]; then
+  echo $(basename $(dirname "$pwd"))
+else
+  echo "$cwd"
+fi
