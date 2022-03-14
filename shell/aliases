@@ -85,6 +85,15 @@ delete_terms() {
 set_posts_statuses() {
   wp post update $(wp post list --post_type=$1 --post_status=$2 --format=ids) --post_status=$3
 }
+project() {
+  wp_path="$HOME/Code/wordpress"
+
+  if [ -z "$1" ]; then
+    cd "$wp_path"
+  else
+    cd "$wp_path/$1"
+  fi
+}
 
 # Navigation
 alias up1='cd ..'
