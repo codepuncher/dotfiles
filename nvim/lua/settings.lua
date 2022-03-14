@@ -60,11 +60,20 @@ vim.g.Hexokinase_highlighters = { 'virtual' }
 -- Misc
 vim.o.signcolumn = 'yes'
 vim.o.updatetime = 250 -- Update sign column every quarter second
+local highlight_group = vim.api.nvim_create_augroup('highlight_yank', { clear = true })
 vim.api.nvim_command([[augroup highlight_yank]])
 vim.api.nvim_command([[autocmd!]])
 vim.api.nvim_command([[au TextYankPost * silent! lua vim.highlight.on_yank{higroup="IncSearch", timeout=700}]])
 vim.api.nvim_command([[augroup END]])
 
 -- Filetypes
-vim.api.nvim_command([[autocmd FileType markdown setlocal shiftwidth=4 softtabstop=4 expandtab]])
-vim.api.nvim_command([[autocmd FileType lua setlocal shiftwidth=4 softtabstop=4 expandtab]])
+vim.api.nvim_create_autocmd({ 'FileType' }, {
+  desc = 'Set indents for Lua files',
+  pattern = 'lua',
+  command = 'setlocal shiftwidth=2 softtabstop=2 expandtab',
+})
+vim.api.nvim_create_autocmd({ 'FileType' }, {
+  desc = 'Set indents for Markdown files',
+  pattern = 'markdown',
+  command = 'setlocal shiftwidth=4 softtabstop=4 expandtab',
+})

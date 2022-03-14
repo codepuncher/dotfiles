@@ -6,5 +6,5 @@ cwd="${pwd##*/}"
 if [[ "$cwd" == 'bedrock' || "$cwd" == 'trellis' ]]; then
   echo $(basename $(dirname "$pwd"))
 else
-  echo "$cwd"
+  echo "#{b:pane_current_path}"
 fi
