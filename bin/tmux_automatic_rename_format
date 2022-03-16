@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
 pwd=$(tmux display-message -p -F "#{pane_current_path}")
-cwd="${pwd##*/}"
+cmd=$(tmux display-message -p -F "#{pane_current_command}")
 
-if [[ "$cwd" == 'bedrock' || "$cwd" == 'trellis' ]]; then
-  echo $(basename $(dirname "$pwd"))
+if [[ "$cmd" != @(nvim|zsh) ]]; then
+  echo "#{pane_current_command}"
+elif [[ $pwd =~ 'bedrock' ]]; then
+  echo "$(basename ${pwd%bedrock*})"
+elif [[ $pwd =~ 'trellis' ]]; then
+  echo "$(basename ${pwd%trellis*})"
 else
   echo "#{b:pane_current_path}"
 fi
