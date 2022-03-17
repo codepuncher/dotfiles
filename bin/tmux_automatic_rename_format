@@ -3,7 +3,7 @@
 pwd=$(tmux display-message -p -F "#{pane_current_path}")
 cmd=$(tmux display-message -p -F "#{pane_current_command}")
 
-if [[ "$cmd" != @(nvim|zsh) ]]; then
+if [[ "$cmd" != @(zsh|nvim) ]]; then
   echo "#{pane_current_command}"
 elif [[ $pwd =~ 'bedrock' ]]; then
   echo "$(basename ${pwd%bedrock*})"
