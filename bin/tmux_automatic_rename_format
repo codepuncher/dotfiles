@@ -6,9 +6,9 @@ cmd=$(tmux display-message -p -F "#{pane_current_command}")
 if [[ "$cmd" != @(zsh|nvim) ]]; then
   echo "#{pane_current_command}"
 elif [[ $pwd =~ 'bedrock' ]]; then
-  echo "$(basename ${pwd%bedrock*})"
+  basename "${pwd%bedrock*}"
 elif [[ $pwd =~ 'trellis' ]]; then
-  echo "$(basename ${pwd%trellis*})"
+  basename "${pwd%trellis*}"
 else
   echo "#{b:pane_current_path}"
 fi
