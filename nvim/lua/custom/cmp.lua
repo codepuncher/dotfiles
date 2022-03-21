@@ -46,8 +46,20 @@ cmp.setup({
     ['<Tab>'] = cmp.mapping(tab, { 'c', 'i', 's' }),
     ['<S-Tab>'] = cmp.mapping(shift_tab, { 'c', 'i', 's' }),
   },
-  sources = cmp.config.sources({ { name = 'nvim_lsp' }, { name = 'vsnip' } }, { { name = 'buffer' } }),
-  formatting = { format = lspkind.cmp_format({ with_text = true, maxwidth = 50 }) },
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'vsnip' },
+    { name = 'emoji' },
+  }, {
+    { name = 'buffer' },
+    { name = 'emoji' },
+  }),
+  formatting = {
+    format = lspkind.cmp_format({
+      with_text = true,
+      maxwidth = 50,
+    }),
+  },
 })
 
 cmp.setup.cmdline('/', { sources = { { name = 'buffer' } } })
