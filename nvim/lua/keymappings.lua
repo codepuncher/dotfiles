@@ -62,6 +62,7 @@ map('n', '<Leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], 
 map('n', '<Leader>fh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], noremap)
 map('n', '<Leader>fr', [[<cmd>lua require('telescope.builtin').lsp_references()<CR>]], noremap)
 map('n', '<Leader>fgs', [[<cmd>lua require('telescope.builtin').git_status()<CR>]], noremap)
+map('n', '<Leader>fgb', [[<cmd>lua require('telescope.builtin').git_branches()<CR>]], noremap)
 
 -- Terminal
 map('t', '<Esc>', '<C-\\><C-n>', noremap)
