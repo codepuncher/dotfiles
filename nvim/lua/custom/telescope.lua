@@ -44,4 +44,16 @@ M.live_grep = function()
   require('telescope.builtin').live_grep(opts)
 end
 
+M.lsp_workspace_symbols = function()
+  local query = vim.fn.input('Query: ')
+
+  if query == nil or query == '' then
+    return require('telescope.builtin').lsp_dynamic_workspace_symbols()
+  end
+
+  return require('telescope.builtin').lsp_workspace_symbols({
+    query = query,
+  })
+end
+
 return M
