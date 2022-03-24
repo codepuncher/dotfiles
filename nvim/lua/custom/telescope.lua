@@ -4,6 +4,9 @@ local M = {}
 telescope.setup({
   defaults = {
     prompt_prefix = '🔍',
+    layout_config = {
+      prompt_position = 'top',
+    },
   },
   extensions = {
     fzf = {
