@@ -89,10 +89,30 @@ project() {
   wp_path="$HOME/Code/wordpress"
 
   if [ -z "$1" ]; then
-    cd "$wp_path"
+    new_path="$wp_path"
   else
-    cd "$wp_path/$1"
+    new_path="$wp_path/$1"
   fi
+
+  if [ -z "$2" ]; then
+    cd "$new_path"
+    return
+  fi
+
+  if [[ "$2" == @(bedrock|trellis) || "$2" != "theme" ]]; then
+    cd "$new_path/$2"
+    return
+  fi
+
+  # Find only themes using Composer.
+  themes=("$new_path/bedrock/web/app/themes/"*/composer.json)
+  theme_path="${themes[1]//composer.json/}"
+  if [ -z "$theme_path" ]; then
+    echo "No theme available"
+    return
+  fi
+
+  cd "$theme_path"
 }
 
 # Navigation
