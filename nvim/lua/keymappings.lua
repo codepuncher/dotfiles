@@ -43,7 +43,7 @@ map('n', '•', '<Cmd>BufferLineGoToBuffer 8<CR>', noremapSilent)
 map('n', 'ª', '<Cmd>BufferLineGoToBuffer 9<CR>', noremapSilent)
 map('n', 'ç', '<Cmd>Bdelete<CR>', noremapSilent)
 ---- Toggle tree
-map('', '<C-e>', [[<Cmd>lua require('nvim-tree').toggle()<CR>]], noremap)
+map('n', '<C-e>', [[<Cmd>lua require('nvim-tree').toggle()<CR>]], noremap)
 ---- Lines
 ---- TODO: Migrate to Lua
 vim.api.nvim_command([[vnoremap J :m '>+1<CR>gv=gv]])
