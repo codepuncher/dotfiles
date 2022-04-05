@@ -20,7 +20,7 @@ local on_attach = function(client, bufnr)
   map('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
   map('n', 'K', '<cmd>Lspsaga hover_doc<CR>', opts)
   map('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  map('n', '<C-k>', '<cmd>Lspsaga signature_help<CR>', opts)
+  map('n', '<space><space>', '<cmd>Lspsaga signature_help<CR>', opts)
   map('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
   map('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
   map('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
@@ -47,6 +47,7 @@ local on_attach = function(client, bufnr)
 end
 
 local eslint = require('lsp.efm.eslint')
+local shellcheck = require('lsp.efm.shellcheck')
 local stylua = require('lsp.efm.stylua')
 local prettier = require('lsp.efm.prettier')
 local phpcs = require('lsp.efm.phpcs')
@@ -74,6 +75,9 @@ nvim_lsp.efm.setup({
       '.prettier.config.cjs',
     },
     languages = {
+      bash = {
+        shellcheck,
+      },
       javascript = {
         eslint,
       },
