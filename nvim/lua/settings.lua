@@ -33,15 +33,27 @@ vim.foldlevelstart = 99
 vim.o.number = true
 vim.o.numberwidth = 5
 ---- On insert, use absolute. On leave, use relative. From: https://jeffkreeftmeijer.com/vim-number/
-vim.api.nvim_command([[augroup numbertoggle]])
-vim.api.nvim_command([[autocmd!]])
-vim.api.nvim_command(
-  [[autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif]]
-)
-vim.api.nvim_command(
-  [[autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif]]
-)
-vim.api.nvim_command([[augroup END]])
+local numbertoggle_group = vim.api.nvim_create_augroup('numbertoggle', { clear = true })
+vim.api.nvim_create_autocmd({ 'BufEnter', 'FocusGained', 'InsertLeave', 'WinEnter' }, {
+  group = numbertoggle_group,
+  callback = function()
+    if not vim.wo.nu or vim.api.nvim_get_mode() == 'i' then
+      return
+    end
+
+    vim.wo.rnu = true
+  end,
+})
+vim.api.nvim_create_autocmd({ 'BufLeave', 'FocusLost', 'InsertEnter', 'WinLeave' }, {
+  group = numbertoggle_group,
+  callback = function()
+    if not vim.wo.nu then
+      return
+    end
+
+    vim.wo.rnu = false
+  end,
+})
 
 -- Layout
 vim.o.completeopt = 'menu,menuone,noselect' -- Vim popup style
@@ -61,10 +73,15 @@ vim.g.Hexokinase_highlighters = { 'virtual' }
 vim.o.signcolumn = 'yes'
 vim.o.updatetime = 250 -- Update sign column every quarter second
 local highlight_group = vim.api.nvim_create_augroup('highlight_yank', { clear = true })
-vim.api.nvim_command([[augroup highlight_yank]])
-vim.api.nvim_command([[autocmd!]])
-vim.api.nvim_command([[au TextYankPost * silent! lua vim.highlight.on_yank{higroup="IncSearch", timeout=700}]])
-vim.api.nvim_command([[augroup END]])
+vim.api.nvim_create_autocmd({ 'TextYankPost' }, {
+  group = highlight_group,
+  callback = function()
+    vim.highlight.on_yank({
+      higroup = 'IncSearch',
+      timeout = 700,
+    })
+  end,
+})
 
 -- Filetypes
 vim.api.nvim_create_autocmd({ 'FileType' }, {
