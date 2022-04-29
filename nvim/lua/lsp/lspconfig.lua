@@ -236,4 +236,9 @@ nvim_lsp.pyright.setup({
   on_attach = on_attach,
 })
 
+nvim_lsp.gopls.setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+})
+
 require('lsp.lua-lsp')
