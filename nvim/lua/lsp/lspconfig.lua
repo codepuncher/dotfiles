@@ -231,4 +231,9 @@ nvim_lsp.jsonls.setup({
   },
 })
 
+nvim_lsp.pyright.setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+})
+
 require('lsp.lua-lsp')
