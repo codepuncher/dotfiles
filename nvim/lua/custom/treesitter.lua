@@ -43,5 +43,6 @@ require('nvim-treesitter.configs').setup({
     'vim',
     'vue',
     'svelte',
+    'python',
   },
 })
