@@ -41,6 +41,7 @@ return require('packer').startup(function(use)
     },
     {
       'akinsho/bufferline.nvim',
+      tag = '*',
       config = function()
         require('custom.bufferline')
       end,
