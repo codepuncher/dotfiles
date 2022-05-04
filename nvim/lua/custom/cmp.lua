@@ -41,8 +41,8 @@ cmp.setup({
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.abort(),
     ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-    ['<Tab>'] = cmp.mapping(tab, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping(shift_tab, { 'i', 's' }),
+    ['<Tab>'] = cmp.mapping(tab, { 'c', 'i', 's' }),
+    ['<S-Tab>'] = cmp.mapping(shift_tab, { 'c', 'i', 's' }),
   }),
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
