@@ -5,6 +5,18 @@ end
 local nvim_lsp = require('lspconfig')
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
+local formatGroup = vim.api.nvim_create_augroup('LspFormatting', {})
+local lsp_formatting = function(bufnr)
+  vim.lsp.buf.format({
+    filter = function(clients)
+      -- filter out clients that you don't want to use
+      return vim.tbl_filter(function(client)
+        return client.name ~= 'tsserver'
+      end, clients)
+    end,
+    bufnr = bufnr,
+  })
+end
 local on_attach = function(client, bufnr)
   local function map(...)
     vim.api.nvim_buf_set_keymap(bufnr, ...)
@@ -34,14 +46,14 @@ local on_attach = function(client, bufnr)
   map('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
   map('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
-  if client.resolved_capabilities.document_formatting then
-    local format_group = vim.api.nvim_create_augroup('Format', { clear = true })
+  if client.supports_method('textDocument/formatting') then
+    vim.api.nvim_clear_autocmds({ group = formatGroup, buffer = bufnr })
     vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
-      group = format_group,
+      group = formatGroup,
+      buffer = bufnr,
       callback = function()
-        vim.lsp.buf.formatting_seq_sync()
+        lsp_formatting(bufnr)
       end,
-      buffer = 0,
     })
   end
 end
@@ -61,7 +73,6 @@ nvim_lsp.efm.setup({
   settings = {
     rootMarkers = {
       '.git',
-      'package.json',
       '.eslintrc.cjs',
       '.eslintrc',
       '.eslintrc.json',
@@ -73,6 +84,7 @@ nvim_lsp.efm.setup({
       '.prettierrc.yaml',
       '.prettier.config.js',
       '.prettier.config.cjs',
+      'package.json',
     },
     languages = {
       bash = {
@@ -100,10 +112,7 @@ nvim_lsp.efm.setup({
 
 nvim_lsp.intelephense.setup({
   capabilities = capabilities,
-  on_attach = function(client, bufnr)
-    client.resolved_capabilities.document_formatting = false
-    on_attach(client, bufnr)
-  end,
+  on_attach = on_attach,
   init_options = {
     documentFormatting = false,
   },
@@ -135,7 +144,7 @@ nvim_lsp.tailwindcss.setup({
 nvim_lsp.tsserver.setup({
   capabilities = capabilities,
   on_attach = function(client, bufnr)
-    client.resolved_capabilities.document_formatting = false
+    client.server_capabilities.documentFormatting = false
     on_attach(client, bufnr)
   end,
   filetypes = {
