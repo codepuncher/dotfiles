@@ -1,4 +1,10 @@
 require('gitsigns').setup({
+  signcolumn = true,
+  numhl = true,
+  linehl = true,
+  word_diff = true,
+  current_line_blame = true,
+
   on_attach = function(bufnr)
     local gs = package.loaded.gitsigns
 
@@ -13,9 +19,11 @@ require('gitsigns').setup({
       if vim.wo.diff then
         return ']c'
       end
+
       vim.schedule(function()
         gs.next_hunk()
       end)
+
       return '<Ignore>'
     end, { expr = true })
 
@@ -23,9 +31,11 @@ require('gitsigns').setup({
       if vim.wo.diff then
         return '[c'
       end
+
       vim.schedule(function()
         gs.prev_hunk()
       end)
+
       return '<Ignore>'
     end, { expr = true })
   end,
