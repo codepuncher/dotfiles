@@ -48,6 +48,10 @@ return require('packer').startup(function(use)
     },
     {
       'kyazdani42/nvim-tree.lua',
+      opt = true,
+      event = {
+        'BufEnter',
+      },
       config = function()
         require('custom.nvim-tree')
       end,
