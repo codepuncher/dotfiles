@@ -26,10 +26,10 @@ telescope.setup({
     git_branches = {
       mappings = {
         i = {
-          ["<C-p>"] = git_push_to_remote_branch,
+          ['<C-p>'] = git_push_to_remote_branch,
         },
         n = {
-          ["<C-p>"] = git_push_to_remote_branch,
+          ['<C-p>'] = git_push_to_remote_branch,
         },
       },
     },
