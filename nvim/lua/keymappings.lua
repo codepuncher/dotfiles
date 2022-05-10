@@ -91,6 +91,7 @@ map('n', '<Leader>gaf', "<Cmd>Git add % <bar> echo 'Staged ' . @%<CR>", noremap)
 map('n', '<Leader>gaa', "<Cmd>Git add . <bar> echo 'Staged tracked files'<CR>", noremap)
 map('n', '<Leader>gaA', "<Cmd>Git add -A <bar> echo 'Staged tracked and untracked files'<CR>", noremap)
 map('n', '<Leader>gp', '<Cmd>Git push<CR>', noremap)
+map('n', '<Leader>gP', '<Cmd>Git push -f<CR>', noremap)
 map('n', '<Leader>gbn', [[<Cmd>lua require('custom.misc').git_branch_new()<CR>]], noremapSilent)
 
 -- Symbols Outline

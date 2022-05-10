@@ -11,7 +11,7 @@ local lsp_formatting = function(bufnr)
     filter = function(clients)
       -- filter out clients that you don't want to use
       return vim.tbl_filter(function(client)
-        return client.name ~= 'tsserver'
+        return client.name ~= 'tsserver' and client.name ~= 'intelephense'
       end, clients)
     end,
     bufnr = bufnr,
