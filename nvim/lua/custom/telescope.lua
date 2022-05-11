@@ -4,7 +4,9 @@ local actions_state = require('telescope.actions.state')
 
 local M = {}
 
-local function git_push_to_remote_branch(prompt_bufnr)
+local function git_push_to_remote_branch(prompt_bufnr, force)
+  local should_force = false
+  force = force or (force == nil and should_force)
   local selection = actions_state.get_selected_entry()
   local branch_name = selection.name
   local origin_position = string.find(branch_name, 'origin/')
@@ -12,7 +14,12 @@ local function git_push_to_remote_branch(prompt_bufnr)
     branch_name = string.sub(branch_name, 8)
   end
   actions.close(prompt_bufnr)
-  vim.api.nvim_command('Git push origin HEAD:' .. branch_name)
+
+  if force then
+    vim.api.nvim_command('Git push origin HEAD:' .. branch_name .. ' -f')
+  else
+    vim.api.nvim_command('Git push origin HEAD:' .. branch_name)
+  end
 end
 
 telescope.setup({
@@ -27,9 +34,15 @@ telescope.setup({
       mappings = {
         i = {
           ['<C-p>'] = git_push_to_remote_branch,
+          ['<C-M-p>'] = function(bufnr)
+            git_push_to_remote_branch(bufnr, true)
+          end,
         },
         n = {
           ['<C-p>'] = git_push_to_remote_branch,
+          ['<C-M-p>'] = function(bufnr)
+            git_push_to_remote_branch(bufnr, true)
+          end,
         },
       },
     },
