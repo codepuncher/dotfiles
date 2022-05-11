@@ -20,6 +20,12 @@ elif [[ "${OSTYPE:0:6}" = 'darwin' ]] ; then
 fi
 alias gcb='git_copy_branch'
 alias git_set_missing_end_of_file='git ls-files -z | while IFS= read -rd "" f; do tail -c1 < "$f" | read -r _ || echo >> "$f"; done'
+function gh_repo_list() {
+  if [ -z "$1" ]; then
+    echo 'Please specify a repo prefix (e.g. "bedrock")'
+  fi
+  gh repo list ItinerisLtd --private --no-archived --source --limit 400 --json name --jq ". | values[] | select(.name | endswith(\"${1}\")) | values[]"
+}
 
 # Composer
 alias c='composer'
@@ -113,6 +119,30 @@ project() {
   fi
 
   cd "$theme_path"
+}
+trellis_generate_deploy_key() {
+  local remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/trellis/bedrock/g')
+  local known_hosts=$(rg 'ansible_host=\d.*\s' hosts/production -o | rg -o '\d.*')
+  trellis key generate --repo "$remote" --known-hosts "$known_hosts" --no-provision
+}
+gh_set_vault_pass() {
+  local remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/-trellis//g;s/-bedrock//g')
+  if [[ "$PWD" == *bedrock ]]; then
+    local vault_pass='../trellis/.vault_pass'
+  elif [[ "$PWD" == *trellis ]]; then
+    local vault_pass='./.vault_pass'
+  fi
+  gh secret set ANSIBLE_VAULT_PASSWORD < "$vault_pass" --repo "${remote}-trellis"
+  gh secret set ANSIBLE_VAULT_PASSWORD < "$vault_pass" --repo "${remote}-bedrock"
+}
+gh_set_repo_pat() {
+  if [ -z "$1" ]; then
+    echo 'Please provide a PAT.'
+    exit 1
+  fi
+
+  local remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/-trellis//g;s/-bedrock//g')
+  gh secret set REPO_PAT -b "$1" --repo "${remote}-bedrock"
 }
 
 # Navigation
