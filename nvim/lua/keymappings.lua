@@ -54,15 +54,30 @@ map('i', '<C-J>', '<Esc><Cmd>m .+1<CR>==a', noremap)
 map('i', '<C-K>', '<Esc><Cmd>m .-2<CR>==a', noremap)
 
 -- Telescope
-map('n', '<Leader>ff', [[<cmd>lua require('telescope.builtin').find_files()<CR>]], noremap) -- With ignore
+map(
+  'n',
+  '<Leader>ff',
+  [[<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown({layout_config={width=0.5}}))<CR>]],
+  noremap
+) -- With ignore
 map('n', '<Leader>FF', [[<cmd>lua require('custom.telescope').find_files()<CR>]], noremap) -- Without ignore
 map('n', '<Leader>fg', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], noremap) -- With ignore
 map('n', '<Leader>FG', [[<cmd>lua require('custom.telescope').live_grep()<CR>]], noremap) -- Without ignore
 map('n', '<Leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], noremap)
 map('n', '<Leader>fh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], noremap)
 map('n', '<Leader>fr', [[<cmd>lua require('telescope.builtin').lsp_references()<CR>]], noremap)
-map('n', '<Leader>fgs', [[<cmd>lua require('telescope.builtin').git_status()<CR>]], noremap)
-map('n', '<Leader>fgb', [[<cmd>lua require('telescope.builtin').git_branches()<CR>]], noremap)
+map(
+  'n',
+  '<Leader>fgs',
+  [[<cmd>lua require('telescope.builtin').git_status(require('telescope.themes').get_ivy({}))<CR>]],
+  noremap
+)
+map(
+  'n',
+  '<Leader>fgb',
+  [[<cmd>lua require('telescope.builtin').git_branches(require('telescope.themes').get_ivy({}))<CR>]],
+  noremap
+)
 map('n', '<Leader>fws', [[<cmd>lua require('custom.telescope').lsp_workspace_symbols()<CR>]], noremap)
 
 -- Terminal
