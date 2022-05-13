@@ -60,7 +60,7 @@ map(
   [[<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown({layout_config={width=0.5}}))<CR>]],
   noremap
 ) -- With ignore
-map('n', '<Leader>FF', [[<cmd>lua require('custom.telescope').find_files()<CR>]], noremap) -- Without ignore
+map('n', '<Leader>FF', [[<cmd>lua require('custom.telescope').find_files_no_ignore()<CR>]], noremap) -- Without ignore
 map('n', '<Leader>fg', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], noremap) -- With ignore
 map('n', '<Leader>FG', [[<cmd>lua require('custom.telescope').live_grep()<CR>]], noremap) -- Without ignore
 map('n', '<Leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], noremap)
