@@ -104,6 +104,14 @@ return require('packer').startup(function(use)
       config = function()
         require('lsp.lspconfig')
       end,
+      requires = {
+        {
+          'ray-x/lsp_signature.nvim',
+          config = function()
+            require('lsp.signature')
+          end,
+        },
+      },
     },
     {
       -- this fork is for whilst repo maintainer is OOA.
