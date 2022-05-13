@@ -62,7 +62,7 @@ telescope.setup({
 telescope.load_extension('fzf')
 telescope.load_extension('gh')
 
-M.find_files = function()
+M.find_files_no_ignore = function()
   local theme = require('telescope.themes').get_dropdown({
     hidden = true,
     no_ignore = true,

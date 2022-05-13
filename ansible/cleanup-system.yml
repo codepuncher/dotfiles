@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Find SQL files
+      find:
+        paths: ~/Code/wordpress/
+        recurse: true
+        depth: 3
+        patterns: '*.sql,*.SQL'
+      register: result
+
+    - name: Remove SQL files
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ result.files }}"

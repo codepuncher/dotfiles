@@ -1,4 +1,4 @@
-vim.cmd([[packadd packer.nvim]])
+vim.api.nvim_command('packadd packer.nvim')
 
 return require('packer').startup(function(use)
   use('wbthomason/packer.nvim')
@@ -7,12 +7,12 @@ return require('packer').startup(function(use)
   use({
     -- Dependency for many plugins.
     'nvim-lua/plenary.nvim',
-    -- Dependency for many plugins.
-    'kyazdani42/nvim-web-devicons',
+
     'famiu/bufdelete.nvim',
     {
       'nvim-telescope/telescope.nvim',
       requires = {
+        { 'nvim-lua/plenary.nvim' },
         {
           'nvim-telescope/telescope-fzf-native.nvim',
           run = 'make',
@@ -29,12 +29,11 @@ return require('packer').startup(function(use)
   use({
     {
       'folke/tokyonight.nvim',
-    },
-    {
-      'edkolev/tmuxline.vim',
+      requires = { { 'kyazdani42/nvim-web-devicons', opt = true } },
     },
     {
       'nvim-lualine/lualine.nvim',
+      requires = { { 'kyazdani42/nvim-web-devicons', opt = true } },
       config = function()
         require('custom.lualine')
       end,
@@ -60,14 +59,17 @@ return require('packer').startup(function(use)
     {
       'nvim-treesitter/nvim-treesitter',
       run = ':TSUpdate',
+      requires = {
+        'nvim-treesitter/nvim-treesitter-textobjects',
+        'nvim-treesitter/nvim-treesitter-refactor',
+      },
       config = function()
         require('custom.treesitter')
       end,
     },
-    'nvim-treesitter/nvim-treesitter-refactor',
-    'nvim-treesitter/nvim-treesitter-textobjects',
     {
       'simrat39/symbols-outline.nvim',
+      cmd = 'SymbolsOutline',
       config = function()
         require('custom.symbols-outline')
       end,
@@ -98,9 +100,18 @@ return require('packer').startup(function(use)
   use({
     {
       'neovim/nvim-lspconfig',
+      after = 'nvim-cmp',
       config = function()
         require('lsp.lspconfig')
       end,
+      requires = {
+        {
+          'ray-x/lsp_signature.nvim',
+          config = function()
+            require('lsp.signature')
+          end,
+        },
+      },
     },
     {
       -- this fork is for whilst repo maintainer is OOA.
@@ -110,29 +121,31 @@ return require('packer').startup(function(use)
       end,
     },
     {
-      'L3MON4D3/LuaSnip',
-      requires = {
-        'rafamadriz/friendly-snippets',
-      },
-      config = function()
-        require('luasnip.loaders.from_vscode').lazy_load()
-      end,
-    },
-    {
       'hrsh7th/nvim-cmp',
-      requires = {
-        'hrsh7th/cmp-nvim-lsp',
-        'hrsh7th/cmp-buffer',
-        'hrsh7th/cmp-path',
-        'hrsh7th/cmp-emoji',
-        'saadparwaiz1/cmp_luasnip',
-      },
       config = function()
         require('custom.cmp')
       end,
-    },
-    {
-      'onsails/lspkind-nvim',
+      requires = {
+        { 'hrsh7th/cmp-buffer', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-emoji', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-path', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-nvim-lsp', before = 'nvim-lspconfig' },
+        { 'hrsh7th/cmp-nvim-lua', after = 'nvim-cmp' },
+        { 'saadparwaiz1/cmp_luasnip', after = 'nvim-cmp' },
+        { 'petertriho/cmp-git', after = 'nvim-cmp' },
+        { 'onsails/lspkind-nvim', module = 'lspkind' },
+        {
+          'L3MON4D3/LuaSnip',
+          -- module = 'luasnip',
+          bufread = false,
+          requires = {
+            'rafamadriz/friendly-snippets',
+          },
+          config = function()
+            require('luasnip.loaders.from_vscode').lazy_load()
+          end,
+        },
+      },
     },
     {
       'windwp/nvim-autopairs',
@@ -151,7 +164,8 @@ return require('packer').startup(function(use)
     },
     {
       'folke/trouble.nvim',
-      requires = 'kyazdani42/nvim-web-devicons',
+      requires = { { 'kyazdani42/nvim-web-devicons', opt = true } },
+      cmd = { 'Trouble', 'TroubleClose', 'TroubleToggle', 'TroubleRefresh' },
       config = function()
         require('custom.trouble')
       end,
@@ -167,6 +181,7 @@ return require('packer').startup(function(use)
     },
     {
       'RRethy/vim-hexokinase',
+      event = 'BufEnter',
       run = 'make hexokinase',
       ft = {
         'php',
