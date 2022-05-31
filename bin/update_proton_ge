@@ -6,16 +6,29 @@ if ! command -v jq &> /dev/null; then
   exit 1
 fi
 
-latest_release_api_url='https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest'
-latest_release_json=$(curl -s "$latest_release_api_url")
-latest_tag_name=$(jq --raw-output '.tag_name' <<<"$latest_release_json")
-latest_tag_file_name="$latest_tag_name.tar.gz"
-latest_download_url='https://github.com/GloriousEggroll/proton-ge-custom/releases/latest/download'
-temp_file=$(mktemp)
-output_dir="$HOME/.steam/root/compatibilitytools.d"
+repo='GloriousEggroll/proton-ge-custom'
+latest_release_json=$(curl -s "https://api.github.com/repos/${repo}/releases/latest")
+latest_tag_name=$(jq --raw-output '.tag_name' <<<"${latest_release_json}")
+latest_tag_file_name="${latest_tag_name}.tar.gz"
 
-echo 'Downloading latest release...' && \
-  curl --progress-bar --location -o "$temp_file" "$latest_download_url/$latest_tag_file_name" &&
-  echo 'Extracting...' && \
-  mkdir -p "$output_dir" && \
-  tar -xzf "$temp_file" -C "$output_dir"
+echo "Latest version: ${latest_tag_name}"
+
+output_dir="${HOME}/.steam/root/compatibilitytools.d"
+if [[ -d "${output_dir}/${latest_tag_name}" ]]; then
+  echo 'You already have the latest version.'
+  exit 0
+fi
+
+latest_download_url="https://github.com/${repo}/releases/latest/download"
+temp_file=$(mktemp)
+
+echo "Downloading ${latest_tag_name}..."
+if curl --progress-bar --location -o "${temp_file}" "${latest_download_url}/${latest_tag_file_name}"; then
+  echo "Extracting ${latest_tag_name}..."
+  mkdir -p "${output_dir}"
+  tar -xzf "${temp_file}" --checkpoint=.1000 -C "${output_dir}"
+  pkill steam
+  echo ''
+  echo ''
+  echo 'Restart Steam...'
+fi
