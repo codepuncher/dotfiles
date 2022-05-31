@@ -27,6 +27,7 @@ return require('packer').startup(function(use)
 
   -- Theme/colours
   use({
+    'kyazdani42/nvim-web-devicons',
     {
       'folke/tokyonight.nvim',
       requires = { { 'kyazdani42/nvim-web-devicons', opt = true } },

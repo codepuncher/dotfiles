@@ -1,3 +1,5 @@
 # Variables for use throughout the shell
 IS_LINUX=("${OSTYPE:0:6}" = 'linux')
 IS_MACOS=("${OSTYPE:0:6}" = 'darwin')
+
+DF_LOG_PATH='~/.logs'
