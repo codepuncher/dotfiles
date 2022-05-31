@@ -66,12 +66,7 @@ map('n', '<Leader>FG', [[<cmd>lua require('custom.telescope').live_grep()<CR>]],
 map('n', '<Leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], noremap)
 map('n', '<Leader>fh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], noremap)
 map('n', '<Leader>fr', [[<cmd>lua require('telescope.builtin').lsp_references()<CR>]], noremap)
-map(
-  'n',
-  '<Leader>fgs',
-  [[<cmd>lua require('telescope.builtin').git_status(require('telescope.themes').get_ivy({}))<CR>]],
-  noremap
-)
+map('n', '<Leader>fgs', [[<cmd>lua require('telescope.builtin').git_status()<CR>]], noremap)
 map(
   'n',
   '<Leader>fgb',
