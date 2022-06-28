@@ -8,11 +8,8 @@ local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protoco
 local formatGroup = vim.api.nvim_create_augroup('LspFormatting', {})
 local lsp_formatting = function(bufnr)
   vim.lsp.buf.format({
-    filter = function(clients)
-      -- filter out clients that you don't want to use
-      return vim.tbl_filter(function(client)
-        return client.name ~= 'tsserver' and client.name ~= 'intelephense'
-      end, clients)
+    filter = function(client)
+      return client.name ~= 'tsserver' and client.name ~= 'intelephense'
     end,
     bufnr = bufnr,
   })
