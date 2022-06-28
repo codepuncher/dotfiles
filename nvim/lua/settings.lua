@@ -68,6 +68,7 @@ vim.g.tokyonight_transparent_sidebar = true
 vim.g.tokyonight_style = 'night'
 vim.cmd([[colorscheme tokyonight]])
 vim.g.Hexokinase_highlighters = { 'virtual' }
+vim.api.nvim_set_hl(0, 'TelescopeNormal', { ctermbg = 220 })
 
 -- Misc
 vim.o.signcolumn = 'yes'
