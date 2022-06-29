@@ -20,7 +20,7 @@ return require('packer').startup(function(use)
         'nvim-telescope/telescope-github.nvim',
       },
       config = function()
-        require('custom.telescope')
+        require('plugins.configs.telescope')
       end,
     },
   })
@@ -36,14 +36,14 @@ return require('packer').startup(function(use)
       'nvim-lualine/lualine.nvim',
       requires = { { 'kyazdani42/nvim-web-devicons', opt = true } },
       config = function()
-        require('custom.lualine')
+        require('plugins.configs.lualine')
       end,
     },
     {
       'akinsho/bufferline.nvim',
       tag = '*',
       config = function()
-        require('custom.bufferline')
+        require('plugins.configs.bufferline')
       end,
     },
     {
@@ -53,7 +53,7 @@ return require('packer').startup(function(use)
         'BufEnter',
       },
       config = function()
-        require('custom.nvim-tree')
+        require('plugins.configs.nvim-tree')
       end,
     },
     'lukas-reineke/indent-blankline.nvim',
@@ -65,14 +65,14 @@ return require('packer').startup(function(use)
         'nvim-treesitter/nvim-treesitter-refactor',
       },
       config = function()
-        require('custom.treesitter')
+        require('plugins.configs.treesitter')
       end,
     },
     {
       'simrat39/symbols-outline.nvim',
       cmd = 'SymbolsOutline',
       config = function()
-        require('custom.symbols-outline')
+        require('plugins.configs.symbols-outline')
       end,
     },
   })
@@ -92,7 +92,7 @@ return require('packer').startup(function(use)
     {
       'lewis6991/gitsigns.nvim',
       config = function()
-        require('custom.gitsigns')
+        require('plugins.configs.gitsigns')
       end,
     },
   })
@@ -101,30 +101,22 @@ return require('packer').startup(function(use)
   use({
     {
       'neovim/nvim-lspconfig',
-      after = 'nvim-cmp',
-      config = function()
-        require('lsp.lspconfig')
-      end,
       requires = {
         {
+          'folke/lua-dev.nvim',
+          'jose-elias-alvarez/typescript.nvim',
           'ray-x/lsp_signature.nvim',
-          config = function()
-            require('lsp.signature')
-          end,
         },
       },
     },
     {
       -- this fork is for whilst repo maintainer is OOA.
       'tami5/lspsaga.nvim',
-      config = function()
-        require('lsp.lspsaga')
-      end,
     },
     {
       'hrsh7th/nvim-cmp',
       config = function()
-        require('custom.cmp')
+        require('plugins.configs.cmp')
       end,
       requires = {
         { 'hrsh7th/cmp-buffer', after = 'nvim-cmp' },
@@ -151,13 +143,13 @@ return require('packer').startup(function(use)
     {
       'windwp/nvim-autopairs',
       config = function()
-        require('custom.autopairs')
+        require('plugins.configs.autopairs')
       end,
     },
     {
       'windwp/nvim-ts-autotag',
       config = function()
-        require('custom.autotag')
+        require('plugins.configs.autotag')
       end,
     },
     {
@@ -168,7 +160,7 @@ return require('packer').startup(function(use)
       requires = { { 'kyazdani42/nvim-web-devicons', opt = true } },
       cmd = { 'Trouble', 'TroubleClose', 'TroubleToggle', 'TroubleRefresh' },
       config = function()
-        require('custom.trouble')
+        require('plugins.configs.trouble')
       end,
     },
     {
