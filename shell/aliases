@@ -175,10 +175,14 @@ alias watch_error_log='tail -f ~/.valet/Log/nginx-error.log'
 alias ducks='du -cks * | sort -rn | head'
 alias whatsmyip='curl -s https://api.ipify.org; echo'
 alias show_path='echo $PATH | tr -s ":" "\n"'
-alias generate_string='openssl rand -base64 500 | tr -dc 'a-zA-Z0-9' | fold -w 128 | head -n 1'
+alias generate_string='openssl rand -base64 500 | tr -dc "a-zA-Z0-9" | fold -w 128 | head -n 1'
 alias generate_satis_pass='openssl rand -base64 500 | tr -dc a-zA-Z0-9 | fold -w 64 | head -n 1'
 alias clear_dns_cache='sudo killall -HUP mDNSResponder'
 alias cat='cat -n'
+
+watch_file() {
+  tail -f "${1}" | bat --paging=never -l log
+}
 
 # Tmux
 tmux_layout() {
