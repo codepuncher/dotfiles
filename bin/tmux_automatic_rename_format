@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-pwd=$(tmux display-message -p -F "#{pane_current_path}")
+pwd="${1}"
 cmd=$(tmux display-message -p -F "#{pane_current_command}")
 
-if [[ "$cmd" != @(zsh|nvim) ]]; then
-  echo "#{pane_current_command}"
+if [[ "${cmd}" != @(zsh|nvim) ]]; then
+  echo "${cmd}"
 elif [[ $pwd =~ 'bedrock' ]]; then
   basename "${pwd%bedrock*}"
 elif [[ $pwd =~ 'trellis' ]]; then
