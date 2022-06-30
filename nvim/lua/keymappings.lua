@@ -94,7 +94,8 @@ map('n', '+', '<C-a>', noremap)
 map('n', '-', '<C-x>', noremap)
 
 --Git
-map('n', '<Leader>gd', '<Cmd>Git diff<CR>', noremap)
+map('n', '<Leader>gda', '<Cmd>Git diff<CR>', noremap)
+map('n', '<Leader>gdf', '<Cmd>Git diff %<CR>', noremap)
 map('n', '<Leader>gs', '<Cmd>Git<CR>', noremap)
 map('n', '<Leader>gh', '<Cmd>diffget //3<CR>', noremap)
 map('n', '<Leader>gl', '<Cmd>diffget //2<CR>', noremap)
