@@ -54,13 +54,16 @@ map('i', '<C-J>', '<Esc><Cmd>m .+1<CR>==a', noremap)
 map('i', '<C-K>', '<Esc><Cmd>m .-2<CR>==a', noremap)
 
 -- Telescope
+---- Find files, with ignore
 map(
   'n',
   '<Leader>ff',
   [[<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown({layout_config={width=0.5}}))<CR>]],
   noremap
-) -- With ignore
+)
+---- Find files, without ignore
 map('n', '<Leader>FF', [[<cmd>lua require('plugins.configs.telescope').find_files_no_ignore()<CR>]], noremap) -- Without ignore
+---- Other
 map('n', '<Leader>fg', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], noremap) -- With ignore
 map('n', '<Leader>FG', [[<cmd>lua require('plugins.configs.telescope').live_grep()<CR>]], noremap) -- Without ignore
 map('n', '<Leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], noremap)
@@ -91,7 +94,8 @@ map('n', '+', '<C-a>', noremap)
 map('n', '-', '<C-x>', noremap)
 
 --Git
-map('n', '<Leader>gd', '<Cmd>Git diff<CR>', noremap)
+map('n', '<Leader>gda', '<Cmd>Git diff<CR>', noremap)
+map('n', '<Leader>gdf', '<Cmd>Git diff %<CR>', noremap)
 map('n', '<Leader>gs', '<Cmd>Git<CR>', noremap)
 map('n', '<Leader>gh', '<Cmd>diffget //3<CR>', noremap)
 map('n', '<Leader>gl', '<Cmd>diffget //2<CR>', noremap)

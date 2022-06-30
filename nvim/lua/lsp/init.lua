@@ -16,7 +16,6 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, ...)
   end
 
-  --- Mappings.
   local opts = {
     noremap = true,
     silent = true,
@@ -58,27 +57,28 @@ if _cmp_nvim_lsp then
   capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
 end
 
-local servers = {
-  'bashls',
-  'sumneko_lua',
-  'cssls',
-  'html',
-  'emmet_ls',
-  'jsonls',
-  'yamlls',
-  'dockerls',
-  'tsserver',
-  'gopls',
-  'eslint',
-  'pyright',
-  'intelephense',
-  'stylelint_lsp',
-  -- 'tailwindcss',
-  -- 'null_ls',
-}
 local _lspconfig = pcall(require, 'lspconfig')
-
 if _lspconfig then
+  local servers = {
+    'ansiblels',
+    'bashls',
+    'cssls',
+    'dockerls',
+    'emmet_ls',
+    'eslint',
+    'gopls',
+    'html',
+    'intelephense',
+    'jsonls',
+    'pyright',
+    'stylelint_lsp',
+    'sumneko_lua',
+    'tsserver',
+    'yamlls',
+    -- 'efm',
+    -- 'null_ls',
+    -- 'tailwindcss',
+  }
   for _, server in pairs(servers) do
     require('lsp.servers.' .. server).setup(on_attach, capabilities)
   end

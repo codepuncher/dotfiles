@@ -1,7 +1,38 @@
+local install_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
+  PACKER_BOOTSTRAP = vim.fn.system({
+    'git',
+    'clone',
+    '--depth',
+    '1',
+    'https://github.com/wbthomason/packer.nvim',
+    install_path,
+  })
+end
+
 vim.api.nvim_command('packadd packer.nvim')
 
-return require('packer').startup(function(use)
+local _packer, packer = pcall(require, 'packer')
+if not _packer then
+  return
+end
+
+packer.init({
+  auto_clean = true,
+  display = {
+    open_fn = function()
+      return require('packer.util').float({ border = 'single' })
+    end,
+    prompt_border = 'single',
+  },
+  compile_on_sync = true,
+})
+
+return packer.startup(function(use)
   use('wbthomason/packer.nvim')
+
+  -- Performance
+  use('lewis6991/impatient.nvim')
 
   -- Misc
   use({
@@ -23,9 +54,10 @@ return require('packer').startup(function(use)
         require('plugins.configs.telescope')
       end,
     },
+    'folke/which-key.nvim',
   })
 
-  -- Theme/colours
+  -- UI
   use({
     'kyazdani42/nvim-web-devicons',
     {
@@ -41,6 +73,7 @@ return require('packer').startup(function(use)
     },
     {
       'akinsho/bufferline.nvim',
+      after = 'nvim-web-devicons',
       tag = '*',
       config = function()
         require('plugins.configs.bufferline')
@@ -197,4 +230,8 @@ return require('packer').startup(function(use)
       },
     },
   })
+
+  if PACKER_BOOTSTRAP then
+    require('packer').sync()
+  end
 end)
