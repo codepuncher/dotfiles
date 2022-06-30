@@ -1,7 +1,6 @@
 local _M = {}
 
 _M.setup = function(on_attach, capabilities)
-  print('fooooo')
   require('lspconfig').ansiblels.setup({
     on_attach = on_attach,
     capabilities = capabilities,
