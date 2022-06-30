@@ -31,6 +31,9 @@ packer.init({
 return packer.startup(function(use)
   use('wbthomason/packer.nvim')
 
+  -- Performance
+  use('lewis6991/impatient.nvim')
+
   -- Misc
   use({
     -- Dependency for many plugins.
