@@ -60,9 +60,9 @@ map(
   [[<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown({layout_config={width=0.5}}))<CR>]],
   noremap
 ) -- With ignore
-map('n', '<Leader>FF', [[<cmd>lua require('custom.telescope').find_files_no_ignore()<CR>]], noremap) -- Without ignore
+map('n', '<Leader>FF', [[<cmd>lua require('plugins.configs.telescope').find_files_no_ignore()<CR>]], noremap) -- Without ignore
 map('n', '<Leader>fg', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], noremap) -- With ignore
-map('n', '<Leader>FG', [[<cmd>lua require('custom.telescope').live_grep()<CR>]], noremap) -- Without ignore
+map('n', '<Leader>FG', [[<cmd>lua require('plugins.configs.telescope').live_grep()<CR>]], noremap) -- Without ignore
 map('n', '<Leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], noremap)
 map('n', '<Leader>fh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], noremap)
 map('n', '<Leader>fr', [[<cmd>lua require('telescope.builtin').lsp_references()<CR>]], noremap)
@@ -73,7 +73,7 @@ map(
   [[<cmd>lua require('telescope.builtin').git_branches(require('telescope.themes').get_ivy({}))<CR>]],
   noremap
 )
-map('n', '<Leader>fws', [[<cmd>lua require('custom.telescope').lsp_workspace_symbols()<CR>]], noremap)
+map('n', '<Leader>fws', [[<cmd>lua require('plugins.configs.telescope').lsp_workspace_symbols()<CR>]], noremap)
 
 -- Terminal
 map('t', '<Esc>', '<C-\\><C-n>', noremap)
@@ -102,7 +102,7 @@ map('n', '<Leader>gaa', "<Cmd>Git add . <bar> echo 'Staged tracked files'<CR>", 
 map('n', '<Leader>gaA', "<Cmd>Git add -A <bar> echo 'Staged tracked and untracked files'<CR>", noremap)
 map('n', '<Leader>gp', '<Cmd>Git push<CR>', noremap)
 map('n', '<Leader>gP', '<Cmd>Git push -f<CR>', noremap)
-map('n', '<Leader>gbn', [[<Cmd>lua require('custom.misc').git_branch_new()<CR>]], noremapSilent)
+map('n', '<Leader>gbn', [[<Cmd>lua require('misc').git_branch_new()<CR>]], noremapSilent)
 
 -- Symbols Outline
 map('n', '<Leader>CS', '<Cmd>SymbolsOutline<CR>', noremap)
