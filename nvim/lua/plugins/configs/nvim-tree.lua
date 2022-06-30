@@ -1,11 +1,12 @@
-require('nvim-tree').setup({
+local _plugin, plugin = pcall(require, 'nvim-tree')
+if not _plugin then
+  return
+end
+
+plugin.setup({
   auto_reload_on_write = true,
-  open_on_setup = false,
-  update_focused_file = {
-    enable = true,
-    update_cwd = false,
-    ignore_list = {},
-  },
+  create_in_closed_folder = true,
+  sync_root_with_cwd = true,
   view = {
     width = 50,
     side = 'left',
@@ -16,6 +17,25 @@ require('nvim-tree').setup({
           action = '',
         },
       },
+    },
+  },
+  renderer = {
+    highlight_git = true,
+    special_files = { 'Cargo.toml', 'Makefile', 'README.md', 'composer.json', 'package.json' },
+  },
+  update_focused_file = {
+    enable = true,
+    update_cwd = true,
+    ignore_list = {},
+  },
+  diagnostics = {
+    enable = true,
+    show_on_dirs = true,
+  },
+  filters = {
+    dotfiles = false,
+    custom = {
+      '^\\.git$',
     },
   },
   git = {
