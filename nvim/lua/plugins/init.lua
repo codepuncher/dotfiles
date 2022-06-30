@@ -20,8 +20,8 @@ end
 packer.init({
   auto_clean = true,
   display = {
-    open_fn = function ()
-      return require('packer.util').float({border = 'single'})
+    open_fn = function()
+      return require('packer.util').float({ border = 'single' })
     end,
     prompt_border = 'single',
   },
@@ -54,6 +54,7 @@ return packer.startup(function(use)
         require('plugins.configs.telescope')
       end,
     },
+    'folke/which-key.nvim',
   })
 
   -- UI
