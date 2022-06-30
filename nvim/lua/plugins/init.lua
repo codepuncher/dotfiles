@@ -56,7 +56,7 @@ return packer.startup(function(use)
     },
   })
 
-  -- Theme/colours
+  -- UI
   use({
     'kyazdani42/nvim-web-devicons',
     {
