@@ -1,4 +1,4 @@
-if 0 == vim.fn.exists('g:lspconfig') then
+if not vim.fn.exists('g:lspconfig') then
   return
 end
 
@@ -60,6 +60,7 @@ end
 local _lspconfig = pcall(require, 'lspconfig')
 if _lspconfig then
   local servers = {
+    'ansiblels',
     'bashls',
     'cssls',
     'dockerls',
