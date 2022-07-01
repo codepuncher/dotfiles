@@ -1,8 +1,13 @@
-require('gitsigns').setup({
+local _plugin, plugin = pcall(require, 'gitsigns')
+if not _plugin then
+  return
+end
+
+plugin.setup({
   signcolumn = true,
   numhl = true,
   linehl = false,
-  word_diff = true,
+  word_diff = false,
   current_line_blame = true,
 
   on_attach = function(bufnr)
