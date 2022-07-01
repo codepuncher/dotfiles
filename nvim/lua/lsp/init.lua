@@ -1,14 +1,15 @@
-if not vim.fn.exists('g:lspconfig') then
+local _lspconfig = pcall(require, 'lspconfig')
+if not _lspconfig then
   return
 end
 
 local formatGroup = vim.api.nvim_create_augroup('LspFormatting', {})
 local lsp_formatting = function(bufnr)
   vim.lsp.buf.format({
+    bufnr = bufnr,
     filter = function(client)
       return client.name ~= 'tsserver' and client.name ~= 'intelephense'
     end,
-    bufnr = bufnr,
   })
 end
 local on_attach = function(client, bufnr)
@@ -57,31 +58,28 @@ if _cmp_nvim_lsp then
   capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
 end
 
-local _lspconfig = pcall(require, 'lspconfig')
-if _lspconfig then
-  local servers = {
-    'ansiblels',
-    'bashls',
-    'cssls',
-    'dockerls',
-    'emmet_ls',
-    'eslint',
-    'gopls',
-    'html',
-    'intelephense',
-    'jsonls',
-    'pyright',
-    'stylelint_lsp',
-    'sumneko_lua',
-    'tsserver',
-    'yamlls',
-    -- 'efm',
-    -- 'null_ls',
-    -- 'tailwindcss',
-  }
-  for _, server in pairs(servers) do
-    require('lsp.servers.' .. server).setup(on_attach, capabilities)
-  end
+local servers = {
+  'ansiblels',
+  'bashls',
+  'cssls',
+  'dockerls',
+  'emmet_ls',
+  'eslint',
+  'gopls',
+  'html',
+  'intelephense',
+  'jsonls',
+  'pyright',
+  'stylelint_lsp',
+  'sumneko_lua',
+  'tsserver',
+  'yamlls',
+  -- 'efm',
+  -- 'null_ls',
+  -- 'tailwindcss',
+}
+for _, server in pairs(servers) do
+  require('lsp.servers.' .. server).setup(on_attach, capabilities)
 end
 
 return

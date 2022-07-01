@@ -138,13 +138,21 @@ return packer.startup(function(use)
         {
           'folke/lua-dev.nvim',
           'jose-elias-alvarez/typescript.nvim',
-          'ray-x/lsp_signature.nvim',
+          {
+            'ray-x/lsp_signature.nvim',
+            config = function ()
+              require('plugins.configs.lsp_signature')
+            end
+          },
         },
       },
     },
     {
       -- this fork is for whilst repo maintainer is OOA.
       'tami5/lspsaga.nvim',
+      config = function ()
+        require('plugins.configs.lspsaga')
+      end,
     },
     {
       'hrsh7th/nvim-cmp',
