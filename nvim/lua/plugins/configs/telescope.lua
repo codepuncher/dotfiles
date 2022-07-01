@@ -1,4 +1,8 @@
-local telescope = require('telescope')
+local _telescope, telescope = pcall(require, 'telescope')
+if not _telescope then
+  return
+end
+
 local actions = require('telescope.actions')
 local actions_state = require('telescope.actions.state')
 

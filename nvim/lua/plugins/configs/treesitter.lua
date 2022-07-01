@@ -1,8 +1,9 @@
-if not vim.fn.exists('g:loaded_nvim_treesitter') then
+local _plugin, plugin = pcall(require, 'nvim-treesitter.configs')
+if not _plugin then
   return
 end
 
-require('nvim-treesitter.configs').setup({
+plugin.setup({
   highlight = {
     enable = true,
     disable = {},

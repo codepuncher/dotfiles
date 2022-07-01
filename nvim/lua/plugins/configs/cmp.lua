@@ -1,4 +1,8 @@
-local cmp = require('cmp')
+local _cmp, cmp = pcall(require, 'cmp')
+if not _cmp then
+  return
+end
+
 local lspkind = require('lspkind')
 local luasnip = require('luasnip')
 
