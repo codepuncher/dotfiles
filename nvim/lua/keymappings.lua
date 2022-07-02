@@ -1,112 +1,141 @@
-local map = vim.api.nvim_set_keymap
-local noremap = { noremap = true }
-local noremapSilent = { noremap = true, silent = true }
+local _wk, wk = pcall(require, 'which-key')
+if not _wk then
+  return
+end
 
--- Files
-map('n', '<Leader>w', ':update<CR>', noremapSilent)
+local nNoremap = {
+  mode = 'n',
+  prefix = '',
+  silent = false,
+  noremap = true,
+  nowait = true,
+}
+wk.register({
+  ['<leader>w'] = { '<cmd>update<cr>', '[BUFFER] Write unsaved buffer contents' },
+}, nNoremap)
 
--- Navigation
----- Switch windows
-map('', '<C-l>', '<C-w>l', noremap)
-map('', '<C-h>', '<C-w>h', noremap)
-map('', '<C-j>', '<C-w>j', noremap)
-map('', '<C-k>', '<C-w>k', noremap)
----- Barbar
------- Linux
-map('n', '<A-,>', '<Cmd>BufferLineCyclePrev<CR>', noremapSilent)
-map('n', '<A-.>', '<Cmd>BufferLineCycleNext<CR>', noremapSilent)
-map('n', '<A-<>', '<Cmd>BufferLineMovePrev<CR>', noremapSilent)
-map('n', '<A->>', '<Cmd>BufferLineMoveNext<CR>', noremapSilent)
-map('n', '<A-1>', '<Cmd>BufferLineGoToBuffer 1<CR>', noremapSilent)
-map('n', '<A-2>', '<Cmd>BufferLineGoToBuffer 2<CR>', noremapSilent)
-map('n', '<A-3>', '<Cmd>BufferLineGoToBuffer 3<CR>', noremapSilent)
-map('n', '<A-4>', '<Cmd>BufferLineGoToBuffer 4<CR>', noremapSilent)
-map('n', '<A-5>', '<Cmd>BufferLineGoToBuffer 5<CR>', noremapSilent)
-map('n', '<A-6>', '<Cmd>BufferLineGoToBuffer 6<CR>', noremapSilent)
-map('n', '<A-7>', '<Cmd>BufferLineGoToBuffer 7<CR>', noremapSilent)
-map('n', '<A-8>', '<Cmd>BufferLineGoToBuffer 8<CR>', noremapSilent)
-map('n', '<A-9>', '<Cmd>BufferLineGoToBuffer 9<CR>', noremapSilent)
-map('n', '<A-c>', '<Cmd>Bdelete<CR>', noremapSilent)
------- Mac
-map('n', '≤', '<Cmd>BufferLineCyclePrev<CR>', noremapSilent)
-map('n', '≥', '<Cmd>BufferLineCycleNext<CR>', noremapSilent)
-map('n', '¯', '<Cmd>BufferLineMovePrev<CR>', noremapSilent)
-map('n', '˘', '<Cmd>BufferLineMoveNext<CR>', noremapSilent)
-map('n', '¡', '<Cmd>BufferLineGoToBuffer 1<CR>', noremapSilent)
-map('n', '™', '<Cmd>BufferLineGoToBuffer 2<CR>', noremapSilent)
-map('n', '£', '<Cmd>BufferLineGoToBuffer 3<CR>', noremapSilent)
-map('n', '€', '<Cmd>BufferLineGoToBuffer 4<CR>', noremapSilent)
-map('n', '∞', '<Cmd>BufferLineGoToBuffer 5<CR>', noremapSilent)
-map('n', '§', '<Cmd>BufferLineGoToBuffer 6<CR>', noremapSilent)
-map('n', '¶', '<Cmd>BufferLineGoToBuffer 7<CR>', noremapSilent)
-map('n', '•', '<Cmd>BufferLineGoToBuffer 8<CR>', noremapSilent)
-map('n', 'ª', '<Cmd>BufferLineGoToBuffer 9<CR>', noremapSilent)
-map('n', 'ç', '<Cmd>Bdelete<CR>', noremapSilent)
----- Toggle tree
-map('n', '<C-e>', [[<Cmd>lua require('nvim-tree').toggle()<CR>]], noremap)
+local nNoremapSilent = nNoremap
+nNoremapSilent.silent = true
+wk.register({
+  -- Buffers
+  ---- BufferLine
+  ------ Linux
+  ['<A-,>'] = { '<Cmd>BufferLineCyclePrev<cr>', '[BUFFER] Cycle to previous' },
+  ['<A-.>'] = { '<Cmd>BufferLineCycleNext<cr>', '[BUFFER] Cycle to next' },
+  ['<A-<>'] = { '<Cmd>BufferLineMovePrev<cr>', '[BUFFER] Move to previous' },
+  ['<A->>'] = { '<Cmd>BufferLineMoveNext<cr>', '[BUFFER] Move to next' },
+  ['<A-1>'] = { '<Cmd>BufferLineGoToBuffer 1<cr>', '[BUFFER] Go to #1' },
+  ['<A-2>'] = { '<Cmd>BufferLineGoToBuffer 2<cr>', '[BUFFER] Go to #2' },
+  ['<A-3>'] = { '<Cmd>BufferLineGoToBuffer 3<cr>', '[BUFFER] Go to #3' },
+  ['<A-4>'] = { '<Cmd>BufferLineGoToBuffer 4<cr>', '[BUFFER] Go to #4' },
+  ['<A-5>'] = { '<Cmd>BufferLineGoToBuffer 5<cr>', '[BUFFER] Go to #5' },
+  ['<A-6>'] = { '<Cmd>BufferLineGoToBuffer 6<cr>', '[BUFFER] Go to #6' },
+  ['<A-7>'] = { '<Cmd>BufferLineGoToBuffer 7<cr>', '[BUFFER] Go to #7' },
+  ['<A-8>'] = { '<Cmd>BufferLineGoToBuffer 8<cr>', '[BUFFER] Go to #8' },
+  ['<A-9>'] = { '<Cmd>BufferLineGoToBuffer 9<cr>', '[BUFFER] Go to #9' },
+  ['<A-c>'] = { '<Cmd>Bdelete<cr>', '[BUFFER] Delete' },
+  ------ Mac
+  ['≤'] = { '<Cmd>BufferLineCyclePrev<cr>', '[BUFFER] Cycle to previous' },
+  ['≥'] = { '<Cmd>BufferLineCycleNext<cr>', '[BUFFER] Cycle to next' },
+  ['¯'] = { '<Cmd>BufferLineMovePrev<cr>', '[BUFFER] Move to previous' },
+  ['˘'] = { '<Cmd>BufferLineMoveNext<cr>', '[BUFFER] Move to next' },
+  ['¡'] = { '<Cmd>BufferLineGoToBuffer 1<cr>', '[BUFFER] Go to #1' },
+  ['™'] = { '<Cmd>BufferLineGoToBuffer 2<cr>', '[BUFFER] Go to #2' },
+  ['£'] = { '<Cmd>BufferLineGoToBuffer 3<cr>', '[BUFFER] Go to #3' },
+  ['€'] = { '<Cmd>BufferLineGoToBuffer 4<cr>', '[BUFFER] Go to #4' },
+  ['∞'] = { '<Cmd>BufferLineGoToBuffer 5<cr>', '[BUFFER] Go to #5' },
+  ['§'] = { '<Cmd>BufferLineGoToBuffer 6<cr>', '[BUFFER] Go to #6' },
+  ['¶'] = { '<Cmd>BufferLineGoToBuffer 7<cr>', '[BUFFER] Go to #7' },
+  ['•'] = { '<Cmd>BufferLineGoToBuffer 8<cr>', '[BUFFER] Go to #8' },
+  ['ª'] = { '<Cmd>BufferLineGoToBuffer 9<cr>', '[BUFFER] Go to #9' },
+  ['ç'] = { '<Cmd>Bdelete<cr>', '[BUFFER] Delete' },
+
+  -- NvimTree
+  ['<C-e>'] = { '<cmd>NvimTreeToggle<cr>', '[NVIMTREE] Toggle' },
+
+  -- Telescope
+  ['<leader>f'] = {
+    name = '[TELESCOPE]',
+    f = {
+      [[<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown({layout_config={width=0.5}}))<cr>]],
+      '[TELESCOPE] Find files (ignore=true)',
+    },
+    t = { [[<cmd>lua require('telescope.builtin').live_grep()<cr>]], '[TELESCOPE] Grep files (ignore=true)' },
+    b = { [[<cmd>lua require('telescope.builtin').buffers()<cr>]], '[TELESCOPE] Buffers' },
+    h = { [[<cmd>lua require('telescope.builtin').help_tags()<cr>]], '[TELESCOPE] Help tags' },
+    r = { [[<cmd>lua require('telescope.builtin').lsp_references()<cr>]], '[TELESCOPE] LSP references' },
+  },
+  ['<leader>F'] = {
+    name = '[TELESCOPE] ignore=false',
+    F = {
+      [[<cmd>lua require('plugins.configs.telescope').find_files_no_ignore()<cr>]],
+      '[TELESCOPE] Find files (ignore=false)',
+    },
+    T = { [[<cmd>lua require('plugins.configs.telescope').live_grep()<cr>]], '[TELESCOPE] Grep files (ignore=false)' },
+  },
+  ['<leader>fg'] = {
+    name = '[TELESCOPE] Git',
+    s = { [[<cmd>lua require('telescope.builtin').git_status()<cr>]], '[TELESCOPE] Git status' },
+    b = {
+      [[<cmd>lua require('telescope.builtin').git_branches(require('telescope.themes').get_ivy({}))<cr>]],
+      '[TELESCOPE] Git branches',
+    },
+  },
+  ['<leader>fl'] = {
+    name = '[TELESCOPE] LSP',
+    w = {
+      [[<cmd>lua require('plugins.configs.telescope').lsp_workspace_symbols()<cr>]],
+      '[TELESCOPE] LSP workspace symbols',
+    },
+  },
+
+  -- Trouble
+  ['<leader>x'] = {
+    name = '[TROUBLE]',
+    x = { '<cmd>TroubleToggle<cr>', '[TROUBLE] Toggle' },
+    w = { '<cmd>Trouble workspace_diagnostics<cr>', '[TROUBLE] Workspace diagnostics' },
+    d = { '<cmd>Trouble document_diagnostics<cr>', '[TROUBLE] Document diagnostics' },
+    l = { '<cmd>Trouble loclist<cr>', '[TROUBLE] Loclist' },
+    q = { '<cmd>Trouble quickfix<cr>', '[TROUBLE] Quickfix' },
+    r = { '<cmd>Trouble lsp_references<cr>', '[TROUBLE] References' },
+  },
+
+  -- Misc
+  ['+'] = { '<c-a>', 'Increment number' },
+  ['-'] = { '<c-x>', 'Decrement number' },
+
+  -- Git/Fugitive
+  ['<leader>g'] = {
+    name = '[GIT]',
+    da = { '<cmd>Git diff<cr>', '[GIT] Diff all' },
+    df = { '<cmd>Git diff %<cr>', '[GIT] Diff current file' },
+    s = { '<cmd>Git<cr>', '[GIT] Status' },
+    h = { '<cmd>diffget //3<cr>' },
+    l = { '<cmd>diffget //2<cr>' },
+    cc = { '<cmd>Git commit<cr>', '[GIT] Commit' },
+    ca = { '<cmd>Git commit -a<cr>', '[GIT] Commit all tracked files' },
+    af = { "<Cmd>Git add % <bar> echo 'Staged ' . expand('%')<cr>", '[GIT] Stage current file' },
+    aa = { "<Cmd>Git add . <bar> echo 'Staged tracked files'<cr>", '[GIT] Stage tracked files' },
+    aA = {
+      "<Cmd>Git add -A <bar> echo 'Staged tracked and untracked files'<cr>",
+      '[GIT] Stage tracked and untracked files',
+    },
+    p = { '<cmd>Git push<cr>', '[GIT] Push' },
+    P = { '<cmd>Git push -f<cr>', '[GIT] Push (force)' },
+    bn = { "<Cmd>lua require('misc').git_branch_new()<cr>", '[GIT] Create new branch' },
+  },
+
+  -- Symbols Outline
+  ['<leader>CS'] = { '<cmd>SymbolsOutline<cr>', '[LSP] Outline symbols' },
+
+  -- Lines
+  ['<c-J>'] = { '<cmd>m .+1<cr>==', '[LINES] Move line up' },
+  ['<c-K>'] = { '<cmd>m .-2<cr>==', '[LINES] Move line down' },
+}, nNoremapSilent)
+
+wk.setup({})
+
 ---- Lines
 ---- TODO: Migrate to Lua
-vim.api.nvim_command([[vnoremap J :m '>+1<CR>gv=gv]])
-vim.api.nvim_command([[vnoremap K :m '<-2<CR>gv=gv]])
-map('n', '<C-J>', '<Cmd>m .+1<CR>==', noremap)
-map('n', '<C-K>', '<Cmd>m .-2<CR>==', noremap)
-map('i', '<C-J>', '<Esc><Cmd>m .+1<CR>==a', noremap)
-map('i', '<C-K>', '<Esc><Cmd>m .-2<CR>==a', noremap)
-
--- Telescope
----- Find files, with ignore
-map(
-  'n',
-  '<Leader>ff',
-  [[<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown({layout_config={width=0.5}}))<CR>]],
-  noremap
-)
----- Find files, without ignore
-map('n', '<Leader>FF', [[<cmd>lua require('plugins.configs.telescope').find_files_no_ignore()<CR>]], noremap) -- Without ignore
----- Other
-map('n', '<Leader>fg', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], noremap) -- With ignore
-map('n', '<Leader>FG', [[<cmd>lua require('plugins.configs.telescope').live_grep()<CR>]], noremap) -- Without ignore
-map('n', '<Leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], noremap)
-map('n', '<Leader>fh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], noremap)
-map('n', '<Leader>fr', [[<cmd>lua require('telescope.builtin').lsp_references()<CR>]], noremap)
-map('n', '<Leader>fgs', [[<cmd>lua require('telescope.builtin').git_status()<CR>]], noremap)
-map(
-  'n',
-  '<Leader>fgb',
-  [[<cmd>lua require('telescope.builtin').git_branches(require('telescope.themes').get_ivy({}))<CR>]],
-  noremap
-)
-map('n', '<Leader>fws', [[<cmd>lua require('plugins.configs.telescope').lsp_workspace_symbols()<CR>]], noremap)
-
--- Terminal
-map('t', '<Esc>', '<C-\\><C-n>', noremap)
-
--- Trouble
-map('n', '<leader>xx', '<cmd>Trouble<cr>', noremapSilent)
-map('n', '<leader>xw', '<cmd>Trouble lsp_workspace_diagnostics<cr>', noremapSilent)
-map('n', '<leader>xd', '<cmd>Trouble lsp_document_diagnostics<cr>', noremapSilent)
-map('n', '<leader>xl', '<cmd>Trouble loclist<cr>', noremapSilent)
-map('n', '<leader>xq', '<cmd>Trouble quickfix<cr>', noremapSilent)
-map('n', 'gR', '<cmd>Trouble lsp_references<cr>', noremapSilent)
-
--- (In/De)crement numbers
-map('n', '+', '<C-a>', noremap)
-map('n', '-', '<C-x>', noremap)
-
---Git
-map('n', '<Leader>gda', '<Cmd>Git diff<CR>', noremap)
-map('n', '<Leader>gdf', '<Cmd>Git diff %<CR>', noremap)
-map('n', '<Leader>gs', '<Cmd>Git<CR>', noremap)
-map('n', '<Leader>gh', '<Cmd>diffget //3<CR>', noremap)
-map('n', '<Leader>gl', '<Cmd>diffget //2<CR>', noremap)
-map('n', '<Leader>gca', '<Cmd>Git commit -a<CR>', noremap)
-map('n', '<Leader>gcc', '<Cmd>Git commit<CR>', noremap)
-map('n', '<Leader>gaf', "<Cmd>Git add % <bar> echo 'Staged ' . expand('%')<CR>", noremap)
-map('n', '<Leader>gaa', "<Cmd>Git add . <bar> echo 'Staged tracked files'<CR>", noremap)
-map('n', '<Leader>gaA', "<Cmd>Git add -A <bar> echo 'Staged tracked and untracked files'<CR>", noremap)
-map('n', '<Leader>gp', '<Cmd>Git push<CR>', noremap)
-map('n', '<Leader>gP', '<Cmd>Git push -f<CR>', noremap)
-map('n', '<Leader>gbn', [[<Cmd>lua require('misc').git_branch_new()<CR>]], noremapSilent)
-
--- Symbols Outline
-map('n', '<Leader>CS', '<Cmd>SymbolsOutline<CR>', noremap)
+vim.api.nvim_command([[vnoremap J :m '>+1<cr>gv=gv]])
+vim.api.nvim_command([[vnoremap K :m '<-2<cr>gv=gv]])

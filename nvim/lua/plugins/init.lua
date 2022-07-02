@@ -43,12 +43,13 @@ return packer.startup(function(use)
     {
       'nvim-telescope/telescope.nvim',
       requires = {
-        { 'nvim-lua/plenary.nvim' },
+        'nvim-lua/plenary.nvim',
         {
           'nvim-telescope/telescope-fzf-native.nvim',
           run = 'make',
         },
         'nvim-telescope/telescope-github.nvim',
+        'nvim-telescope/telescope-node-modules.nvim',
       },
       config = function()
         require('plugins.configs.telescope')
@@ -90,15 +91,61 @@ return packer.startup(function(use)
       end,
     },
     'lukas-reineke/indent-blankline.nvim',
-    {
-      'nvim-treesitter/nvim-treesitter',
-      run = ':TSUpdate',
-      requires = {
-        'nvim-treesitter/nvim-treesitter-textobjects',
-        'nvim-treesitter/nvim-treesitter-refactor',
+  })
+
+  -- Treesitter
+  use({
+    'nvim-treesitter/nvim-treesitter',
+    requires = {
+      'nvim-treesitter/nvim-treesitter-textobjects',
+      'nvim-treesitter/nvim-treesitter-refactor',
+      'p00f/nvim-ts-rainbow',
+      'JoosepAlviste/nvim-ts-context-commentstring',
+      {
+        'windwp/nvim-ts-autotag',
+        config = function()
+          require('plugins.configs.nvim-ts-autotag')
+        end,
       },
+    },
+    run = ':TSUpdate',
+    config = function()
+      require('plugins.configs.treesitter')
+    end,
+  })
+
+  -- LSP
+  use({
+    'neovim/nvim-lspconfig',
+    'folke/lua-dev.nvim',
+    'jose-elias-alvarez/typescript.nvim',
+    {
+      'jose-elias-alvarez/null-ls.nvim',
+      requires = {
+        'nvim-lua/plenary.nvim',
+      },
+    },
+    {
+      -- TODO: Replace with glepnir/lspsaga.nvim
+      'tami5/lspsaga.nvim',
       config = function()
-        require('plugins.configs.treesitter')
+        require('plugins.configs.lspsaga')
+      end,
+    },
+    {
+      'ray-x/lsp_signature.nvim',
+      config = function()
+        require('plugins.configs.lsp_signature')
+      end,
+    },
+    {
+      'folke/trouble.nvim',
+      requires = {
+        'kyazdani42/nvim-web-devicons',
+      },
+      cmd = { 'Trouble', 'TroubleClose', 'TroubleToggle', 'TroubleRefresh' },
+      config = function()
+        require('plugins.configs.trouble')
       end,
     },
     {
@@ -133,20 +180,6 @@ return packer.startup(function(use)
   -- Dev
   use({
     {
-      'neovim/nvim-lspconfig',
-      requires = {
-        {
-          'folke/lua-dev.nvim',
-          'jose-elias-alvarez/typescript.nvim',
-          'ray-x/lsp_signature.nvim',
-        },
-      },
-    },
-    {
-      -- this fork is for whilst repo maintainer is OOA.
-      'tami5/lspsaga.nvim',
-    },
-    {
       'hrsh7th/nvim-cmp',
       config = function()
         require('plugins.configs.cmp')
@@ -180,21 +213,7 @@ return packer.startup(function(use)
       end,
     },
     {
-      'windwp/nvim-ts-autotag',
-      config = function()
-        require('plugins.configs.autotag')
-      end,
-    },
-    {
       'tpope/vim-surround',
-    },
-    {
-      'folke/trouble.nvim',
-      requires = { { 'kyazdani42/nvim-web-devicons', opt = true } },
-      cmd = { 'Trouble', 'TroubleClose', 'TroubleToggle', 'TroubleRefresh' },
-      config = function()
-        require('plugins.configs.trouble')
-      end,
     },
     {
       'numToStr/Comment.nvim',
@@ -203,7 +222,7 @@ return packer.startup(function(use)
       end,
     },
     {
-      'editorconfig/editorconfig-vim',
+      'gpanders/editorconfig.nvim',
     },
     {
       'RRethy/vim-hexokinase',

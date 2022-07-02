@@ -1,4 +1,9 @@
-require('lsp_signature').setup({
+local _plugin, plugin = pcall(require, 'lsp_signature')
+if not _plugin then
+  return
+end
+
+plugin.setup({
   debug = true,
   hint_enable = true,
   handler_opts = {

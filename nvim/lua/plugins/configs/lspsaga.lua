@@ -1,10 +1,9 @@
-if not vim.fn.exists('g:loaded_lspsaga') then
+local _plugin, plugin = pcall(require, 'lspsaga')
+if not _plugin then
   return
 end
 
-local saga = require('lspsaga')
-
-saga.init_lsp_saga({
+plugin.init_lsp_saga({
   error_sign = '',
   warn_sign = '',
   hint_sign = '',

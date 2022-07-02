@@ -63,10 +63,13 @@ vim.o.splitright = true
 
 -- Colours
 vim.opt.termguicolors = true
-vim.g.tokyonight_transparent = true
-vim.g.tokyonight_transparent_sidebar = true
-vim.g.tokyonight_style = 'storm'
-vim.cmd([[colorscheme tokyonight]])
+local themeExists = pcall(require, 'tokyonight')
+if themeExists then
+  vim.g.tokyonight_transparent = true
+  vim.g.tokyonight_transparent_sidebar = true
+  vim.g.tokyonight_style = 'storm'
+  vim.cmd([[colorscheme tokyonight]])
+end
 vim.g.Hexokinase_highlighters = { 'virtual' }
 vim.api.nvim_set_hl(0, 'TelescopeNormal', { ctermbg = 220 })
 

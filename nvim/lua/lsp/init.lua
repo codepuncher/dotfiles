@@ -1,14 +1,15 @@
-if not vim.fn.exists('g:lspconfig') then
+local _lspconfig = pcall(require, 'lspconfig')
+if not _lspconfig then
   return
 end
 
 local formatGroup = vim.api.nvim_create_augroup('LspFormatting', {})
 local lsp_formatting = function(bufnr)
   vim.lsp.buf.format({
+    bufnr = bufnr,
     filter = function(client)
       return client.name ~= 'tsserver' and client.name ~= 'intelephense'
     end,
-    bufnr = bufnr,
   })
 end
 local on_attach = function(client, bufnr)
@@ -57,83 +58,32 @@ if _cmp_nvim_lsp then
   capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
 end
 
-local _lspconfig = pcall(require, 'lspconfig')
-if _lspconfig then
-  local servers = {
-    'ansiblels',
-    'bashls',
-    'cssls',
-    'dockerls',
-    'emmet_ls',
-    'eslint',
-    'gopls',
-    'html',
-    'intelephense',
-    'jsonls',
-    'pyright',
-    'stylelint_lsp',
-    'sumneko_lua',
-    'tsserver',
-    'yamlls',
-    -- 'efm',
-    -- 'null_ls',
-    -- 'tailwindcss',
-  }
-  for _, server in pairs(servers) do
-    require('lsp.servers.' .. server).setup(on_attach, capabilities)
+local servers = {
+  'ansiblels',
+  'bashls',
+  'cssls',
+  'dockerls',
+  'emmet_ls',
+  'eslint',
+  'gopls',
+  'html',
+  'intelephense',
+  'jsonls',
+  'pyright',
+  'stylelint_lsp',
+  'sumneko_lua',
+  'tsserver',
+  'yamlls',
+  'null_ls',
+  -- 'tailwindcss',
+}
+for _, server in pairs(servers) do
+  local _config, config = pcall(require, 'lsp.servers.' .. server)
+  if not _config then
+    return
   end
+
+  config.setup(on_attach, capabilities)
 end
 
 return
-
--- local eslint = require('lsp.efm.eslint')
--- local shellcheck = require('lsp.efm.shellcheck')
--- local stylua = require('lsp.efm.stylua')
--- local prettier = require('lsp.efm.prettier')
--- local phpcs = require('lsp.efm.phpcs')
---
--- nvim_lsp.efm.setup({
---   capabilities = capabilities,
---   on_attach = on_attach,
---   init_options = {
---     documentFormatting = true,
---   },
---   settings = {
---     rootMarkers = {
---       '.git',
---       '.eslintrc.cjs',
---       '.eslintrc',
---       '.eslintrc.json',
---       '.eslintrc.js',
---       '.prettierrc',
---       '.prettierrc.js',
---       '.prettierrc.json',
---       '.prettierrc.yml',
---       '.prettierrc.yaml',
---       '.prettier.config.js',
---       '.prettier.config.cjs',
---       'package.json',
---     },
---     languages = {
---       bash = {
---         shellcheck,
---       },
---       javascript = {
---         eslint,
---       },
---       lua = {
---         stylua,
---       },
---       typescript = {
---         eslint,
---         prettier,
---       },
---       php = {
---         phpcs,
---       },
---       vue = {
---         prettier,
---       },
---     },
---   },
--- })
