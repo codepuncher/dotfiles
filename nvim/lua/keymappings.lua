@@ -56,7 +56,10 @@ wk.register({
   -- Telescope
   ['<leader>f'] = {
     name = '[TELESCOPE]',
-    f = { [[<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown({layout_config={width=0.5}}))<cr>]], '[TELESCOPE] Find files (ignore=true)' },
+    f = {
+      [[<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown({layout_config={width=0.5}}))<cr>]],
+      '[TELESCOPE] Find files (ignore=true)',
+    },
     t = { [[<cmd>lua require('telescope.builtin').live_grep()<cr>]], '[TELESCOPE] Grep files (ignore=true)' },
     b = { [[<cmd>lua require('telescope.builtin').buffers()<cr>]], '[TELESCOPE] Buffers' },
     h = { [[<cmd>lua require('telescope.builtin').help_tags()<cr>]], '[TELESCOPE] Help tags' },
@@ -64,23 +67,32 @@ wk.register({
   },
   ['<leader>F'] = {
     name = '[TELESCOPE] ignore=false',
-    F = { [[<cmd>lua require('plugins.configs.telescope').find_files_no_ignore()<cr>]], '[TELESCOPE] Find files (ignore=false)' },
+    F = {
+      [[<cmd>lua require('plugins.configs.telescope').find_files_no_ignore()<cr>]],
+      '[TELESCOPE] Find files (ignore=false)',
+    },
     T = { [[<cmd>lua require('plugins.configs.telescope').live_grep()<cr>]], '[TELESCOPE] Grep files (ignore=false)' },
   },
   ['<leader>fg'] = {
     name = '[TELESCOPE] Git',
     s = { [[<cmd>lua require('telescope.builtin').git_status()<cr>]], '[TELESCOPE] Git status' },
-    b = { [[<cmd>lua require('telescope.builtin').git_branches(require('telescope.themes').get_ivy({}))<cr>]], '[TELESCOPE] Git branches' }
+    b = {
+      [[<cmd>lua require('telescope.builtin').git_branches(require('telescope.themes').get_ivy({}))<cr>]],
+      '[TELESCOPE] Git branches',
+    },
   },
   ['<leader>fl'] = {
     name = '[TELESCOPE] LSP',
-    w = { [[<cmd>lua require('plugins.configs.telescope').lsp_workspace_symbols()<cr>]], '[TELESCOPE] LSP workspace symbols' },
+    w = {
+      [[<cmd>lua require('plugins.configs.telescope').lsp_workspace_symbols()<cr>]],
+      '[TELESCOPE] LSP workspace symbols',
+    },
   },
 
   -- Trouble
   ['<leader>x'] = {
     name = '[TROUBLE]',
-    x = { '<cmd>TroubleToggle<cr>', '[TROUBLE] Toggle', },
+    x = { '<cmd>TroubleToggle<cr>', '[TROUBLE] Toggle' },
     w = { '<cmd>Trouble workspace_diagnostics<cr>', '[TROUBLE] Workspace diagnostics' },
     d = { '<cmd>Trouble document_diagnostics<cr>', '[TROUBLE] Document diagnostics' },
     l = { '<cmd>Trouble loclist<cr>', '[TROUBLE] Loclist' },
@@ -102,12 +114,15 @@ wk.register({
     l = { '<cmd>diffget //2<cr>' },
     cc = { '<cmd>Git commit<cr>', '[GIT] Commit' },
     ca = { '<cmd>Git commit -a<cr>', '[GIT] Commit all tracked files' },
-    af = { '<Cmd>Git add % <bar> echo \'Staged \' . expand(\'%\')<cr>', '[GIT] Stage current file' },
-    aa = { '<Cmd>Git add . <bar> echo \'Staged tracked files\'<cr>', '[GIT] Stage tracked files' },
-    aA = { '<Cmd>Git add -A <bar> echo \'Staged tracked and untracked files\'<cr>', '[GIT] Stage tracked and untracked files' },
+    af = { "<Cmd>Git add % <bar> echo 'Staged ' . expand('%')<cr>", '[GIT] Stage current file' },
+    aa = { "<Cmd>Git add . <bar> echo 'Staged tracked files'<cr>", '[GIT] Stage tracked files' },
+    aA = {
+      "<Cmd>Git add -A <bar> echo 'Staged tracked and untracked files'<cr>",
+      '[GIT] Stage tracked and untracked files',
+    },
     p = { '<cmd>Git push<cr>', '[GIT] Push' },
     P = { '<cmd>Git push -f<cr>', '[GIT] Push (force)' },
-    bn = { '<Cmd>lua require(\'misc\').git_branch_new()<cr>', '[GIT] Create new branch' },
+    bn = { "<Cmd>lua require('misc').git_branch_new()<cr>", '[GIT] Create new branch' },
   },
 
   -- Symbols Outline

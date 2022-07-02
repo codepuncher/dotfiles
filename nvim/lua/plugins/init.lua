@@ -128,15 +128,15 @@ return packer.startup(function(use)
     {
       -- TODO: Replace with glepnir/lspsaga.nvim
       'tami5/lspsaga.nvim',
-      config = function ()
+      config = function()
         require('plugins.configs.lspsaga')
       end,
     },
     {
       'ray-x/lsp_signature.nvim',
-      config = function ()
+      config = function()
         require('plugins.configs.lsp_signature')
-      end
+      end,
     },
     {
       'folke/trouble.nvim',
