@@ -118,14 +118,6 @@ wk.register({
   ['<c-K>'] = { '<cmd>m .-2<cr>==', '[LINES] Move line down' },
 }, nNoremapSilent)
 
-local iNoremapSilent = nNoremapSilent
-iNoremapSilent.mode = 'i'
-wk.register({
-  -- Lines
-  ['<c-J>'] = { '<esc><cmd>m .+1<cr>==a', '[LINES] Move line up' },
-  ['<c-K>'] = { '<esc><cmd>m .-2<cr>==a', '[LINES] Move line down' },
-}, iNoremapSilent)
-
 wk.setup({})
 
 ---- Lines
