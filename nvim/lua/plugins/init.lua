@@ -120,6 +120,12 @@ return packer.startup(function(use)
     'folke/lua-dev.nvim',
     'jose-elias-alvarez/typescript.nvim',
     {
+      'jose-elias-alvarez/null-ls.nvim',
+      requires = {
+        'nvim-lua/plenary.nvim',
+      },
+    },
+    {
       -- TODO: Replace with glepnir/lspsaga.nvim
       'tami5/lspsaga.nvim',
       config = function ()

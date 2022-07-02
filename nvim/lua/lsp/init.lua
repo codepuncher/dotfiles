@@ -74,64 +74,16 @@ local servers = {
   'sumneko_lua',
   'tsserver',
   'yamlls',
-  -- 'efm',
-  -- 'null_ls',
+  'null_ls',
   -- 'tailwindcss',
 }
 for _, server in pairs(servers) do
-  require('lsp.servers.' .. server).setup(on_attach, capabilities)
+  local _config, config = pcall(require, 'lsp.servers.' .. server)
+  if not _config then
+    return
+  end
+
+  config.setup(on_attach, capabilities)
 end
 
 return
-
--- local eslint = require('lsp.efm.eslint')
--- local shellcheck = require('lsp.efm.shellcheck')
--- local stylua = require('lsp.efm.stylua')
--- local prettier = require('lsp.efm.prettier')
--- local phpcs = require('lsp.efm.phpcs')
---
--- nvim_lsp.efm.setup({
---   capabilities = capabilities,
---   on_attach = on_attach,
---   init_options = {
---     documentFormatting = true,
---   },
---   settings = {
---     rootMarkers = {
---       '.git',
---       '.eslintrc.cjs',
---       '.eslintrc',
---       '.eslintrc.json',
---       '.eslintrc.js',
---       '.prettierrc',
---       '.prettierrc.js',
---       '.prettierrc.json',
---       '.prettierrc.yml',
---       '.prettierrc.yaml',
---       '.prettier.config.js',
---       '.prettier.config.cjs',
---       'package.json',
---     },
---     languages = {
---       bash = {
---         shellcheck,
---       },
---       javascript = {
---         eslint,
---       },
---       lua = {
---         stylua,
---       },
---       typescript = {
---         eslint,
---         prettier,
---       },
---       php = {
---         phpcs,
---       },
---       vue = {
---         prettier,
---       },
---     },
---   },
--- })
