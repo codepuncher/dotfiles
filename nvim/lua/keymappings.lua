@@ -122,7 +122,7 @@ wk.register({
     },
     p = { '<cmd>Git push<cr>', '[GIT] Push' },
     P = { '<cmd>Git push -f<cr>', '[GIT] Push (force)' },
-    bn = { "<Cmd>lua require('misc').git_branch_new()<cr>", '[GIT] Create new branch' },
+    bn = { "<Cmd>lua require('utils').git_branch_new()<cr>", '[GIT] Create new branch' },
   },
 
   -- Symbols Outline
