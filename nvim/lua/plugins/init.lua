@@ -126,8 +126,10 @@ return packer.startup(function(use)
       },
     },
     {
-      -- TODO: Replace with glepnir/lspsaga.nvim
-      'tami5/lspsaga.nvim',
+      -- 'glepnir/lspsaga.nvim',
+      'codepuncher/lspsaga.nvim',
+      -- '~/Code/misc/lspsaga.nvim',
+      branch = 'issue/330',
       config = function()
         require('plugins.configs.lspsaga')
       end,
