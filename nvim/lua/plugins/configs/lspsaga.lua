@@ -4,9 +4,9 @@ if not _plugin then
 end
 
 plugin.init_lsp_saga({
-  error_sign = '',
-  warn_sign = '',
-  hint_sign = '',
-  infor_sign = '',
   border_style = 'round',
+  diagnostic_header = { ' ', ' ', ' ', 'ﴞ ' },
+  symbol_in_winbar = true,
+  winbar_separator = '>',
+  winbar_show_file = true,
 })
