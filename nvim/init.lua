@@ -3,7 +3,7 @@ if _impatient then
   impatient.enable_profile()
 end
 
+require('plugins')
 require('settings')
 require('keymappings')
-require('plugins')
 require('lsp')
