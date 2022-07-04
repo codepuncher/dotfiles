@@ -126,10 +126,8 @@ return packer.startup(function(use)
       },
     },
     {
-      -- 'glepnir/lspsaga.nvim',
-      'codepuncher/lspsaga.nvim',
+      'glepnir/lspsaga.nvim',
       -- '~/Code/misc/lspsaga.nvim',
-      branch = 'issue/330',
       config = function()
         require('plugins.configs.lspsaga')
       end,
