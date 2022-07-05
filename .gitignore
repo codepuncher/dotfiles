@@ -3,3 +3,5 @@
 nvim/plugin
 tmux/plugins
 bin/logs
+
+terminals/alacritty.yml # Prevent committing temporary changes

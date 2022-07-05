@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+CONFIG_PATH="${HOME}/.config/alacritty/alacritty.yml"
+# Convert symlink to real file.
+CONFIG_PATH=$(realpath "${CONFIG_PATH}")
+if [[ -z "${CONFIG_PATH}" ]]; then
+  exit 1
+fi
+
+OPACITY_VALUE_NEW=1
+OPACITY_VALUE_ORIGINAL=$(sed -n '/opacity: /,$p' "${CONFIG_PATH}")
+OPACITY_VALUE_ORIGINAL="${OPACITY_VALUE_ORIGINAL#*: }"
+if [[ -z "${OPACITY_VALUE_ORIGINAL}" ]]; then
+  exit 1
+fi
+
+if [[ -n "${1}" ]]; then
+  OPACITY_VALUE_NEW="${1}"
+elif [[ 1 == "${OPACITY_VALUE_ORIGINAL}" ]]; then
+  OPACITY_VALUE_NEW=0.7
+fi
+
+sed -i '' "s/opacity: ${OPACITY_VALUE_ORIGINAL}/opacity: ${OPACITY_VALUE_NEW}/g" "${CONFIG_PATH}"
