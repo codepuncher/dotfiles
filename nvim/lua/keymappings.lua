@@ -80,6 +80,7 @@ wk.register({
       [[<cmd>lua require('telescope.builtin').git_branches(require('telescope.themes').get_ivy({}))<cr>]],
       '[TELESCOPE] Git branches',
     },
+    r = { '<cmd>Telescope gh run<cr>', '[TELESCOPE] GitHub view workflow runs' },
   },
   ['<leader>fl'] = {
     name = '[TELESCOPE] LSP',
