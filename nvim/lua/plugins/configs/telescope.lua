@@ -64,6 +64,7 @@ telescope.setup({
 })
 
 telescope.load_extension('fzf')
+telescope.load_extension('node_modules')
 telescope.load_extension('gh')
 
 M.find_files_no_ignore = function()
