@@ -10,6 +10,17 @@ local M = {
     vim.api.nvim_command('Git checkout -b ' .. branch_name)
   end,
 
+  git_branch_rename = function()
+    local branch_name = vim.fn.input('Branch name: ')
+    if branch_name == nil or branch_name == '' then
+      print('No branch specified')
+      return
+    end
+
+    vim.api.nvim_command('redraw')
+    vim.api.nvim_command('Git branch -m ' .. branch_name)
+  end,
+
   is_empty = function(s)
     return s == nil or s == ''
   end,

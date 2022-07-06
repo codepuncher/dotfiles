@@ -124,6 +124,7 @@ wk.register({
     p = { '<cmd>Git push<cr>', '[GIT] Push' },
     P = { '<cmd>Git push -f<cr>', '[GIT] Push (force)' },
     bn = { "<Cmd>lua require('utils').git_branch_new()<cr>", '[GIT] Create new branch' },
+    br = { "<Cmd>lua require('utils').git_branch_rename()<cr>", '[GIT] Rename current branch' },
     ['='] = {
       "<cmd>Git push -u origin @ | :execute '!gh pr create -f' | :Telescope gh run<cr>",
       '[GIT] Push new branch, create a PR and watch the Actions job',
