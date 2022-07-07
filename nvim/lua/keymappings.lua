@@ -134,6 +134,12 @@ wk.register({
   -- Symbols Outline
   ['<leader>CS'] = { '<cmd>SymbolsOutline<cr>', '[LSP] Outline symbols' },
 
+  -- Lua stuff
+  ['<leader>l'] = {
+    name = '[LUA]',
+    rk = { "<cmd>source ~/.config/nvim/lua/keymappings.lua | echo 'Keymaps reloaded'<cr>", '[LUA] Reload keymaps' },
+  },
+
   -- Lines
   ['<c-J>'] = { '<cmd>m .+1<cr>==', '[LINES] Move line up' },
   ['<c-K>'] = { '<cmd>m .-2<cr>==', '[LINES] Move line down' },
