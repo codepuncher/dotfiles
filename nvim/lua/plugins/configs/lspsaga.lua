@@ -6,7 +6,11 @@ end
 plugin.init_lsp_saga({
   border_style = 'round',
   diagnostic_header = { ' ', ' ', ' ', 'ﴞ ' },
-  symbol_in_winbar = true,
-  winbar_separator = '>',
-  winbar_show_file = true,
+  symbol_in_winbar = {
+    in_custom = false,
+    enable = true,
+    separator = '  ',
+    show_file = true,
+    click_support = false,
+  },
 })
