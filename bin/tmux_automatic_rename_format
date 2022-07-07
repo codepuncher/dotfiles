@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 
-pwd="${1}"
-cmd=$(tmux display-message -p -F "#{pane_current_command}")
+PWD="${1}"
+CMD=$(tmux display-message -p -F "#{pane_current_command}")
 
-if [[ "${cmd}" != @(zsh|nvim) ]]; then
-  echo "${cmd}"
-elif [[ $pwd =~ 'bedrock' ]]; then
-  basename "${pwd%bedrock*}"
-elif [[ $pwd =~ 'trellis' ]]; then
-  basename "${pwd%trellis*}"
+if [[ "${CMD}" != @(zsh|nvim|trellis-cli) ]]; then
+  echo "${CMD}"
+elif [[ "${PWD}" =~ 'bedrock' ]]; then
+  basename "${PWD%bedrock*}"
+elif [[ "${PWD}" =~ 'site' ]]; then
+  basename "${PWD%site*}"
+elif [[ "${PWD}" =~ 'trellis' ]]; then
+  basename "${PWD%trellis*}"
 else
   echo "#{b:pane_current_path}"
 fi
