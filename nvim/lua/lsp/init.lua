@@ -69,6 +69,7 @@ local servers = {
   'html',
   'intelephense',
   'jsonls',
+  'lemminx',
   'pyright',
   'stylelint_lsp',
   'sumneko_lua',
