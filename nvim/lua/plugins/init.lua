@@ -50,6 +50,7 @@ return packer.startup(function(use)
         },
         'nvim-telescope/telescope-github.nvim',
         'nvim-telescope/telescope-node-modules.nvim',
+        'nvim-telescope/telescope-file-browser.nvim',
       },
       config = function()
         require('plugins.configs.telescope')
