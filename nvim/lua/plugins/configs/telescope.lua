@@ -60,12 +60,16 @@ telescope.setup({
       case_mode = 'smart_case', -- or "ignore_case" or "respect_case"
       -- the default case_mode is "smart_case"
     },
+    file_browser = {
+      theme = 'ivy',
+    },
   },
 })
 
 telescope.load_extension('fzf')
 telescope.load_extension('node_modules')
 telescope.load_extension('gh')
+telescope.load_extension('file_browser')
 
 M.find_files_no_ignore = function()
   local theme = require('telescope.themes').get_dropdown({
