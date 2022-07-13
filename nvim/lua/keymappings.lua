@@ -61,7 +61,7 @@ wk.register({
       '[TELESCOPE] Find files (ignore=true)',
     },
     t = { [[<cmd>lua require('telescope.builtin').live_grep()<cr>]], '[TELESCOPE] Grep files (ignore=true)' },
-    b = { [[<cmd>lua require('telescope.builtin').buffers()<cr>]], '[TELESCOPE] Buffers' },
+    b = { [[<cmd>lua require('telescope').extensions.file_browser.file_browser()<cr>]], '[TELESCOPE] Buffers' },
     h = { [[<cmd>lua require('telescope.builtin').help_tags()<cr>]], '[TELESCOPE] Help tags' },
     r = { [[<cmd>lua require('telescope.builtin').lsp_references()<cr>]], '[TELESCOPE] LSP references' },
   },
