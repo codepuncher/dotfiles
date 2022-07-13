@@ -14,3 +14,5 @@
 	helper = !/usr/local/bin/gh auth git-credential
 [alias]
 	conflicts = diff --name-only --diff-filter=U
+[init]
+	defaultBranch = main
