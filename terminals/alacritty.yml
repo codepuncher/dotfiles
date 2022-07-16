@@ -6,6 +6,7 @@ font:
     family: "JetBrainsMono Nerd Font"
   italic:
     family: "JetBrainsMono Nerd Font"
+  size: 10.0
 
 # TokyoNight Alacritty Colors
 colors:
