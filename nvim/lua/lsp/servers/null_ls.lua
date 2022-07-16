@@ -29,7 +29,9 @@ _M.setup = function(on_attach)
       }),
       -- diagnostics.phpmd, -- FIX: doesn't work yet.
       diagnostics.shellcheck,
-      diagnostics.stylelint,
+      diagnostics.stylelint.with({
+        prefer_local = './node_modules/stylelint/bin',
+      }),
       diagnostics.tidy,
       diagnostics.yamllint,
       diagnostics.zsh,
@@ -40,7 +42,9 @@ _M.setup = function(on_attach)
         prefer_local = './vendor/bin',
       }),
       formatting.prettierd,
-      formatting.stylelint,
+      formatting.stylelint.with({
+        prefer_local = './node_modules/stylelint/bin',
+      }),
       formatting.stylua,
       formatting.shfmt.with({
         filetypes = {
