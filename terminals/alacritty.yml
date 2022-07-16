@@ -6,6 +6,7 @@ font:
     family: "JetBrainsMono Nerd Font"
   italic:
     family: "JetBrainsMono Nerd Font"
+  size: 10.0
 
 # TokyoNight Alacritty Colors
 colors:
@@ -50,3 +51,6 @@ colors:
 
 window:
   opacity: 0.9
+
+env:
+  WINIT_X11_SCALE_FACTOR: "1"
