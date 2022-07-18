@@ -126,11 +126,14 @@ wk.register({
     bn = { "<Cmd>lua require('utils').git_branch_new()<cr>", '[GIT] Create new branch' },
     br = { "<Cmd>lua require('utils').git_branch_rename()<cr>", '[GIT] Rename current branch' },
     ['='] = {
-      "<cmd>Git push -u origin @ | :execute '!gh pr create -f'",
+      "<cmd>Git push -u origin @ | :execute '!gh pr create -f'<cr>",
       '[GIT] Push new branch, create a PR and watch the Actions job',
     },
     mpr = { '<cmd>!gh pr merge -md<cr>', '[GIT] Merge PR and delete branch' },
   },
+
+  -- Symbols Outline
+  ['<leader>so'] = { '<cmd>LSoutlineToggle<cr>', '[LSP] Outline symbols' },
 
   -- Lua stuff
   ['<leader>l'] = {

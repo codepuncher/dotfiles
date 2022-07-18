@@ -13,4 +13,8 @@ plugin.init_lsp_saga({
     show_file = true,
     click_support = false,
   },
+  show_outline = {
+    win_width = 50,
+    jump_key = '<cr>',
+  },
 })
