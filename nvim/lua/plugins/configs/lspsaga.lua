@@ -4,7 +4,7 @@ if not _plugin then
 end
 
 plugin.init_lsp_saga({
-  border_style = 'round',
+  border_style = 'rounded',
   diagnostic_header = { ' ', ' ', ' ', 'ﴞ ' },
   symbol_in_winbar = {
     in_custom = false,
