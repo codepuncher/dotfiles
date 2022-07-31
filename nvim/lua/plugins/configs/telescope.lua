@@ -70,6 +70,7 @@ telescope.load_extension('fzf')
 telescope.load_extension('node_modules')
 telescope.load_extension('gh')
 telescope.load_extension('file_browser')
+telescope.load_extension('dap')
 
 M.find_files_no_ignore = function()
   local theme = require('telescope.themes').get_dropdown({

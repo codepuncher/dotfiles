@@ -115,7 +115,7 @@ return packer.startup(function(use)
     end,
   })
 
-  -- LSP
+  -- Language Server Protocol
   use({
     'neovim/nvim-lspconfig',
     'folke/lua-dev.nvim',
@@ -156,6 +156,21 @@ return packer.startup(function(use)
         require('plugins.configs.symbols-outline')
       end,
     },
+  })
+
+  -- Debug Adapter Protocol
+  use({
+    {
+      'mfussenegger/nvim-dap',
+      config = function()
+        require('plugins.configs.dap')
+      end,
+    },
+    'rcarriga/nvim-dap-ui',
+    'rcarriga/cmp-dap',
+    'theHamsta/nvim-dap-virtual-text',
+    'nvim-telescope/telescope-dap.nvim',
+    'leoluz/nvim-dap-go',
   })
 
   -- Git

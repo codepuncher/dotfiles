@@ -3,4 +3,10 @@ if not _plugin then
   return
 end
 
-plugin.setup({})
+plugin.setup({
+  check_ts = true,
+  ts_config = {
+    lua = { 'string' },
+    javascript = { 'template_string' },
+  },
+})
