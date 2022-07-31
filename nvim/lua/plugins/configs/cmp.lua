@@ -81,6 +81,12 @@ cmp.setup.cmdline(':', {
   }),
 })
 
+cmp.setup.filetype({ 'dap-repl', 'dapui_watches' }, {
+  cmp.config.sources({
+    { name = 'dap' },
+  }),
+})
+
 local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 
 cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done({ map_char = { tex = '' } }))
