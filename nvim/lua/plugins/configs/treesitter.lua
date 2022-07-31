@@ -4,6 +4,9 @@ if not _plugin then
 end
 
 plugin.setup({
+  autotag = {
+    enable = true,
+  },
   highlight = {
     enable = true,
     disable = {},

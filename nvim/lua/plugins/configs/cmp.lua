@@ -65,6 +65,14 @@ cmp.setup({
   },
 })
 
+cmp.setup.filetype('gitcommit', {
+  sources = cmp.config.sources({
+    { name = 'cmp_git' },
+  }, {
+    { name = 'buffer' },
+  }),
+})
+
 cmp.setup.cmdline('/', {
   mapping = cmp.mapping.preset.cmdline(),
   sources = {
@@ -89,4 +97,4 @@ cmp.setup.filetype({ 'dap-repl', 'dapui_watches' }, {
 
 local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 
-cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done({ map_char = { tex = '' } }))
+cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
