@@ -18,3 +18,8 @@ plugin.init_lsp_saga({
     jump_key = '<cr>',
   },
 })
+
+vim.api.nvim_create_autocmd({ 'WinEnter' }, {
+  desc = 'Close lspsaga outline if is last window.',
+  command = "if &filetype == 'lspsagaoutline' && winnr('$') == 1 | bdel | endif",
+})
