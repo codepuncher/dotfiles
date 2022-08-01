@@ -108,8 +108,8 @@ wk.register({
   -- Git/Fugitive
   ['<leader>g'] = {
     name = '[GIT]',
-    da = { '<cmd>Git diff<cr>', '[GIT] Diff all' },
-    df = { '<cmd>Git diff %<cr>', '[GIT] Diff current file' },
+    da = { '<cmd>vertical Git diff<cr>', '[GIT] Diff all' },
+    df = { '<cmd>vertical Git diff %<cr>', '[GIT] Diff current file' },
     s = { '<cmd>Git<cr>', '[GIT] Status' },
     h = { '<cmd>diffget //3<cr>' },
     l = { '<cmd>diffget //2<cr>' },
@@ -126,14 +126,14 @@ wk.register({
     bn = { "<Cmd>lua require('utils').git_branch_new()<cr>", '[GIT] Create new branch' },
     br = { "<Cmd>lua require('utils').git_branch_rename()<cr>", '[GIT] Rename current branch' },
     ['='] = {
-      "<cmd>Git push -u origin @ | :execute '!gh pr create -f' | :Telescope gh run<cr>",
+      "<cmd>Git push -u origin @ | :execute '!gh pr create -f'<cr>",
       '[GIT] Push new branch, create a PR and watch the Actions job',
     },
     mpr = { '<cmd>!gh pr merge -md<cr>', '[GIT] Merge PR and delete branch' },
   },
 
   -- Symbols Outline
-  ['<leader>CS'] = { '<cmd>SymbolsOutline<cr>', '[LSP] Outline symbols' },
+  ['<leader>so'] = { '<cmd>LSoutlineToggle<cr>', '[LSP] Outline symbols' },
 
   -- Lua stuff
   ['<leader>l'] = {

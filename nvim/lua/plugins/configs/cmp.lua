@@ -70,6 +70,7 @@ cmp.setup.filetype('gitcommit', {
     { name = 'cmp_git' },
   }, {
     { name = 'buffer' },
+    { name = 'emoji' },
   }),
 })
 

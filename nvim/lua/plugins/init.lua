@@ -149,13 +149,6 @@ return packer.startup(function(use)
         require('plugins.configs.trouble')
       end,
     },
-    {
-      'simrat39/symbols-outline.nvim',
-      cmd = 'SymbolsOutline',
-      config = function()
-        require('plugins.configs.symbols-outline')
-      end,
-    },
   })
 
   -- Debug Adapter Protocol
