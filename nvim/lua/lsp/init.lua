@@ -63,7 +63,6 @@ local servers = {
   'bashls',
   'cssls',
   'dockerls',
-  'emmet_ls',
   'eslint',
   'gopls',
   'html',
