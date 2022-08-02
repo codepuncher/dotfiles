@@ -1,6 +1,5 @@
-local _plugin, plugin = pcall(require, 'dap')
-if not _plugin then
-  print('no dap')
+local _dap, dap = pcall(require, 'dap')
+if not _dap then
   return
 end
 
@@ -13,14 +12,15 @@ require('nvim-dap-virtual-text').setup({
   show_stop_reason = true,
   virt_text_pos = 'eol',
   all_frames = false,
-  1,
 })
 
-plugin.adapters.nlua = function(callback, config)
+dap.set_log_level('DEBUG')
+
+dap.adapters.nlua = function(callback, config)
   callback({ type = 'server', host = config.host, port = config.port })
 end
 
-plugin.configurations.lua = {
+dap.configurations.lua = {
   {
     type = 'nlua',
     request = 'attach',
@@ -38,11 +38,11 @@ plugin.configurations.lua = {
 -- This will configure Delve for us with a default configuration.
 require('dap-go').setup()
 -- Now we can append our own additional configurations.
-table.insert(plugin.configurations.go, {
-  type = 'delve',
+table.insert(dap.configurations.go, {
+  type = 'go',
   name = 'Debug iroots site new',
   request = 'launch',
-  mode = 'debug',
+  cwd = '${workspaceFolder}',
   program = '${fileDirname}',
   args = {
     'site',
@@ -50,15 +50,18 @@ table.insert(plugin.configurations.go, {
     '-s',
     'foo',
     '-b',
-    'bar',
+    'www.foo.bar-bedrock',
     '-t',
-    'baz',
+    'www.foo.bar-trellis',
     '--bedrock_repo_pat',
     '1',
     '--trellis_template_vault_pass',
     '2',
   },
 })
+
+local dap_ui = require('dapui')
+dap_ui.setup()
 
 local map = function(lhs, rhs, desc)
   if desc then
@@ -68,22 +71,22 @@ local map = function(lhs, rhs, desc)
   vim.keymap.set('n', lhs, rhs, { silent = true, desc = desc })
 end
 
-map('<F1>', require('dap').step_back, 'step_back')
-map('<F2>', require('dap').step_into, 'step_into')
-map('<F3>', require('dap').step_over, 'step_over')
-map('<F4>', require('dap').step_out, 'step_out')
-map('<F5>', require('dap').continue, 'continue')
+map('<F1>', dap.step_back, 'step_back')
+map('<F2>', dap.step_into, 'step_into')
+map('<F3>', dap.step_over, 'step_over')
+map('<F4>', dap.step_out, 'step_out')
+map('<F5>', dap.continue, 'continue')
 
-map('<leader>dr', require('dap').repl.open)
+map('<leader>dr', dap.repl.open)
 
-map('<leader>db', require('dap').toggle_breakpoint)
+map('<leader>db', dap.toggle_breakpoint)
 map('<leader>dB', function()
   require('dap').set_breakpoint(vim.fn.input('[DAP] Condition > '))
 end)
 
-map('<leader>de', require('dapui').eval)
+map('<leader>de', dap_ui.eval)
 map('<leader>dE', function()
-  require('dapui').eval(vim.fn.input('[DAP] Expression > '))
+  dap_ui.eval(vim.fn.input('[DAP] Expression > '))
 end)
 
 -- You can set trigger characters OR it will default to '.'
@@ -94,10 +97,6 @@ augroup DapRepl
   au FileType dap-repl lua require('dap.ext.autocompl').attach()
 augroup END
 ]])
-
-local dap_ui = require('dapui')
-
-dap_ui.setup()
 
 local original = {}
 local debug_map = function(lhs, rhs, desc)
@@ -130,18 +129,18 @@ local debug_unmap = function()
   original = {}
 end
 
-plugin.listeners.after.event_initialized['dapui_config'] = function()
+dap.listeners.after.event_initialized['dapui_config'] = function()
   debug_map('asdf', ":echo 'hello world<CR>", 'showing things')
 
   dap_ui.open()
 end
 
-plugin.listeners.before.event_terminated['dapui_config'] = function()
+dap.listeners.before.event_terminated['dapui_config'] = function()
   debug_unmap()
 
   dap_ui.close()
 end
 
-plugin.listeners.before.event_exited['dapui_config'] = function()
+dap.listeners.before.event_exited['dapui_config'] = function()
   dap_ui.close()
 end
