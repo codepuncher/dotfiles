@@ -234,9 +234,16 @@ return packer.startup(function(use)
       'gpanders/editorconfig.nvim',
     },
     {
-      'RRethy/vim-hexokinase',
+      'brenoprata10/nvim-highlight-colors',
+      config = function()
+        local plugin = require('nvim-highlight-colors')
+        plugin.setup({
+          render = 'background',
+          enable_tailwind = true,
+        })
+        plugin.toggle()
+      end,
       event = 'BufEnter',
-      run = 'make hexokinase',
       ft = {
         'php',
         'html',
