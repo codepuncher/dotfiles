@@ -70,7 +70,6 @@ if themeExists then
   vim.g.tokyonight_style = 'storm'
   vim.cmd([[colorscheme tokyonight]])
 end
-vim.g.Hexokinase_highlighters = { 'virtual' }
 vim.api.nvim_set_hl(0, 'TelescopeNormal', { ctermbg = 220 })
 
 -- Misc
