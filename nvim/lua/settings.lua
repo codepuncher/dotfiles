@@ -63,11 +63,15 @@ vim.o.splitright = true
 
 -- Colours
 vim.opt.termguicolors = true
-local themeExists = pcall(require, 'tokyonight')
+local themeExists, tokyonight = pcall(require, 'tokyonight')
 if themeExists then
-  vim.g.tokyonight_transparent = true
-  vim.g.tokyonight_transparent_sidebar = true
-  vim.g.tokyonight_style = 'storm'
+  tokyonight.setup({
+    style = 'storm',
+    transparent = true,
+    styles = {
+      sidebars = 'transparent',
+    },
+  })
   vim.cmd([[colorscheme tokyonight]])
 end
 vim.api.nvim_set_hl(0, 'TelescopeNormal', { ctermbg = 220 })
