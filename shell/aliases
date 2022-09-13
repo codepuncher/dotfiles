@@ -67,7 +67,11 @@ trellis_copy_basic_auth_pass() {
 
 	AUTH_PASS=$(trellis vault view "$ENVIRONMENT" | grep -o "http_basic_auth_password: .*" | cut -f2- -d: | cut -c2-)
 	echo "$AUTH_PASS"
-	echo "$AUTH_PASS" | pbcopy
+	if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
+		echo "$AUTH_PASS" | xclip -selection c
+	elif [[ "${OSTYPE:0:6}" = 'darwin' ]]; then
+		echo "$AUTH_PASS" | pbcopy
+	fi
 }
 wp_get_user_id() {
 	[ -z "$1" ] && email='wordpress@itineris.co.uk' || email="$1"
