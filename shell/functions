@@ -23,8 +23,6 @@ install_arch_packages() {
 		plank
 		spotify-launcher
 		spotifyd
-		git
-		github-cli
 
 		# Social
 		discord
@@ -59,6 +57,9 @@ install_arch_packages() {
 
 		# System
 		tldr
+		git
+		github-cli
+		jq
 	)
 
 	# shellcheck disable=2046
