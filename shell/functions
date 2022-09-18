@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+
+section_start() {
+	printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+	echo "${1}"
+}
+
+reinstall_dotfiles() {
+	rm -rf ~/.{local/bin,npm,nvm,zinit,go/bin}
+	cd ~/.dotfiles && ./setup.sh
+}
+
+install_arch_packages() {
+	echo 'Enabling the AUR...'
+	sudo sed -Ei '/EnableAUR/s/^#//' /etc/pamac.conf
+
+	PACKAGES=(
+		# General
+		redshift
+		ulauncher
+		variety
+		bitwarden
+		plank
+		spotify-launcher
+		spotifyd
+		git
+		github-cli
+
+		# Social
+		discord
+		caprine
+
+		# Work
+		teams
+		microsoft-edge-stable-bin
+
+		# Terminal/shell
+		alacritty
+		tmux
+
+		# Languages
+		go
+
+		# Fonts
+		nerd-fonts-anonymous-pro
+		nerd-fonts-dejavu-complete
+		nerd-fonts-fira-code
+		nerd-fonts-go-mono
+		nerd-fonts-hack
+		nerd-fonts-jetbrains-mono
+		nerd-fonts-liberation-mono
+		nerd-fonts-source-code-pro
+		nerd-fonts-terminus
+
+		# IDE
+		neovim-nightly-bin
+		lua-language-server
+		shellcheck
+
+		# System
+		tldr
+	)
+
+	# shellcheck disable=2046
+	sudo pamac install --no-confirm --no-upgrade $(
+		IFS=' '
+		echo "${PACKAGES[*]}"
+	)
+}
+
+install_node_packages() {
+	PACKAGES=(
+		bash-language-server
+		intelephense
+	)
+
+	# shellcheck disable=2046
+	yarn global add $(
+		IFS=' '
+		echo "${PACKAGES[*]}"
+	)
+}
+
+install_go_packages() {
+	PACKAGES=(
+		mvdan.cc/sh/v3/cmd/shfmt@latest
+	)
+
+	# shellcheck disable=2046
+	go install $(
+		IFS=' '
+		echo "${PACKAGES[*]}"
+	)
+}
