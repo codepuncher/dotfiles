@@ -3,5 +3,7 @@
 nvim/plugin
 tmux/plugins
 bin/logs
+backups
+!.gitkeep
 
 terminals/alacritty.yml # Prevent committing temporary changes

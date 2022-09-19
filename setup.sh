@@ -12,19 +12,16 @@ section_start "Running from ${PWD}"
 
 # Initialize a few directories.
 init_dirs() {
-	echo 'Creating ~/Code/{misc,go,wordpress}'
-	mkdir -p "${HOME}/Code/{misc,go,wordpress}"
-	echo 'Creating ~/Tools'
-	mkdir -p "${HOME}/Tools"
-	echo 'Directories created'
+	section_start 'Creating ~/{Code/{misc,go,wordpress},Tools}'
+	mkdir -p "${HOME}"/{Code/{misc,go,wordpress},Tools}
 }
 
 backup() {
-	[ -e "${HOME}/${1}" ] && mkdir -p "${SCRIPT_PATH}/backups" && mv "${HOME}/${1}" "${HOME}/.dotfiles/backups/${1}"
+	[ -e "${HOME}/${1}" ] && mkdir -p "${SCRIPT_PATH}/backups/$(dirname "${2}")" && mv "${HOME}/${1}" "${HOME}/.dotfiles/backups/${2}"
 }
 
 move_link() {
-	backup "${1}"
+	backup "${1}" "${2}"
 	from="${SCRIPT_PATH}/${2}"
 	to="${HOME}/${1}"
 	new_path="$(dirname "${to}")"
@@ -46,10 +43,11 @@ init_links() {
 		move_link .gitconfig git/gitconfig
 		move_link .config/alacritty/alacritty.yml terminals/alacritty.yml
 		move_link .config/spotifyd/spotifyd.conf media/spotifyd.conf
-		echo 'Symlinking complete'
-	else
-		echo 'Symlinking cancelled by user'
+		echo "Symlinking complete. Backups stored in ${SCRIPT_PATH}/backups."
+		return
 	fi
+
+	echo 'Symlinking cancelled by user'
 }
 
 install_packages() {
@@ -65,6 +63,9 @@ install_packages() {
 	fi
 
 	install_arch_packages
+	post_install_packages
+	setup_arch_services
+	post_setup_arch_services
 	install_go_packages
 }
 
@@ -85,7 +86,7 @@ install_packer_nvim() {
 	if [[ ! -d "${PACKER_NVIM_FILE}" ]]; then
 		echo 'packer.nvim not installed. Installing...'
 		git clone --depth 1 https://github.com/wbthomason/packer.nvim "${PACKER_NVIM_FILE}" &&
-			echo "packer.nvim installed. Don't forget to run :PlugInstall when opening nvim for the first time!" ||
+			echo "packer.nvim installed. Don't forget to run :PackerSync when opening nvim for the first time!" ||
 			echo 'packer.nvim installation failed.'
 	fi
 }
@@ -104,15 +105,42 @@ install_tpm() {
 		echo 'TPM installation failed.'
 }
 
+install_composer() {
+	section_start 'Installing Composer'
+	EXPECTED_CHECKSUM="$(php -r 'copy("https://composer.github.io/installer.sig", "php://stdout");')"
+	php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+	ACTUAL_CHECKSUM="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
+
+	if [ "${EXPECTED_CHECKSUM}" != "${ACTUAL_CHECKSUM}" ]; then
+		echo >&2 'ERROR: Invalid installer checksum'
+		rm composer-setup.php
+		return
+	fi
+
+	php composer-setup.php --quiet
+	rm composer-setup.php
+	sudo mv composer.phar /usr/local/bin/composer
+	install_composer_packages
+}
+
 install_tools() {
-	section_start 'Installing Tools'
+	section_start 'Install tools? [y/n]'
+	read -r resp
+	if [ "${resp}" != 'y' ] && [ "${resp}" != 'Y' ]; then
+		return
+	fi
+
 	install_zinit
 	install_packer_nvim
 	install_tpm
+	install_composer
 }
 
 install_packages
 install_tools
 init_dirs
 init_links
+if [[ "${SHELL}" != */zsh ]]; then
+	chsh -s "$(which zsh)"
+fi
 command zsh

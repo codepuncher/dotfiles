@@ -6,7 +6,7 @@ section_start() {
 }
 
 reinstall_dotfiles() {
-	rm -rf ~/.{local/bin,npm,nvm,zinit,go/bin}
+	rm -rf ~/.{local/bin,npm,nvm,zinit,go/bin,config/composer/vendor}
 	cd ~/.dotfiles && ./setup.sh
 }
 
@@ -34,12 +34,14 @@ install_arch_packages() {
 		teams
 		microsoft-edge-stable-bin
 
-		# Terminal/shell
+		# Dev
 		alacritty
 		tmux
-
-		# Languages
 		go
+		nginx
+		mariadb
+		php
+		php-fpm
 
 		# Fonts
 		nerd-fonts-anonymous-pro
@@ -66,12 +68,32 @@ install_arch_packages() {
 		exa
 		fd
 		git-delta
+		xsel
 	)
 
 	# shellcheck disable=2046
 	sudo pamac install --no-confirm --no-upgrade $(
 		IFS=' '
 		echo "${PACKAGES[*]}"
+	)
+}
+
+setup_arch_services() {
+	SERVICES=(
+		nginx
+		mariadb
+		php-fpm
+	)
+
+	# shellcheck disable=2046
+	sudo systemctl start $(
+		IFS=' '
+		echo "${SERVICES[*]}"
+	)
+	# shellcheck disable=2046
+	sudo systemctl enable $(
+		IFS=' '
+		echo "${SERVICES[*]}"
 	)
 }
 
@@ -98,4 +120,32 @@ install_go_packages() {
 		IFS=' '
 		echo "${PACKAGES[*]}"
 	)
+}
+
+install_composer_packages() {
+	PACKAGES=(
+		cpriego/valet-linux
+	)
+
+	# shellcheck disable=2046
+	composer global require $(
+		IFS=' '
+		echo "${PACKAGES[*]}"
+	)
+}
+
+post_install_packages() {
+	section_start 'Post package install'
+
+	# shellcheck disable=2016
+	echo 'Running `mariadb-install-db`'
+	sudo mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
+}
+
+post_setup_arch_services() {
+	section_start 'Post setup arch services'
+
+	# shellcheck disable=2016
+	echo 'Running `mysql_secure_installation`'
+	sudo mysql_secure_installation
 }
