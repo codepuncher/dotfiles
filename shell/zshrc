@@ -79,6 +79,7 @@ zinit snippet OMZP::npm
 
 # Theme
 zinit light spaceship-prompt/spaceship-prompt
+zinit light spaceship-prompt/spaceship-vi-mode
 
 # Spaceship Prompt
 SPACESHIP_TIME_SHOW=true
@@ -94,7 +95,7 @@ SPACESHIP_PROMPT_ORDER=(
 	exec_time # Execution time
 	line_sep  # Line break
 	battery   # Battery level and status
-	vi_mode   # Vi-mode indicator
+	# vi_mode   # Vi-mode indicator
 	jobs      # Background jobs indicator
 	exit_code # Exit code section
 	char      # Prompt character
@@ -103,6 +104,8 @@ SPACESHIP_PROMPT_ORDER=(
 SPACESHIP_RPROMPT_ORDER=(
 	time # Time stampts section
 )
+
+spaceship add --before char vi_mode
 
 # Setup history
 HISTFILE=~/.zsh_history
