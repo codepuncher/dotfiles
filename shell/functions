@@ -38,6 +38,7 @@ install_arch_packages() {
 		alacritty
 		tmux
 		go
+		rustup
 		nginx
 		mariadb
 		php7
@@ -79,7 +80,9 @@ install_arch_packages() {
 		fd
 		git-delta
 		xsel
+		xclip
 		imagemagick
+		dnsutils
 	)
 
 	# shellcheck disable=2046
@@ -156,6 +159,11 @@ post_install_packages() {
 	echo 'Enabling PHP extensions'
 	sudo sed -Ei '/^;extension=mysqli/s/^;//' /etc/php7/php.ini
 	sudo sed -Ei '/^;extension=gd/s/^;//' /etc/php7/php.ini
+
+	echo 'Installing `spotify-tui'
+	mkdir "$HOME/.rustup"
+	rustup default stable
+	pamac install --no-confirm --no-upgrade spotify-tui
 }
 
 post_setup_arch_services() {
