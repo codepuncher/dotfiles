@@ -140,6 +140,7 @@ install_composer_packages() {
 	PACKAGES=(
 		cpriego/valet-linux
 		wp-cli/wp-cli-bundle
+		itinerisltd/itineris-wp-coding-standards
 	)
 
 	# shellcheck disable=2046
