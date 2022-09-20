@@ -115,6 +115,8 @@ install_node_packages() {
 	PACKAGES=(
 		bash-language-server
 		intelephense
+		yaml-language-server
+		@ansible/ansible-language-server
 	)
 
 	# shellcheck disable=2046
@@ -145,6 +147,21 @@ install_composer_packages() {
 
 	# shellcheck disable=2046
 	composer global require $(
+		IFS=' '
+		echo "${PACKAGES[*]}"
+	)
+}
+
+install_pip_packages() {
+	python -m ensurepip --upgrade
+	python -m pip install --upgrade pip
+
+	PACKAGES=(
+		yamllint
+	)
+
+	# shellcheck disable=2046
+	python -m pip install --user $(
 		IFS=' '
 		echo "${PACKAGES[*]}"
 	)
