@@ -32,6 +32,7 @@ install_arch_packages() {
 		# Work
 		teams
 		microsoft-edge-stable-bin
+		clickup
 
 		# Dev
 		alacritty
