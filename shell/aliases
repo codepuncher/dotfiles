@@ -103,33 +103,31 @@ set_posts_statuses() {
 	wp post update "$(wp post list --post_type="$1" --post_status="$2" --format=ids)" --post_status="$3"
 }
 project() {
-	wp_path="$HOME/Code/wordpress"
+	WP_PATH="${HOME}/Code/wordpress"
 
-	if [ -z "$1" ]; then
-		new_path="$wp_path"
+	if [ -z "${1}" ]; then
+		NEW_PATH="${WP_PATH}"
 	else
-		new_path="$wp_path/$1"
+		NEW_PATH="${WP_PATH}/${1}"
 	fi
 
-	if [ -z "$2" ]; then
-		cd "$new_path" || exit
-		return
+	if [ -z "${2}" ]; then
+		cd "${NEW_PATH}" && return || return
 	fi
 
-	if [[ "$2" == @(bedrock|trellis) || "$2" != "theme" ]]; then
-		cd "$new_path/$2" || exit
-		return
+	if [[ "${2}" == @(bedrock|trellis) || "${2}" != "theme" ]]; then
+		cd "${NEW_PATH}/${2}" && return || return
 	fi
 
 	# Find only themes using Composer.
-	themes=("$new_path/bedrock/web/app/themes/"*/composer.json)
-	theme_path="${themes[1]//composer.json/}"
-	if [ -z "$theme_path" ]; then
+	THEMES=("${NEW_PATH}/bedrock/web/app/themes/"*/composer.json)
+	THEME_PATH="${THEMES[1]//composer.json/}"
+	if [ -z "${THEME_PATH}" ]; then
 		echo "No theme available"
 		return
 	fi
 
-	cd "$theme_path" || exit
+	cd "${THEME_PATH}" || return
 }
 trellis_generate_deploy_key() {
 	remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/trellis/bedrock/g')
