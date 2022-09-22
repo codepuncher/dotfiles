@@ -117,6 +117,8 @@ install_node_packages() {
 		intelephense
 		yaml-language-server
 		@ansible/ansible-language-server
+		stylelint-lsp
+		vscode-langservers-extracted
 	)
 
 	# shellcheck disable=2046
@@ -140,7 +142,7 @@ install_go_packages() {
 
 install_composer_packages() {
 	PACKAGES=(
-		cpriego/valet-linux
+		cpriego/valet-linux:dev-master
 		wp-cli/wp-cli-bundle
 		itinerisltd/itineris-wp-coding-standards
 	)
