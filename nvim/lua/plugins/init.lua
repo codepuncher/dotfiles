@@ -100,6 +100,12 @@ return packer.startup(function(use)
       end,
     },
     'lukas-reineke/indent-blankline.nvim',
+    {
+      'rcarriga/nvim-notify',
+      config = function()
+        vim.notify = require('notify')
+      end,
+    },
   })
 
   -- Treesitter
