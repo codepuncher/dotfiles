@@ -167,6 +167,18 @@ install_pip_packages() {
 	)
 }
 
+install_cargo_packages() {
+	PACKAGES=(
+		stylua
+	)
+
+	# shellcheck disable=2046
+	cargo install $(
+		IFS=' '
+		echo "${PACKAGES[*]}"
+	)
+}
+
 post_install_packages() {
 	section_start 'Post package install'
 

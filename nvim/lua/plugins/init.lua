@@ -19,7 +19,6 @@ local ensure_packer = function()
 end
 
 local packer_bootstrap = ensure_packer()
-
 local _packer, packer = pcall(require, 'packer')
 if not _packer then
   return
