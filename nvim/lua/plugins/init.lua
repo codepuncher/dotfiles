@@ -280,7 +280,9 @@ return packer.startup(function(use)
     {
       'iamcco/markdown-preview.nvim',
       run = 'cd app && yarn',
-      setup = function() vim.g.mkdp_filetypes = { 'markdown' } end,
+      setup = function()
+        vim.g.mkdp_filetypes = { 'markdown' }
+      end,
       ft = {
         'markdown',
       },
