@@ -23,6 +23,8 @@ install_arch_packages() {
 		plank
 		spotify-launcher
 		spotifyd
+		pandoc
+		texlive-core
 
 		# Social
 		discord
@@ -33,10 +35,12 @@ install_arch_packages() {
 		teams
 		microsoft-edge-stable-bin
 		clickup
+		zoom
 
 		# Dev
 		alacritty
 		tmux
+		github-cli
 		go
 		rustup
 		nginx
@@ -73,7 +77,6 @@ install_arch_packages() {
 		vim
 		tldr
 		git
-		github-cli
 		jq
 		ripgrep
 		exa
@@ -119,6 +122,9 @@ install_node_packages() {
 		@ansible/ansible-language-server
 		stylelint-lsp
 		vscode-langservers-extracted
+		markdownlint
+		markdownlint-cli
+		@fsouza/prettierd
 	)
 
 	# shellcheck disable=2046
@@ -160,6 +166,7 @@ install_pip_packages() {
 
 	PACKAGES=(
 		yamllint
+		csvkit
 	)
 
 	# shellcheck disable=2046
@@ -181,7 +188,7 @@ post_install_packages() {
 	sudo sed -Ei '/^;extension=gd/s/^;//' /etc/php7/php.ini
 
 	echo 'Installing `spotify-tui'
-	mkdir "$HOME/.rustup"
+	mkdir "${HOME}/.rustup"
 	rustup default stable
 	pamac install --no-confirm --no-upgrade spotify-tui
 }
@@ -197,4 +204,9 @@ post_setup_arch_services() {
 	sudo mysql -e "CREATE USER 'wp'@'localhost' IDENTIFIED BY 'wp'"
 	sudo mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'wp'@'localhost' WITH GRANT OPTION"
 	sudo mysql -e "FLUSH PRIVILEGES"
+}
+
+setup_arch_system_emoji_support() {
+	sudo pamac install noto-fonts-emoji
+	sudo cp ~/.dotfiles/templates/fonts-local.conf /etc/fonts/local.conf
 }

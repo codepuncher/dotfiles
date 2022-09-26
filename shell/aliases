@@ -55,8 +55,20 @@ alias yrb='y run build'
 alias yrbp='y run build:production'
 
 # WordPress
-alias export_staging='wp @staging db export - > "staging_db_$(date +%F).sql"'
-alias export_production='wp @production db export - > "production_db_$(date +%F).sql"'
+wp_db_export() {
+	ENVIRONMENT="${1}"
+	if [[ -z "${ENVIRONMENT}" ]]; then
+		echo 'Please specify an environment'
+		if [[ -f wp-cli.trellis-alias.yml ]]; then
+			cat wp-cli.trellis-alias.yml
+		fi
+		return
+	fi
+
+	ENVIRONMENT="${ENVIRONMENT//@/}"
+
+	wp "@${ENVIRONMENT}" db export - >"${ENVIRONMENT}_db_$(date +%F).sql"
+}
 alias t='trellis'
 trellis_copy_basic_auth_pass() {
 	[ -z "$1" ] && ENVIRONMENT='staging' || ENVIRONMENT="$1"
@@ -152,6 +164,28 @@ gh_set_repo_pat() {
 
 	remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/-trellis//g;s/-bedrock//g')
 	gh secret set REPO_PAT -b "$1" --repo "${remote}-bedrock"
+}
+valet() {
+	case "${1}" in
+	open)
+		ARGS=("open")
+		if [[ -n "${2}" ]]; then
+			ARGS+=("${2}")
+		else
+			DIRNAME="$(dirname "${PWD}")"
+			CURRDIRNAME="$(basename "${PWD}")"
+			if [[ bedrock == "${CURRDIRNAME}" ]]; then
+				BASENAME="$(basename "${DIRNAME}")"
+				ARGS+=("${BASENAME}")
+			fi
+		fi
+		;;
+	*)
+		ARGS=("${@}")
+		;;
+	esac
+
+	/usr/local/bin/valet "${ARGS[@]}"
 }
 
 # Navigation
