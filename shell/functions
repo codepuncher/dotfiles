@@ -137,13 +137,12 @@ install_node_packages() {
 install_go_packages() {
 	PACKAGES=(
 		mvdan.cc/sh/v3/cmd/shfmt@latest
+		github.com/rhysd/actionlint/cmd/actionlint@latest
 	)
 
-	# shellcheck disable=2046
-	go install $(
-		IFS=' '
-		echo "${PACKAGES[*]}"
-	)
+	for P in "${PACKAGES[@]}"; do
+		go install "${P}"
+	done
 }
 
 install_composer_packages() {
@@ -171,6 +170,18 @@ install_pip_packages() {
 
 	# shellcheck disable=2046
 	python -m pip install --user $(
+		IFS=' '
+		echo "${PACKAGES[*]}"
+	)
+}
+
+install_cargo_packages() {
+	PACKAGES=(
+		stylua
+	)
+
+	# shellcheck disable=2046
+	cargo install $(
 		IFS=' '
 		echo "${PACKAGES[*]}"
 	)
