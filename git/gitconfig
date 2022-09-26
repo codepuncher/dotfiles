@@ -16,3 +16,5 @@
 	conflicts = diff --name-only --diff-filter=U
 [init]
 	defaultBranch = main
+[push]
+	autoSetupRemote = true

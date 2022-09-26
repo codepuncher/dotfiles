@@ -277,6 +277,16 @@ return packer.startup(function(use)
         'blade',
       },
     },
+    {
+      'iamcco/markdown-preview.nvim',
+      run = 'cd app && yarn',
+      setup = function()
+        vim.g.mkdp_filetypes = { 'markdown' }
+      end,
+      ft = {
+        'markdown',
+      },
+    },
   })
 
   if packer_bootstrap then

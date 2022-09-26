@@ -55,8 +55,20 @@ alias yrb='y run build'
 alias yrbp='y run build:production'
 
 # WordPress
-alias export_staging='wp @staging db export - > "staging_db_$(date +%F).sql"'
-alias export_production='wp @production db export - > "production_db_$(date +%F).sql"'
+wp_db_export() {
+	ENVIRONMENT="${1}"
+	if [[ -z "${ENVIRONMENT}" ]]; then
+		echo 'Please specify an environment'
+		if [[ -f wp-cli.trellis-alias.yml ]]; then
+			cat wp-cli.trellis-alias.yml
+		fi
+		return
+	fi
+
+	ENVIRONMENT="${ENVIRONMENT//@/}"
+
+	wp "@${ENVIRONMENT}" db export - >"${ENVIRONMENT}_db_$(date +%F).sql"
+}
 alias t='trellis'
 trellis_copy_basic_auth_pass() {
 	[ -z "$1" ] && ENVIRONMENT='staging' || ENVIRONMENT="$1"
@@ -103,33 +115,31 @@ set_posts_statuses() {
 	wp post update "$(wp post list --post_type="$1" --post_status="$2" --format=ids)" --post_status="$3"
 }
 project() {
-	wp_path="$HOME/Code/wordpress"
+	WP_PATH="${HOME}/Code/wordpress"
 
-	if [ -z "$1" ]; then
-		new_path="$wp_path"
+	if [ -z "${1}" ]; then
+		NEW_PATH="${WP_PATH}"
 	else
-		new_path="$wp_path/$1"
+		NEW_PATH="${WP_PATH}/${1}"
 	fi
 
-	if [ -z "$2" ]; then
-		cd "$new_path" || exit
-		return
+	if [ -z "${2}" ]; then
+		cd "${NEW_PATH}" && return || return
 	fi
 
-	if [[ "$2" == @(bedrock|trellis) || "$2" != "theme" ]]; then
-		cd "$new_path/$2" || exit
-		return
+	if [[ "${2}" == @(bedrock|trellis) || "${2}" != "theme" ]]; then
+		cd "${NEW_PATH}/${2}" && return || return
 	fi
 
 	# Find only themes using Composer.
-	themes=("$new_path/bedrock/web/app/themes/"*/composer.json)
-	theme_path="${themes[1]//composer.json/}"
-	if [ -z "$theme_path" ]; then
+	THEMES=("${NEW_PATH}/bedrock/web/app/themes/"*/composer.json)
+	THEME_PATH="${THEMES[1]//composer.json/}"
+	if [ -z "${THEME_PATH}" ]; then
 		echo "No theme available"
 		return
 	fi
 
-	cd "$theme_path" || exit
+	cd "${THEME_PATH}" || return
 }
 trellis_generate_deploy_key() {
 	remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/trellis/bedrock/g')
@@ -154,6 +164,28 @@ gh_set_repo_pat() {
 
 	remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/-trellis//g;s/-bedrock//g')
 	gh secret set REPO_PAT -b "$1" --repo "${remote}-bedrock"
+}
+valet() {
+	case "${1}" in
+	open)
+		ARGS=("open")
+		if [[ -n "${2}" ]]; then
+			ARGS+=("${2}")
+		else
+			DIRNAME="$(dirname "${PWD}")"
+			CURRDIRNAME="$(basename "${PWD}")"
+			if [[ bedrock == "${CURRDIRNAME}" ]]; then
+				BASENAME="$(basename "${DIRNAME}")"
+				ARGS+=("${BASENAME}")
+			fi
+		fi
+		;;
+	*)
+		ARGS=("${@}")
+		;;
+	esac
+
+	/usr/local/bin/valet "${ARGS[@]}"
 }
 
 # Navigation
