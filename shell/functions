@@ -120,11 +120,14 @@ install_node_packages() {
 		intelephense
 		yaml-language-server
 		@ansible/ansible-language-server
+		stylelint
 		stylelint-lsp
 		vscode-langservers-extracted
 		markdownlint
 		markdownlint-cli
 		@fsouza/prettierd
+		typescript
+		typescript-language-server
 	)
 
 	# shellcheck disable=2046
