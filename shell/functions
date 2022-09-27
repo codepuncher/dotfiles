@@ -116,18 +116,19 @@ setup_arch_services() {
 
 install_node_packages() {
 	PACKAGES=(
-		bash-language-server
-		intelephense
-		yaml-language-server
 		@ansible/ansible-language-server
-		stylelint
-		stylelint-lsp
-		vscode-langservers-extracted
+		@fsouza/prettierd
+		bash-language-server
+		eslint_d
+		intelephense
 		markdownlint
 		markdownlint-cli
-		@fsouza/prettierd
+		stylelint
+		stylelint-lsp
 		typescript
 		typescript-language-server
+		vscode-langservers-extracted
+		yaml-language-server
 	)
 
 	# shellcheck disable=2046
