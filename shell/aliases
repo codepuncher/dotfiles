@@ -60,14 +60,19 @@ wp_db_export() {
 	if [[ -z "${ENVIRONMENT}" ]]; then
 		echo 'Please specify an environment'
 		if [[ -f wp-cli.trellis-alias.yml ]]; then
-			cat wp-cli.trellis-alias.yml
+			rg --color never --no-line-number --only-matching '^@[^:]*' wp-cli.trellis-alias.yml
+			echo '@development'
 		fi
 		return
 	fi
 
 	ENVIRONMENT="${ENVIRONMENT//@/}"
 
-	wp "@${ENVIRONMENT}" db export - >"${ENVIRONMENT}_db_$(date +%F).sql"
+	if [[ 'development' == "${ENVIRONMENT}" ]]; then
+		wp db export - >"${ENVIRONMENT}_db_$(date +%F).sql"
+	else
+		wp "@${ENVIRONMENT}" db export - >"${ENVIRONMENT}_db_$(date +%F).sql"
+	fi
 }
 alias t='trellis'
 trellis_copy_basic_auth_pass() {
