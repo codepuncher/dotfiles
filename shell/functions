@@ -125,6 +125,7 @@ install_node_packages() {
 		markdownlint-cli
 		stylelint
 		stylelint-lsp
+		stylelint-config-prettier
 		typescript
 		typescript-language-server
 		vscode-langservers-extracted
