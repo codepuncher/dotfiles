@@ -92,13 +92,13 @@ trellis_copy_basic_auth_pass() {
 }
 wp_get_user_id() {
 	[ -z "$1" ] && email='wordpress@itineris.co.uk' || email="$1"
-	wp user get "$email" --field=ID --format=csv | head -n1 | tr -d '\n'
+	wp user get "$email" --field=ID --format=csv --skip-themes --skip-plugins | head -n1 | tr -d '\n'
 }
 wp_copy_user_id() {
 	wp_get_user_id "$1" | pbcopy
 }
 wp_reset_local_user_pass() {
-	wp user update "$(wp_get_user_id)" --user_pass=admin
+	wp user update "$(wp_get_user_id)" --user_pass=admin --skip-themes --skip-plugins
 }
 generate_vault_pass() {
 	vault_pass=$(
