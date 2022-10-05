@@ -1,13 +1,8 @@
 #!/usr/bin/env bash
 
-if ping -q -c 1 www.google.co.uk &>/dev/null; then
-	echo 'Can already resolve www.google.co.uk'
+if ping -q -c 1 api.github.com &>/dev/null; then
+	echo 'Can already resolve api.github.com'
 	exit 0
-fi
-
-if [ ! -f /run/systemd/resolve/resolv.conf ]; then
-	echo 'Creating /run/systemd/resolve/resolv.conf'
-	sudo systemctl restart systemd-resolved
 fi
 
 if [ -f /etc/resolv.conf ]; then
@@ -15,5 +10,6 @@ if [ -f /etc/resolv.conf ]; then
 	sudo rm /etc/resolv.conf
 fi
 
-sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+echo 'Linking custom resolv.conf'
+sudo ln -s "${HOME}/.dotfiles/templates/resolv.conf" /etc/resolv.conf
 sudo systemctl restart dnsmasq
