@@ -130,8 +130,11 @@ return packer.startup(function(use)
 
   -- Language Server Protocol
   use({
-    'neovim/nvim-lspconfig',
-    'folke/lua-dev.nvim',
+    'folke/neodev.nvim',
+    {
+      'neovim/nvim-lspconfig',
+      before = 'neodev',
+    },
     'jose-elias-alvarez/typescript.nvim',
     {
       'jose-elias-alvarez/null-ls.nvim',
