@@ -86,6 +86,7 @@ install_arch_packages() {
 		xclip
 		imagemagick
 		dnsutils
+		bat
 	)
 
 	# shellcheck disable=2046

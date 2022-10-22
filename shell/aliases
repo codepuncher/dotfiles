@@ -226,6 +226,7 @@ alias generate_string='openssl rand -base64 500 | tr -dc "a-zA-Z0-9" | fold -w 1
 alias generate_satis_pass='openssl rand -base64 500 | tr -dc a-zA-Z0-9 | fold -w 64 | head -n 1'
 alias clear_dns_cache='sudo killall -HUP mDNSResponder'
 alias cat='cat -n'
+alias find_bad_words='curl --silent http://www.bannedwordlist.com/lists/swearWords.txt > /tmp/badwords && rg --word-regexp --file=/tmp/badwords'
 
 watch_file() {
 	tail -f "${1}" | bat --paging=never -l log
