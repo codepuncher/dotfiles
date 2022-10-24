@@ -10,6 +10,8 @@ if [ -f /etc/resolv.conf ]; then
 	sudo rm /etc/resolv.conf
 fi
 
-echo 'Linking custom resolv.conf'
-sudo ln -s "${HOME}/.dotfiles/templates/resolv.conf" /etc/resolv.conf
-sudo systemctl restart dnsmasq
+echo 'Linking Valet resolv.conf'
+sudo ln -s /opt/valet-linux/resolv.conf /etc/resolv.conf
+
+echo 'Adding "nameserver 1.1.1.1" to /etc/resolv.conf'
+echo 'nameserver 1.1.1.1' | sudo tee -a /etc/resolv.conf
