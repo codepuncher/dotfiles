@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+# Source common functions
+source "$HOME/.dotfiles/shell/functions"
+
+# Set script varibles
+PROJECT="$1"
+ENVIRONMENT="$2"
+
+if ! [ -x "$(command -v wp)" ]; then
+  # shellcheck disable=SC2016
+  error 'wp is not in $PATH.'
+fi
+
+if [[ -z "$PROJECT" ]]; then
+  error 'No project specified.'
+fi
+
+if [[ -z "$ENVIRONMENT" ]]; then
+  error 'No alias/environment specified.'
+fi
+
+PROJECT_PATH="$HOME/Code/wordpress/$PROJECT"
+# shellcheck disable=SC2269
+PROJECT_PATH="$PROJECT_PATH" && [[ -d "$PROJECT_PATH/bedrock" ]] && PROJECT_PATH="$PROJECT_PATH/bedrock"
+if [[ ! -d "$PROJECT_PATH" ]]; then
+  error "Project $PROJECT_PATH does not exist."
+fi
+
+CWD="$PWD"
+ALIAS_DATA=$(cd "$PROJECT_PATH" && wp cli alias get "@$ENVIRONMENT" 2>&1)
+# shellcheck disable=SC2181
+if [[ "$?" -ne 0 ]]; then
+  cd "$CWD" || exit
+  error "Environment '$ENVIRONMENT' does not exist."
+fi
+
+cd "$CWD" || exit
+
+ALIAS_SSH_STRING="${ALIAS_DATA#*ssh: }"
+if [[ -z "$ALIAS_SSH_STRING" ]]; then
+  cd "$CWD" || exit
+  error 'Invalid SSH string'
+fi
+
+ALIAS_PATH_STRING=$(sed -n -e 's/^path: //p' <<<"$ALIAS_DATA")
+if [[ -z "$ALIAS_PATH_STRING" ]]; then
+  cd "$CWD" || exit
+  error 'Invalid path string'
+fi
+
+SSH_USER=${ALIAS_SSH_STRING%%@*}
+SSH_HOST=${ALIAS_SSH_STRING%%:*}; SSH_HOST=${SSH_HOST##*@}
+SSH_PORT=${ALIAS_SSH_STRING##*:}
+
+# shellcheck disable=SC2181
+if [ "$?" -ne 0 ] || [ -z "$SSH_USER" ] || [ -z "$SSH_HOST" ] || [ -z "$SSH_PORT" ]; then
+  cd "$CWD" || exit
+  error "Invalid SSH string: $ALIAS_SSH_STRING"
+fi
+
+ssh "$SSH_USER@$SSH_HOST" -p "$SSH_PORT"

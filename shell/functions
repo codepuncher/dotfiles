@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# General shell functions
+
+## Source common environment variables
+source "$HOME/.dotfiles/shell/variables"
+
+error() {
+  [[ -n "$DF_LOG_PATH" ]] && LOG_PATH="$DF_LOG_PATH" || LOG_PATH="$HOME/.dotfiles/bin/logs"
+  SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  mkdir -p "$LOG_PATH"
+  echo "$*" | tee "$HOME/logs/$PROJECT-$ENVIRONMENT-$DATETIME-results-failed.log"
+  exit 1
+}

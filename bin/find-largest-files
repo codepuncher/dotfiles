@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+MAX_FILES=10
+
+cd ~/public
+
+UPLOADS_DIRECTORY=$(readlink -f $(wp eval 'echo wp_get_upload_dir()["basedir"];'))
+
+find "$UPLOADS_DIRECTORY/" -printf '%s %p\n' | sort -nr | head -n "$MAX_FILES"

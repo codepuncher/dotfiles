@@ -42,9 +42,9 @@ _M.setup = function(on_attach)
         prefer_local = './vendor/bin',
       }),
       formatting.prettierd,
-      formatting.stylelint.with({
-        prefer_local = './node_modules/stylelint/bin',
-      }),
+      -- formatting.stylelint.with({
+      --   prefer_local = './node_modules/stylelint/bin',
+      -- }),
       formatting.stylua,
       formatting.shfmt.with({
         filetypes = {

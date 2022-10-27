@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+if [[ -z "$1" ]]; then
+  echo 'No project specified.'
+  exit 1
+fi
+
+if [[ -z "$2" ]]; then
+  echo 'No alias/environment specified.'
+  exit 1
+fi
+
+if [[ -z "$3" ]]; then
+  echo 'No filetype specified.'
+  exit 1
+fi
+
+PROJECT_PATH="$HOME/Code/wordpress/$1"
+if [[ ! -d "$PROJECT_PATH" ]]; then
+  echo "Project $PROJECT_PATH does not exist."
+  exit 1
+fi
+
+"$HOME/.dotfiles/bin/run_remote_project_command" "$1" "$2" "find public/shared/uploads/ -type f -name '*.$3'"
