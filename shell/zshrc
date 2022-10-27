@@ -25,9 +25,6 @@ if type composer &>/dev/null; then
 	export PATH="$PATH:$(composer config -g home)/vendor/bin"
 fi
 
-# Yarn
-export PATH="$PATH:$HOME/.yarn/bin"
-
 # Homebrew
 if type brew &>/dev/null; then
 	FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
@@ -65,10 +62,6 @@ if [ -f ~/.shell_env ]; then
 	source ~/.shell_env
 fi
 
-# Node
-export NVM_SYMLINK_CURRENT=true
-export NVM_AUTO_USE=true
-
 # Plugins
 zinit ice wait"0b" lucid atload'bindkey "$terminfo[kcuu1]" history-substring-search-up; bindkey "$terminfo[kcud1]" history-substring-search-down'
 zinit light zsh-users/zsh-history-substring-search
@@ -80,11 +73,13 @@ zinit light zsh-users/zsh-completions
 zinit ice wait"0c" lucid atinit"zpcompinit;zpcdreplay"
 zinit light zdharma-continuum/fast-syntax-highlighting
 zinit ice wait"1" lucid
+zinit ice atload '! type node &>/dev/null && nvm install --lts'
 zinit light lukechilds/zsh-nvm
 zinit snippet OMZP::npm
 
 # Theme
-zinit light denysdovhan/spaceship-prompt
+zinit light spaceship-prompt/spaceship-prompt
+zinit light spaceship-prompt/spaceship-vi-mode
 
 # Spaceship Prompt
 SPACESHIP_TIME_SHOW=true
@@ -100,7 +95,7 @@ SPACESHIP_PROMPT_ORDER=(
 	exec_time # Execution time
 	line_sep  # Line break
 	battery   # Battery level and status
-	vi_mode   # Vi-mode indicator
+	# vi_mode   # Vi-mode indicator
 	jobs      # Background jobs indicator
 	exit_code # Exit code section
 	char      # Prompt character
@@ -109,6 +104,8 @@ SPACESHIP_PROMPT_ORDER=(
 SPACESHIP_RPROMPT_ORDER=(
 	time # Time stampts section
 )
+
+spaceship add --before char vi_mode
 
 # Setup history
 HISTFILE=~/.zsh_history
@@ -120,7 +117,27 @@ autoload -U compinit && compinit
 zmodload -i zsh/complist
 compdef __git_branch_names gpDo
 
-# Trellis virtualenv shell integration
+# Node
+export NVM_SYMLINK_CURRENT=true
+export NVM_AUTO_USE=true
+if ! type node &>/dev/null; then
+	nvm install --lts
+fi
+
+# Yarn
+if ! type yarn &>/dev/null; then
+	if ! type corepack; then
+		npm i -g corepack
+	fi
+
+	corepack enable
+fi
+export PATH="$PATH:$HOME/.yarn/bin"
+
+# Trellis
+if ! type trellis &>/dev/null; then
+	curl -sL https://raw.githubusercontent.com/roots/trellis-cli/master/scripts/get | bash -s -- -b ~/.local/bin
+fi
 eval "$(trellis shell-init zsh)"
 
 # Load aliases

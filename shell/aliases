@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Git
 alias g='git'
 alias ga='g add'
@@ -13,18 +15,19 @@ alias gm='g merge'
 alias gp='g push'
 alias gr='g reset'
 alias gs='g status -sb'
-if [[ "${OSTYPE:0:6}" =~ ^linux.* ]] ; then
-  alias git_copy_branch='gb --show-current | xclip -selection c'
-elif [[ "${OSTYPE:0:6}" = 'darwin' ]] ; then
-  alias git_copy_branch='gb --show-current | pbcopy'
+if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
+	alias git_copy_branch='gb --show-current | xclip -selection c'
+elif [[ "${OSTYPE:0:6}" = 'darwin' ]]; then
+	alias git_copy_branch='gb --show-current | pbcopy'
 fi
 alias gcb='git_copy_branch'
+# shellcheck disable=SC2154
 alias git_set_missing_end_of_file='git ls-files -z | while IFS= read -rd "" f; do tail -c1 < "$f" | read -r _ || echo >> "$f"; done'
 function gh_repo_list() {
-  if [ -z "$1" ]; then
-    echo 'Please specify a repo prefix (e.g. "bedrock")'
-  fi
-  gh repo list ItinerisLtd --private --no-archived --source --limit 400 --json name --jq ". | values[] | select(.name | endswith(\"${1}\")) | values[]"
+	if [ -z "$1" ]; then
+		echo 'Please specify a repo prefix (e.g. "bedrock")'
+	fi
+	gh repo list ItinerisLtd --private --no-archived --source --limit 400 --json name --jq ". | values[] | select(.name | endswith(\"${1}\")) | values[]"
 }
 
 # Composer
@@ -52,98 +55,142 @@ alias yrb='y run build'
 alias yrbp='y run build:production'
 
 # WordPress
-alias export_staging='wp @staging db export - > "staging_db_$(date +%F).sql"'
-alias export_production='wp @production db export - > "production_db_$(date +%F).sql"'
+wp_db_export() {
+	ENVIRONMENT="${1}"
+	if [[ -z "${ENVIRONMENT}" ]]; then
+		echo 'Please specify an environment'
+		if [[ -f wp-cli.trellis-alias.yml ]]; then
+			rg --color never --no-line-number --only-matching '^@[^:]*' wp-cli.trellis-alias.yml
+			echo '@development'
+		fi
+		return
+	fi
+
+	ENVIRONMENT="${ENVIRONMENT//@/}"
+
+	if [[ 'development' == "${ENVIRONMENT}" ]]; then
+		wp db export - >"${ENVIRONMENT}_db_$(date +%F).sql"
+	else
+		wp "@${ENVIRONMENT}" db export - >"${ENVIRONMENT}_db_$(date +%F).sql"
+	fi
+}
 alias t='trellis'
 trellis_copy_basic_auth_pass() {
-  [ -z "$1" ] && ENVIRONMENT='staging' || ENVIRONMENT="$1"
-  if [ ! -f "hosts/$ENVIRONMENT" ]; then
-    echo 'Invalid environment provided'
-    return 1
-  fi
+	[ -z "$1" ] && ENVIRONMENT='staging' || ENVIRONMENT="$1"
+	if [ ! -f "hosts/$ENVIRONMENT" ]; then
+		echo 'Invalid environment provided'
+		return 1
+	fi
 
-  AUTH_PASS=$(trellis vault view "$ENVIRONMENT" | grep -o "http_basic_auth_password: .*" | cut -f2- -d: | cut -c2-)
-  echo "$AUTH_PASS"
-  echo "$AUTH_PASS" | pbcopy
+	AUTH_PASS=$(trellis vault view "$ENVIRONMENT" | grep -o "http_basic_auth_password: .*" | cut -f2- -d: | cut -c2-)
+	echo "$AUTH_PASS"
+	if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
+		echo "$AUTH_PASS" | xclip -selection c
+	elif [[ "${OSTYPE:0:6}" = 'darwin' ]]; then
+		echo "$AUTH_PASS" | pbcopy
+	fi
 }
 wp_get_user_id() {
-  [ -z "$1" ] && email='wordpress@itineris.co.uk' || email="$1"
-  wp user get "$email" --field=ID --format=csv | head -n1 | tr -d '\n'
+	[ -z "$1" ] && email='wordpress@itineris.co.uk' || email="$1"
+	wp user get "$email" --field=ID --format=csv --skip-themes --skip-plugins | head -n1 | tr -d '\n'
 }
 wp_copy_user_id() {
-  wp_get_user_id "$1" | pbcopy
+	wp_get_user_id "$1" | pbcopy
 }
 wp_reset_local_user_pass() {
-  wp user update $(wp_get_user_id) --user_pass=admin
+	wp user update "$(wp_get_user_id)" --user_pass=admin --skip-themes --skip-plugins
 }
 generate_vault_pass() {
-  vault_pass=$(LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 512; echo '')
-  echo "$vault_pass" > .vault_pass
+	vault_pass=$(
+		LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 512
+		echo ''
+	)
+	echo "$vault_pass" >.vault_pass
 }
 delete_posts() {
-  wp post delete $(wp post list --post_type=$1 --format=ids) --force
+	wp post delete "$(wp post list --post_type="$1" --format=ids)" --force
 }
 publish_draft_posts() {
-  wp post update $(wp post list --post_type=$1 --post_status=draft --format=ids) --post_status=publish
+	wp post update "$(wp post list --post_type="$1" --post_status=draft --format=ids)" --post_status=publish
 }
 delete_terms() {
-  wp term delete $1 $(wp term list $1 --format=ids)
+	wp term delete "$1" "$(wp term list "$1" --format=ids)"
 }
 set_posts_statuses() {
-  wp post update $(wp post list --post_type=$1 --post_status=$2 --format=ids) --post_status=$3
+	wp post update "$(wp post list --post_type="$1" --post_status="$2" --format=ids)" --post_status="$3"
 }
 project() {
-  wp_path="$HOME/Code/wordpress"
+	WP_PATH="${HOME}/Code/wordpress"
 
-  if [ -z "$1" ]; then
-    new_path="$wp_path"
-  else
-    new_path="$wp_path/$1"
-  fi
+	if [ -z "${1}" ]; then
+		NEW_PATH="${WP_PATH}"
+	else
+		NEW_PATH="${WP_PATH}/${1}"
+	fi
 
-  if [ -z "$2" ]; then
-    cd "$new_path"
-    return
-  fi
+	if [ -z "${2}" ]; then
+		cd "${NEW_PATH}" && return || return
+	fi
 
-  if [[ "$2" == @(bedrock|trellis) || "$2" != "theme" ]]; then
-    cd "$new_path/$2"
-    return
-  fi
+	if [[ "${2}" == @(bedrock|trellis) || "${2}" != "theme" ]]; then
+		cd "${NEW_PATH}/${2}" && return || return
+	fi
 
-  # Find only themes using Composer.
-  themes=("$new_path/bedrock/web/app/themes/"*/composer.json)
-  theme_path="${themes[1]//composer.json/}"
-  if [ -z "$theme_path" ]; then
-    echo "No theme available"
-    return
-  fi
+	# Find only themes using Composer.
+	THEMES=("${NEW_PATH}/bedrock/web/app/themes/"*/composer.json)
+	THEME_PATH="${THEMES[1]//composer.json/}"
+	if [ -z "${THEME_PATH}" ]; then
+		echo "No theme available"
+		return
+	fi
 
-  cd "$theme_path"
+	cd "${THEME_PATH}" || return
 }
 trellis_generate_deploy_key() {
-  local remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/trellis/bedrock/g')
-  local known_hosts=$(rg 'ansible_host=\d.*\s' hosts/production -o | rg -o '\d.*')
-  trellis key generate --repo "$remote" --known-hosts "$known_hosts" --no-provision
+	remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/trellis/bedrock/g')
+	known_hosts=$(rg 'ansible_host=\d.*\s' hosts/production -o | rg -o '\d.*')
+	trellis key generate --repo "$remote" --known-hosts "$known_hosts" --no-provision
 }
 gh_set_vault_pass() {
-  local remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/-trellis//g;s/-bedrock//g')
-  if [[ "$PWD" == *bedrock ]]; then
-    local vault_pass='../trellis/.vault_pass'
-  elif [[ "$PWD" == *trellis ]]; then
-    local vault_pass='./.vault_pass'
-  fi
-  gh secret set ANSIBLE_VAULT_PASSWORD < "$vault_pass" --repo "${remote}-trellis"
-  gh secret set ANSIBLE_VAULT_PASSWORD < "$vault_pass" --repo "${remote}-bedrock"
+	remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/-trellis//g;s/-bedrock//g')
+	if [[ "$PWD" == *bedrock ]]; then
+		local vault_pass='../trellis/.vault_pass'
+	elif [[ "$PWD" == *trellis ]]; then
+		local vault_pass='./.vault_pass'
+	fi
+	gh secret set ANSIBLE_VAULT_PASSWORD --repo "${remote}-trellis" <"$vault_pass"
+	gh secret set ANSIBLE_VAULT_PASSWORD --repo "${remote}-bedrock" <"$vault_pass"
 }
 gh_set_repo_pat() {
-  if [ -z "$1" ]; then
-    echo 'Please provide a PAT.'
-    exit 1
-  fi
+	if [ -z "$1" ]; then
+		echo 'Please provide a PAT.'
+		exit 1
+	fi
 
-  local remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/-trellis//g;s/-bedrock//g')
-  gh secret set REPO_PAT -b "$1" --repo "${remote}-bedrock"
+	remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/-trellis//g;s/-bedrock//g')
+	gh secret set REPO_PAT -b "$1" --repo "${remote}-bedrock"
+}
+valet() {
+	case "${1}" in
+	open)
+		ARGS=("open")
+		if [[ -n "${2}" ]]; then
+			ARGS+=("${2}")
+		else
+			DIRNAME="$(dirname "${PWD}")"
+			CURRDIRNAME="$(basename "${PWD}")"
+			if [[ bedrock == "${CURRDIRNAME}" ]]; then
+				BASENAME="$(basename "${DIRNAME}")"
+				ARGS+=("${BASENAME}")
+			fi
+		fi
+		;;
+	*)
+		ARGS=("${@}")
+		;;
+	esac
+
+	/usr/local/bin/valet "${ARGS[@]}"
 }
 
 # Navigation
@@ -156,20 +203,20 @@ alias up5='cd ../../../../..'
 # Misc
 alias v='vim'
 ## Use NVIM instead of VIM if installed
-if type nvim > /dev/null 2>&1; then
-  alias vim='nvim'
+if type nvim >/dev/null 2>&1; then
+	alias vim='nvim'
 fi
 ## Ensure full path is created
 alias mkdir='mkdir -p'
 ## Ensure coloured output on ls
-if [[ "${OSTYPE:0:6}" =~ ^linux.* ]] ; then
-  alias ls='ls --color'
-elif [[ "${OSTYPE:0:6}" = "darwin" ]] ; then
-  alias ls='ls -G'
+if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
+	alias ls='ls --color'
+elif [[ "${OSTYPE:0:6}" = "darwin" ]]; then
+	alias ls='ls -G'
 fi
 alias ll='ls -alh'
-if [[ "${OSTYPE:0:6}" =~ ^linux.* ]] ; then
-  alias open='xdg-open'
+if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
+	alias open='xdg-open'
 fi
 alias watch_error_log='tail -f ~/.valet/Log/nginx-error.log'
 alias ducks='du -cks * | sort -rn | head'
@@ -179,33 +226,34 @@ alias generate_string='openssl rand -base64 500 | tr -dc "a-zA-Z0-9" | fold -w 1
 alias generate_satis_pass='openssl rand -base64 500 | tr -dc a-zA-Z0-9 | fold -w 64 | head -n 1'
 alias clear_dns_cache='sudo killall -HUP mDNSResponder'
 alias cat='cat -n'
+alias find_bad_words='curl --silent http://www.bannedwordlist.com/lists/swearWords.txt > /tmp/badwords && rg --word-regexp --file=/tmp/badwords'
 
 watch_file() {
-  tail -f "${1}" | bat --paging=never -l log
+	tail -f "${1}" | bat --paging=never -l log
 }
 
 # Tmux
 tmux_layout() {
-  layout_file="$HOME/.dotfiles/tmux/layouts/$1.sh"
-  echo "$layout_file"
-  if [[ ! -f "$layout_file" ]]; then
-    echo 'Please specify a valid layout file'
-    return
-  fi
+	layout_file="$HOME/.dotfiles/tmux/layouts/$1.sh"
+	echo "$layout_file"
+	if [[ ! -f "$layout_file" ]]; then
+		echo 'Please specify a valid layout file'
+		return
+	fi
 
-  cwd=$(pwd)
-  if [[ -d "$2" ]]; then
-    working_dir="$2"
-  else
-    working_dir="$cwd"
-  fi
+	cwd=$(pwd)
+	if [[ -d "$2" ]]; then
+		working_dir="$2"
+	else
+		working_dir="$cwd"
+	fi
 
-  cd "$working_dir" && "$layout_file" && cd "$cwd"
+	cd "$working_dir" && "$layout_file" && cd "$cwd" || exit
 }
 
 # Previews
 mdp() {
-  pandoc "$1" | lynx -stdin
+	pandoc "$1" | lynx -stdin
 }
 
 # Laravel

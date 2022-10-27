@@ -5,9 +5,237 @@
 source "$HOME/.dotfiles/shell/variables"
 
 error() {
-  [[ -n "$DF_LOG_PATH" ]] && LOG_PATH="$DF_LOG_PATH" || LOG_PATH="$HOME/.dotfiles/bin/logs"
-  SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-  mkdir -p "$LOG_PATH"
-  echo "$*" | tee "$HOME/logs/$PROJECT-$ENVIRONMENT-$DATETIME-results-failed.log"
-  exit 1
+	[[ -n "$DF_LOG_PATH" ]] && LOG_PATH="$DF_LOG_PATH" || LOG_PATH="$HOME/.dotfiles/bin/logs"
+	SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+	mkdir -p "$LOG_PATH"
+	echo "$*" | tee "$HOME/logs/$PROJECT-$ENVIRONMENT-$DATETIME-results-failed.log"
+	exit 1
+}
+
+section_start() {
+	printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+	echo "${1}"
+}
+
+reinstall_dotfiles() {
+	rm -rf ~/.{local/bin,npm,nvm,zinit,go/bin,config/composer/vendor}
+	cd ~/.dotfiles && ./setup.sh
+}
+
+install_arch_packages() {
+	echo 'Enabling the AUR...'
+	sudo sed -Ei '/EnableAUR/s/^#//' /etc/pamac.conf
+
+	PACKAGES=(
+		# General
+		redshift
+		ulauncher
+		variety
+		bitwarden
+		plank
+		spotify-launcher
+		spotifyd
+		pandoc
+		texlive-core
+
+		# Social
+		discord
+		caprine
+		whatsapp-for-linux
+
+		# Work
+		teams
+		microsoft-edge-stable-bin
+		clickup
+		zoom
+
+		# Dev
+		alacritty
+		tmux
+		github-cli
+		go
+		rustup
+		nginx
+		mariadb
+		php7
+		php7-fpm
+		php7-gd
+		php7-imagick
+		php7-imap
+		php7-intl
+		php7-mcrypt
+		php7-memcache
+		php7-memcached
+		php7-xdebug
+		php7-xsl
+
+		# Fonts
+		nerd-fonts-anonymous-pro
+		nerd-fonts-dejavu-complete
+		nerd-fonts-fira-code
+		nerd-fonts-go-mono
+		nerd-fonts-hack
+		nerd-fonts-jetbrains-mono
+		nerd-fonts-liberation-mono
+		nerd-fonts-source-code-pro
+		nerd-fonts-terminus
+
+		# IDE
+		neovim-nightly-bin
+		lua-language-server
+		shellcheck
+
+		# System
+		vim
+		tldr
+		git
+		jq
+		ripgrep
+		exa
+		fd
+		git-delta
+		xsel
+		xclip
+		imagemagick
+		dnsutils
+		bat
+	)
+
+	# shellcheck disable=2046
+	sudo pamac install --no-confirm --no-upgrade $(
+		IFS=' '
+		echo "${PACKAGES[*]}"
+	)
+}
+
+setup_arch_services() {
+	SERVICES=(
+		nginx
+		mariadb
+		php-fpm
+	)
+
+	# shellcheck disable=2046
+	sudo systemctl start $(
+		IFS=' '
+		echo "${SERVICES[*]}"
+	)
+	# shellcheck disable=2046
+	sudo systemctl enable $(
+		IFS=' '
+		echo "${SERVICES[*]}"
+	)
+}
+
+install_node_packages() {
+	PACKAGES=(
+		@ansible/ansible-language-server
+		@fsouza/prettierd
+		bash-language-server
+		eslint_d
+		intelephense
+		markdownlint
+		markdownlint-cli
+		stylelint
+		stylelint-lsp
+		stylelint-config-prettier
+		typescript
+		typescript-language-server
+		vscode-langservers-extracted
+		yaml-language-server
+	)
+
+	# shellcheck disable=2046
+	yarn global add $(
+		IFS=' '
+		echo "${PACKAGES[*]}"
+	)
+}
+
+install_go_packages() {
+	PACKAGES=(
+		mvdan.cc/sh/v3/cmd/shfmt@latest
+		github.com/rhysd/actionlint/cmd/actionlint@latest
+	)
+
+	for P in "${PACKAGES[@]}"; do
+		go install "${P}"
+	done
+}
+
+install_composer_packages() {
+	PACKAGES=(
+		cpriego/valet-linux:dev-master
+		wp-cli/wp-cli-bundle
+		itinerisltd/itineris-wp-coding-standards
+	)
+
+	# shellcheck disable=2046
+	composer global require $(
+		IFS=' '
+		echo "${PACKAGES[*]}"
+	)
+}
+
+install_pip_packages() {
+	python -m ensurepip --upgrade
+	python -m pip install --upgrade pip
+
+	PACKAGES=(
+		yamllint
+		csvkit
+	)
+
+	# shellcheck disable=2046
+	python -m pip install --user $(
+		IFS=' '
+		echo "${PACKAGES[*]}"
+	)
+}
+
+install_cargo_packages() {
+	PACKAGES=(
+		stylua
+	)
+
+	# shellcheck disable=2046
+	cargo install $(
+		IFS=' '
+		echo "${PACKAGES[*]}"
+	)
+}
+
+post_install_packages() {
+	section_start 'Post package install'
+
+	# shellcheck disable=2016
+	echo 'Running `mariadb-install-db`'
+	sudo mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
+
+	echo 'Enabling PHP extensions'
+	sudo sed -Ei '/^;extension=mysqli/s/^;//' /etc/php7/php.ini
+	sudo sed -Ei '/^;extension=gd/s/^;//' /etc/php7/php.ini
+
+	echo 'Installing `spotify-tui'
+	mkdir "${HOME}/.rustup"
+	rustup default stable
+	pamac install --no-confirm --no-upgrade spotify-tui
+}
+
+post_setup_arch_services() {
+	section_start 'Post setup arch services'
+
+	# shellcheck disable=2016
+	echo 'Running `mysql_secure_installation`'
+	sudo mysql_secure_installation
+
+	echo -e 'Creating wp mysql user'
+	sudo mysql -e "CREATE USER 'wp'@'localhost' IDENTIFIED BY 'wp'"
+	sudo mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'wp'@'localhost' WITH GRANT OPTION"
+	sudo mysql -e "FLUSH PRIVILEGES"
+}
+
+setup_arch_system_emoji_support() {
+	sudo pamac install noto-fonts-emoji
+	sudo cp ~/.dotfiles/templates/fonts-local.conf /etc/fonts/local.conf
 }

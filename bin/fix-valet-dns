@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+if ping -q -c 1 api.github.com &>/dev/null; then
+	echo 'Can already resolve api.github.com'
+	exit 0
+fi
+
+if [ -f /etc/resolv.conf ]; then
+	echo 'Deleting /etc/resolv.conf'
+	sudo rm /etc/resolv.conf
+fi
+
+echo 'Linking Valet resolv.conf'
+sudo ln -s /opt/valet-linux/resolv.conf /etc/resolv.conf
+
+echo 'Adding "nameserver 1.1.1.1" to /etc/resolv.conf'
+echo 'nameserver 1.1.1.1' | sudo tee -a /etc/resolv.conf
