@@ -29,6 +29,11 @@ function gh_repo_list() {
 	fi
 	gh repo list ItinerisLtd --private --no-archived --source --limit 400 --json name --jq ". | values[] | select(.name | endswith(\"${1}\")) | values[]"
 }
+function gp_pr_create_with_reviewer {
+	[[ -z "${1}" ]] && REVIEWER='ItinerisLtd/php-team' || REVIEWER="${1}"
+
+	gp && gh pr create --fill --reviewer "${REVIEWER}"
+}
 
 # Composer
 alias c='composer'
@@ -98,7 +103,12 @@ wp_copy_user_id() {
 	wp_get_user_id "$1" | pbcopy
 }
 wp_reset_local_user_pass() {
-	wp user update "$(wp_get_user_id)" --user_pass=admin --skip-themes --skip-plugins
+	[ -z "${1}" ] && ENVIRONMENT='development' || ENVIRONMENT="${1}"
+	if [[ "${ENVIRONMENT}" = 'development' ]]; then
+		wp user update "$(wp_get_user_id)" --user_pass=admin --skip-themes --skip-plugins
+	else
+		wp "@${ENVIRONMENT}" user update "$(wp_get_user_id)" --user_pass=admin --skip-themes --skip-plugins
+	fi
 }
 generate_vault_pass() {
 	vault_pass=$(
