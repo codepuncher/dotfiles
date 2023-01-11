@@ -164,3 +164,4 @@ bindkey -M vicmd 'j' history-substring-search-down
 
 # Misc
 export WORDCHARS=${WORDCHARS/\//}
+export EDITOR=nvim
