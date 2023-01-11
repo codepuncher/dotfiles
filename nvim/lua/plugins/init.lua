@@ -89,7 +89,7 @@ return packer.startup(function(use)
       end,
     },
     {
-      'kyazdani42/nvim-tree.lua',
+      'nvim-tree/nvim-tree.lua',
       opt = true,
       event = {
         'BufEnter',
@@ -121,6 +121,7 @@ return packer.startup(function(use)
           require('plugins.configs.nvim-ts-autotag')
         end,
       },
+      'andymass/vim-matchup',
     },
     run = ':TSUpdate',
     config = function()

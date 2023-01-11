@@ -22,9 +22,9 @@ elif [[ "${OSTYPE:0:6}" = 'darwin' ]]; then
 fi
 alias gcb='git_copy_branch'
 # shellcheck disable=SC2154
-alias git_set_missing_end_of_file='git ls-files -z | while IFS= read -rd "" f; do tail -c1 < "$f" | read -r _ || echo >> "$f"; done'
+alias git_set_missing_end_of_file='git ls-files -z | while IFS= read -rd "" f; do tail -c1 < "${f}" | read -r _ || echo >> "${f}"; done'
 function gh_repo_list() {
-	if [ -z "$1" ]; then
+	if [ -z "${1}" ]; then
 		echo 'Please specify a repo prefix (e.g. "bedrock")'
 	fi
 	gh repo list ItinerisLtd --private --no-archived --source --limit 400 --json name --jq ". | values[] | select(.name | endswith(\"${1}\")) | values[]"
@@ -81,26 +81,26 @@ wp_db_export() {
 }
 alias t='trellis'
 trellis_copy_basic_auth_pass() {
-	[ -z "$1" ] && ENVIRONMENT='staging' || ENVIRONMENT="$1"
-	if [ ! -f "hosts/$ENVIRONMENT" ]; then
+	[ -z "${1}" ] && ENVIRONMENT='staging' || ENVIRONMENT="${1}"
+	if [ ! -f "hosts/${ENVIRONMENT}" ]; then
 		echo 'Invalid environment provided'
 		return 1
 	fi
 
-	AUTH_PASS=$(trellis vault view "$ENVIRONMENT" | grep -o "http_basic_auth_password: .*" | cut -f2- -d: | cut -c2-)
-	echo "$AUTH_PASS"
+	AUTH_PASS=$(trellis vault view "${ENVIRONMENT}" | grep -o "http_basic_auth_password: .*" | cut -f2- -d: | cut -c2-)
+	echo "${AUTH_PASS}"
 	if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
-		echo "$AUTH_PASS" | xclip -selection c
+		echo "${AUTH_PASS}" | xclip -selection c
 	elif [[ "${OSTYPE:0:6}" = 'darwin' ]]; then
-		echo "$AUTH_PASS" | pbcopy
+		echo "${AUTH_PASS}" | pbcopy
 	fi
 }
 wp_get_user_id() {
-	[ -z "$1" ] && email='wordpress@itineris.co.uk' || email="$1"
-	wp user get "$email" --field=ID --format=csv --skip-themes --skip-plugins | head -n1 | tr -d '\n'
+	[ -z "${1}" ] && email='wordpress@itineris.co.uk' || email="${1}"
+	wp user get "${email}" --field=ID --format=csv --skip-themes --skip-plugins | head -n1 | tr -d '\n'
 }
 wp_copy_user_id() {
-	wp_get_user_id "$1" | pbcopy
+	wp_get_user_id "${1}" | pbcopy
 }
 wp_reset_local_user_pass() {
 	[ -z "${1}" ] && ENVIRONMENT='development' || ENVIRONMENT="${1}"
@@ -115,21 +115,21 @@ generate_vault_pass() {
 		LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 512
 		echo ''
 	)
-	echo "$vault_pass" >.vault_pass
+	echo "${vault_pass}" >.vault_pass
 }
 delete_posts() {
-	wp post delete "$(wp post list --post_type="$1" --format=ids)" --force
+	wp post delete "$(wp post list --post_type="${1}" --format=ids)" --force
 }
 publish_draft_posts() {
-	wp post update "$(wp post list --post_type="$1" --post_status=draft --format=ids)" --post_status=publish
+	wp post update "$(wp post list --post_type="${1}" --post_status=draft --format=ids)" --post_status=publish
 }
 delete_terms() {
-	wp term delete "$1" "$(wp term list "$1" --format=ids)"
+	wp term delete "${1}" "$(wp term list "${1}" --format=ids)"
 }
 set_posts_statuses() {
-	wp post update "$(wp post list --post_type="$1" --post_status="$2" --format=ids)" --post_status="$3"
+	wp post update "$(wp post list --post_type="${1}" --post_status="${2}" --format=ids)" --post_status="${3}"
 }
-project() {
+project_open() {
 	WP_PATH="${HOME}/Code/wordpress"
 
 	if [ -z "${1}" ]; then
@@ -156,29 +156,50 @@ project() {
 
 	cd "${THEME_PATH}" || return
 }
+project_edit() {
+	WP_PATH="${HOME}/Code/wordpress"
+
+	if [ -z "${1}" ]; then
+		echo 'No project specified.'
+		return
+	fi
+
+	NEW_PATH="${WP_PATH}/${1}"
+	if [[ -d "${NEW_PATH}/bedrock" ]]; then
+		NEW_PATH="${NEW_PATH}/bedrock"
+	elif [[ -d "${NEW_PATH}/site" ]]; then
+		NEW_PATH="${NEW_PATH}/site"
+	else
+		echo 'Project is missing bedrock/site directory'
+		return
+	fi
+
+	cd "${NEW_PATH}" && tmux_layout dev || return
+}
+
 trellis_generate_deploy_key() {
 	remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/trellis/bedrock/g')
 	known_hosts=$(rg 'ansible_host=\d.*\s' hosts/production -o | rg -o '\d.*')
-	trellis key generate --repo "$remote" --known-hosts "$known_hosts" --no-provision
+	trellis key generate --repo "${remote}" --known-hosts "${known_hosts}" --no-provision
 }
 gh_set_vault_pass() {
 	remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/-trellis//g;s/-bedrock//g')
-	if [[ "$PWD" == *bedrock ]]; then
+	if [[ "${PWD}" == *bedrock ]]; then
 		local vault_pass='../trellis/.vault_pass'
-	elif [[ "$PWD" == *trellis ]]; then
+	elif [[ "${PWD}" == *trellis ]]; then
 		local vault_pass='./.vault_pass'
 	fi
-	gh secret set ANSIBLE_VAULT_PASSWORD --repo "${remote}-trellis" <"$vault_pass"
-	gh secret set ANSIBLE_VAULT_PASSWORD --repo "${remote}-bedrock" <"$vault_pass"
+	gh secret set ANSIBLE_VAULT_PASSWORD --repo "${remote}-trellis" <"${vault_pass}"
+	gh secret set ANSIBLE_VAULT_PASSWORD --repo "${remote}-bedrock" <"${vault_pass}"
 }
 gh_set_repo_pat() {
-	if [ -z "$1" ]; then
+	if [ -z "${1}" ]; then
 		echo 'Please provide a PAT.'
 		exit 1
 	fi
 
 	remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/-trellis//g;s/-bedrock//g')
-	gh secret set REPO_PAT -b "$1" --repo "${remote}-bedrock"
+	gh secret set REPO_PAT -b "${1}" --repo "${remote}-bedrock"
 }
 valet() {
 	case "${1}" in
@@ -231,7 +252,7 @@ fi
 alias watch_error_log='tail -f ~/.valet/Log/nginx-error.log'
 alias ducks='du -cks * | sort -rn | head'
 alias whatsmyip='curl -s https://api.ipify.org; echo'
-alias show_path='echo $PATH | tr -s ":" "\n"'
+alias show_path='echo ${PATH} | tr -s ":" "\n"'
 alias generate_string='openssl rand -base64 500 | tr -dc "a-zA-Z0-9" | fold -w 128 | head -n 1'
 alias generate_satis_pass='openssl rand -base64 500 | tr -dc a-zA-Z0-9 | fold -w 64 | head -n 1'
 alias clear_dns_cache='sudo killall -HUP mDNSResponder'
@@ -244,29 +265,69 @@ watch_file() {
 
 # Tmux
 tmux_layout() {
-	layout_file="$HOME/.dotfiles/tmux/layouts/$1.sh"
-	echo "$layout_file"
-	if [[ ! -f "$layout_file" ]]; then
+	layout_file="${HOME}/.dotfiles/tmux/layouts/${1}.sh"
+	if [[ ! -f "${layout_file}" ]]; then
 		echo 'Please specify a valid layout file'
 		return
 	fi
 
 	cwd=$(pwd)
-	if [[ -d "$2" ]]; then
-		working_dir="$2"
+	if [[ -d "${2}" ]]; then
+		working_dir="${2}"
 	else
-		working_dir="$cwd"
+		working_dir="${cwd}"
 	fi
 
-	cd "$working_dir" && "$layout_file" && cd "$cwd" || exit
+	cd "${working_dir}" && "${layout_file}" && cd "${cwd}" || exit
 }
 
 # Previews
 mdp() {
-	pandoc "$1" | lynx -stdin
+	pandoc "${1}" | lynx -stdin
 }
 
 # Laravel
 alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
+
+# PHP
+php_switch_version() {
+	VERSION="${1//[!0-9]/}"
+	if [[ -z "${VERSION}" ]]; then
+		echo 'No version provided.'
+		return
+	fi
+
+	ORIGINAL_CLI_PATH='/usr/bin/php'
+	NEW_CLI_PATH="${ORIGINAL_CLI_PATH}${VERSION}"
+	if [[ ! -f "${NEW_CLI_PATH}" ]]; then
+		echo "${NEW_CLI_PATH} does not exist."
+		return
+	fi
+
+	if [[ ! -L "${ORIGINAL_CLI_PATH}" ]]; then
+		echo "${ORIGINAL_CLI_PATH} is not a symlink so you shall not pass."
+		return
+	fi
+
+	ORIGINAL_UNIT_PATH='/usr/lib/systemd/system/php-fpm.service'
+	NEW_UNIT_PATH="/usr/lib/systemd/system/php-fpm${VERSION}.service"
+	if [[ ! -f "${NEW_UNIT_PATH}" ]]; then
+		echo "${NEW_UNIT_PATH} does not exist."
+		return
+	fi
+
+	if [[ ! -L "${ORIGINAL_UNIT_PATH}" ]]; then
+		echo "${ORIGINAL_UNIT_PATH} is not a symlink so you shall not pass."
+		return
+	fi
+
+	echo "Switching to php${VERSION}..."
+	sudo rm "${ORIGINAL_CLI_PATH}" && sudo ln -s "${NEW_CLI_PATH}" "${ORIGINAL_CLI_PATH}"
+
+	sudo systemctl disable php-fpm
+	sudo rm "${ORIGINAL_UNIT_PATH}" && sudo ln -s "${NEW_UNIT_PATH}" "${ORIGINAL_UNIT_PATH}"
+	sudo systemctl restart php-fpm
+	sudo systemctl enable php-fpm
+}
 
 # vim: set filetype=bash :

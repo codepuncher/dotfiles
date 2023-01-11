@@ -28,6 +28,9 @@ plugin.setup({
       enable = true,
     },
   },
+  matchup = {
+    enable = true,
+  },
   ensure_installed = {
     'tsx',
     'toml',
