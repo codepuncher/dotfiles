@@ -156,6 +156,7 @@ project_open() {
 
 	cd "${THEME_PATH}" || return
 }
+alias po='project_open'
 project_edit() {
 	WP_PATH="${HOME}/Code/wordpress"
 
@@ -176,6 +177,7 @@ project_edit() {
 
 	cd "${NEW_PATH}" && tmux_layout dev || return
 }
+alias pe='project_edit'
 
 trellis_generate_deploy_key() {
 	remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/trellis/bedrock/g')
