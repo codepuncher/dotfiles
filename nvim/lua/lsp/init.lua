@@ -71,7 +71,7 @@ local servers = {
   'lemminx',
   'pyright',
   'stylelint_lsp',
-  'sumneko_lua',
+  'lua_ls',
   'tsserver',
   'yamlls',
   'null_ls',
