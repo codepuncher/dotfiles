@@ -129,6 +129,9 @@ wk.register({
     P = { '<cmd>Git push -f<cr>', '[GIT] Push (force)' },
     bn = { "<Cmd>lua require('utils').git_branch_new()<cr>", '[GIT] Create new branch' },
     br = { "<Cmd>lua require('utils').git_branch_rename()<cr>", '[GIT] Rename current branch' },
+    bf = {
+      "<Cmd>lua vim.api.nvim_command('!gh browse ' .. vim.fn.expand('%') .. ':' .. vim.api.nvim_win_get_cursor(0)[1])",
+    },
     ['='] = {
       "<cmd>Git push -u origin @ | :execute '!gh pr create -f'<cr>",
       '[GIT] Push new branch, create a PR and watch the Actions job',

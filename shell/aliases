@@ -15,6 +15,8 @@ alias gm='g merge'
 alias gp='g push'
 alias gr='g reset'
 alias gs='g status -sb'
+alias gbn='gco -b'
+alias gbr='gb -m'
 if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
 	alias git_copy_branch='gb --show-current | xclip -selection c'
 elif [[ "${OSTYPE:0:6}" = 'darwin' ]]; then
@@ -33,6 +35,11 @@ function gp_pr_create_with_reviewer {
 	[[ -z "${1}" ]] && REVIEWER='ItinerisLtd/php-team' || REVIEWER="${1}"
 
 	gp && gh pr create --fill --reviewer "${REVIEWER}"
+}
+function gh_actions_cache_delete_all {
+	for KEY in $(gh actions-cache list | awk '{print $1}' | sort -u); do
+		gh actions-cache delete "${KEY}" --confirm
+	done
 }
 
 # Composer

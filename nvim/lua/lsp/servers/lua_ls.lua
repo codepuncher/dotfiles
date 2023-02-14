@@ -8,7 +8,7 @@ plugin.setup({})
 local _M = {}
 
 _M.setup = function(on_attach, capabilities)
-  require('lspconfig').sumneko_lua.setup({
+  require('lspconfig').lua_ls.setup({
     lspconfig = {
       on_attach = on_attach,
       capabilities = capabilities,
