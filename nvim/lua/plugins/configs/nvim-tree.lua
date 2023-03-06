@@ -5,9 +5,9 @@ end
 
 plugin.setup({
   auto_reload_on_write = true,
-  create_in_closed_folder = true,
   sync_root_with_cwd = true,
   view = {
+    adaptive_size = true,
     width = 50,
     side = 'left',
     mappings = {
@@ -25,7 +25,7 @@ plugin.setup({
   },
   update_focused_file = {
     enable = true,
-    update_cwd = true,
+    update_cwd = false,
     ignore_list = {},
   },
   diagnostics = {

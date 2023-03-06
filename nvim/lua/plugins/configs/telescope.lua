@@ -104,6 +104,30 @@ M.live_grep = function()
   require('telescope.builtin').live_grep(opts)
 end
 
+M.live_grep_with_file_type = function()
+  local file_type = vim.fn.input('File type: ')
+  if file_type == nil or file_type == '' then
+    return M.live_grep()
+  else
+    local opts = {
+      vimgrep_arguments = {
+        'rg',
+        '--type=' .. file_type,
+        '--color=never',
+        '--no-heading',
+        '--with-filename',
+        '--line-number',
+        '--column',
+        '--hidden',
+        '--smart-case',
+        '-uu',
+      },
+    }
+
+    require('telescope.builtin').live_grep(opts)
+  end
+end
+
 M.lsp_workspace_symbols = function()
   local query = vim.fn.input('Query: ')
 

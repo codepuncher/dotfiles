@@ -12,13 +12,21 @@ if [[ "${OSTYPE:0:6}" == "darwin" ]]; then
 		source "${HOME}/.iterm2_shell_integration.zsh"
 	fi
 
-	export PATH="${HOME}/Library/Python/3.9/bin:/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/3.0.0/bin:${HOME}/bin:${HOME}/.dotfiles/bin:${HOME}/Code/misc/itineris-bin:${HOME}/.local/bin:/usr/local/bin:/usr/local/sbin:${PATH}"
+	export PATH="${HOME}/Library/Python/3.9/bin:/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/3.0.0/bin:/usr/local/sbin:${PATH}"
 else
-	export PATH="${PATH}:${HOME}/bin:/usr/local/bin:${HOME}/.local/bin"
+	export PATH="${PATH}:${HOME}/.local/share/gem/ruby/3.0.0/bin"
 fi
+
+# General bin paths
+PATH="${PATH}:/usr/local/bin:${HOME}/.local/bin"
 
 # Dotfiles bin
 PATH="${PATH}:${HOME}/.dotfiles/bin"
+
+ITINERIS_BIN_PATH="${HOME}/Code/misc/itineris-bin"
+if [[ -d "${ITINERIS_BIN_PATH}" ]]; then
+	PATH="${PATH}:${ITINERIS_BIN_PATH}"
+fi
 
 # Composer
 if type composer &>/dev/null; then
@@ -162,3 +170,4 @@ bindkey -M vicmd 'j' history-substring-search-down
 
 # Misc
 export WORDCHARS=${WORDCHARS/\//}
+export EDITOR=nvim
