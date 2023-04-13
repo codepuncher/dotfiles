@@ -7,3 +7,4 @@ backups
 !.gitkeep
 
 terminals/alacritty.yml # Prevent committing temporary changes
+.luarc.json
