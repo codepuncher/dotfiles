@@ -123,6 +123,20 @@ wp_reset_local_user_pass() {
 		wp "@${ENVIRONMENT}" user update "$(wp_get_user_id)" --user_pass=admin --skip-themes --skip-plugins
 	fi
 }
+wp_delete_trash_revison_posts() {
+	[ -z "${1}" ] && ENVIRONMENT='development' || ENVIRONMENT="${1}"
+
+	if [[ "${ENVIRONMENT}" = 'development' ]]; then
+		ALIAS=''
+	else
+		ALIAS="@${ENVIRONMENT}"
+	fi
+
+	echo 'Deleting revisions...'
+	wp ${ALIAS:+$ALIAS} post delete $(wp ${ALIAS:+$ALIAS} post list --post_type=revision --format=ids) --force
+	echo 'Deleting trashed posts...'
+	wp ${ALIAS:+$ALIAS} post delete $(wp ${ALIAS:+$ALIAS} post list --post_type=any --post_status=trash --format=ids) --force
+}
 generate_vault_pass() {
 	vault_pass=$(
 		LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 512
