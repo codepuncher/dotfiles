@@ -14,6 +14,7 @@ local code_actions = plugin.builtins.code_actions
 _M.setup = function(on_attach)
   plugin.setup({
     debug = true,
+    root_dir = require('null-ls.utils').root_pattern('.git', 'package.json', 'composer.json'),
     sources = {
       code_actions.eslint_d,
       code_actions.shellcheck,
