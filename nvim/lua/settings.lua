@@ -1,5 +1,3 @@
-vim.g.mapleader = ' '
-
 vim.o.backspace = '2' -- Backspace deletes like most programs in insert mode
 vim.o.hlsearch = true -- highlight searches (:noh to turn off)
 vim.o.ignorecase = true -- case insensitive searching
