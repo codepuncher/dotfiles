@@ -40,9 +40,6 @@ return packer.startup(function(use)
 
   -- Misc
   use({
-    -- Dependency for many plugins.
-    'nvim-lua/plenary.nvim',
-
     'famiu/bufdelete.nvim',
     {
       'nvim-telescope/telescope.nvim',
@@ -65,7 +62,6 @@ return packer.startup(function(use)
 
   -- UI
   use({
-    'kyazdani42/nvim-web-devicons',
     {
       'folke/tokyonight.nvim',
       requires = { { 'kyazdani42/nvim-web-devicons', opt = true } },
@@ -99,7 +95,9 @@ return packer.startup(function(use)
     {
       'rcarriga/nvim-notify',
       config = function()
-        vim.notify = require('notify')
+        vim.notify = require('notify').setup({
+          background_colour = '#000000',
+        })
       end,
     },
   })
@@ -128,11 +126,11 @@ return packer.startup(function(use)
 
   -- Language Server Protocol
   use({
-    'folke/neodev.nvim',
     {
       'neovim/nvim-lspconfig',
       before = 'neodev',
     },
+    'folke/neodev.nvim',
     'jose-elias-alvarez/typescript.nvim',
     {
       'jose-elias-alvarez/null-ls.nvim',
@@ -142,7 +140,6 @@ return packer.startup(function(use)
     },
     {
       'glepnir/lspsaga.nvim',
-      -- '~/Code/misc/lspsaga.nvim',
       config = function()
         require('plugins.configs.lspsaga')
       end,
@@ -208,14 +205,14 @@ return packer.startup(function(use)
         require('plugins.configs.cmp')
       end,
       requires = {
-        { 'hrsh7th/cmp-buffer',       after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-emoji',        after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-path',         after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-nvim-lsp',     before = 'nvim-lspconfig' },
-        { 'hrsh7th/cmp-nvim-lua',     after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-buffer', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-emoji', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-path', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-nvim-lsp', before = 'nvim-lspconfig' },
+        { 'hrsh7th/cmp-nvim-lua', after = 'nvim-cmp' },
         { 'saadparwaiz1/cmp_luasnip', after = 'nvim-cmp' },
-        { 'petertriho/cmp-git',       after = 'nvim-cmp' },
-        { 'onsails/lspkind-nvim',     module = 'lspkind' },
+        { 'petertriho/cmp-git', after = 'nvim-cmp' },
+        { 'onsails/lspkind-nvim', module = 'lspkind' },
         {
           'L3MON4D3/LuaSnip',
           -- module = 'luasnip',
