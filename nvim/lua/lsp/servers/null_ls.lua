@@ -37,6 +37,7 @@ _M.setup = function(on_attach)
       diagnostics.yamllint,
       diagnostics.zsh,
 
+      formatting.blade_formatter,
       formatting.eslint_d,
       formatting.gofmt,
       formatting.phpcbf.with({

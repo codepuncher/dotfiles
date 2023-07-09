@@ -69,12 +69,13 @@ local servers = {
   'intelephense',
   'jsonls',
   'lemminx',
+  'lua_ls',
+  'null_ls',
   'pyright',
   'stylelint_lsp',
-  'lua_ls',
   'tsserver',
+  'volar',
   'yamlls',
-  'null_ls',
   -- 'tailwindcss',
 }
 for _, server in pairs(servers) do

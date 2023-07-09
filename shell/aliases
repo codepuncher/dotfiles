@@ -25,6 +25,7 @@ fi
 alias gcb='git_copy_branch'
 # shellcheck disable=SC2154
 alias git_set_missing_end_of_file='git ls-files -z | while IFS= read -rd "" f; do tail -c1 < "${f}" | read -r _ || echo >> "${f}"; done'
+alias git_get_default_branch='g remote show origin | rg "HEAD branch" | cut -d" " -f5'
 function git_get_repo_from_remote() {
 	GIT_PATH="${1:-${PWD}}"
 	GIT_REMOTE="${2-origin}"
@@ -34,8 +35,9 @@ function git_get_repo_from_remote() {
 function gh_repo_list() {
 	if [ -z "${1}" ]; then
 		echo 'Please specify a repo prefix (e.g. "bedrock")'
+		return
 	fi
-	gh repo list ItinerisLtd --private --no-archived --source --limit 400 --json name --jq ". | values[] | select(.name | endswith(\"${1}\")) | values[]"
+	gh repo list ItinerisLtd --visibility=private --no-archived --source --limit 400 --json name --jq ". | values[] | select(.name | endswith(\"${1}\")) | values[]"
 }
 function gp_pr_create_with_reviewer {
 	[[ -z "${1}" ]] && REVIEWER='ItinerisLtd/php-team' || REVIEWER="${1}"
@@ -47,6 +49,13 @@ function gh_actions_cache_delete_all {
 		gh actions-cache delete "${KEY}" --confirm
 	done
 }
+function gp_create_pr {
+	DEFAULT_BRANCH=$(git_get_default_branch)
+	BASE="${1:-$DEFAULT_BRANCH}"
+	gp && gh pr create --fill --base "${BASE}"
+	sleep 5 && gh pr view -w
+}
+alias gh_check_merge='gh pr checks --watch --interval 2 && gh pr merge -md'
 
 # Composer
 alias c='composer'
@@ -292,6 +301,7 @@ alias whatsmyip='curl -s https://api.ipify.org; echo'
 alias show_path='echo ${PATH} | tr -s ":" "\n"'
 alias generate_string='openssl rand -base64 500 | tr -dc "a-zA-Z0-9" | fold -w 128 | head -n 1'
 alias generate_satis_pass='openssl rand -base64 500 | tr -dc a-zA-Z0-9 | fold -w 64 | head -n 1'
+alias generate_password='openssl rand -base64 24'
 alias clear_dns_cache='sudo killall -HUP mDNSResponder'
 alias cat='cat -n'
 alias find_bad_words='curl --silent http://www.bannedwordlist.com/lists/swearWords.txt > /tmp/badwords && rg --word-regexp --file=/tmp/badwords'
