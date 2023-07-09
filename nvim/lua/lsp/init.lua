@@ -72,6 +72,7 @@ local servers = {
   'lua_ls',
   'null_ls',
   'pyright',
+  'rust_analyzer',
   'stylelint_lsp',
   'tsserver',
   'volar',
