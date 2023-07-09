@@ -38,9 +38,6 @@ packer.init({
 return packer.startup(function(use)
   use('wbthomason/packer.nvim')
 
-  -- Performance
-  use('lewis6991/impatient.nvim')
-
   -- Misc
   use({
     -- Dependency for many plugins.
@@ -211,14 +208,14 @@ return packer.startup(function(use)
         require('plugins.configs.cmp')
       end,
       requires = {
-        { 'hrsh7th/cmp-buffer', after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-emoji', after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-path', after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-nvim-lsp', before = 'nvim-lspconfig' },
-        { 'hrsh7th/cmp-nvim-lua', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-buffer',       after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-emoji',        after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-path',         after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-nvim-lsp',     before = 'nvim-lspconfig' },
+        { 'hrsh7th/cmp-nvim-lua',     after = 'nvim-cmp' },
         { 'saadparwaiz1/cmp_luasnip', after = 'nvim-cmp' },
-        { 'petertriho/cmp-git', after = 'nvim-cmp' },
-        { 'onsails/lspkind-nvim', module = 'lspkind' },
+        { 'petertriho/cmp-git',       after = 'nvim-cmp' },
+        { 'onsails/lspkind-nvim',     module = 'lspkind' },
         {
           'L3MON4D3/LuaSnip',
           -- module = 'luasnip',
