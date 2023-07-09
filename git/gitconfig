@@ -19,9 +19,5 @@
 	defaultBranch = main
 [push]
 	autoSetupRemote = true
-[gpg]
-	format = ssh
-[gpg "ssh"]
-	program = /opt/1Password/op-ssh-sign
-[commit]
-	gpgsign = true
+[includeIf "gitdir:~/work/"]
+  path = ~/.dotfiles/git/users/work.gitconfig
