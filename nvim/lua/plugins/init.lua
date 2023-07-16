@@ -1,59 +1,29 @@
-local ensure_packer = function()
-  local install_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
-
-  if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-    vim.fn.system({
-      'git',
-      'clone',
-      '--depth',
-      '1',
-      'https://github.com/wbthomason/packer.nvim',
-      install_path,
-    })
-    vim.api.nvim_command('packadd packer.nvim')
-
-    return true
-  end
-
-  return false
+local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    'git',
+    'clone',
+    '--filter=blob:none',
+    'https://github.com/folke/lazy.nvim.git',
+    '--branch=stable',
+    lazypath,
+  })
 end
+vim.opt.rtp:prepend(lazypath)
 
-local packer_bootstrap = ensure_packer()
-local _packer, packer = pcall(require, 'packer')
-if not _packer then
-  return
-end
+vim.g.mapleader = ' '
 
-packer.init({
-  auto_clean = true,
-  display = {
-    open_fn = function()
-      return require('packer.util').float({ border = 'single' })
-    end,
-    prompt_border = 'single',
-  },
-  compile_on_sync = true,
-})
-
-return packer.startup(function(use)
-  use('wbthomason/packer.nvim')
-
-  -- Performance
-  use('lewis6991/impatient.nvim')
-
+require('lazy').setup({
   -- Misc
-  use({
-    -- Dependency for many plugins.
-    'nvim-lua/plenary.nvim',
-
+  {
     'famiu/bufdelete.nvim',
     {
       'nvim-telescope/telescope.nvim',
-      requires = {
+      dependencies = {
         'nvim-lua/plenary.nvim',
         {
           'nvim-telescope/telescope-fzf-native.nvim',
-          run = 'make',
+          build = 'make',
         },
         'nvim-telescope/telescope-github.nvim',
         'nvim-telescope/telescope-node-modules.nvim',
@@ -64,29 +34,55 @@ return packer.startup(function(use)
       end,
     },
     'folke/which-key.nvim',
-  })
+  },
 
   -- UI
-  use({
-    'kyazdani42/nvim-web-devicons',
+  {
     {
       'folke/tokyonight.nvim',
-      requires = { { 'kyazdani42/nvim-web-devicons', opt = true } },
+      lazy = false,
+      priority = 1000,
+      opts = {},
+      config = function()
+        require('tokyonight').setup({
+          style = 'storm',
+          transparent = true,
+          styles = {
+            sidebars = 'transparent',
+            floats = 'transparent',
+          },
+        })
+        vim.cmd([[colorscheme tokyonight]])
+      end,
     },
     {
       'nvim-lualine/lualine.nvim',
-      requires = { { 'kyazdani42/nvim-web-devicons', opt = true } },
       config = function()
         require('plugins.configs.lualine')
+      end,
+      dependencies = {
+        'nvim-tree/nvim-web-devicons',
+        'linrongbin16/lsp-progress.nvim',
+      },
+    },
+    {
+      'linrongbin16/lsp-progress.nvim',
+      dependencies = {
+        'nvim-tree/nvim-web-devicons',
+      },
+      config = function()
+        require('lsp-progress').setup()
       end,
     },
     {
       'akinsho/bufferline.nvim',
-      after = 'nvim-web-devicons',
-      tag = '*',
+      version = '*',
       config = function()
         require('plugins.configs.bufferline')
       end,
+      dependencies = {
+        'nvim-tree/nvim-web-devicons',
+      },
     },
     {
       'nvim-tree/nvim-tree.lua',
@@ -102,15 +98,19 @@ return packer.startup(function(use)
     {
       'rcarriga/nvim-notify',
       config = function()
-        vim.notify = require('notify')
+        local notify = require('notify')
+        vim.notify = notify
+        notify.setup({
+          background_colour = '#000000',
+        })
       end,
     },
-  })
+  },
 
   -- Treesitter
-  use({
+  {
     'nvim-treesitter/nvim-treesitter',
-    requires = {
+    dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
       'nvim-treesitter/nvim-treesitter-refactor',
       'p00f/nvim-ts-rainbow',
@@ -123,32 +123,33 @@ return packer.startup(function(use)
       },
       'andymass/vim-matchup',
     },
-    run = ':TSUpdate',
+    build = ':TSUpdate',
     config = function()
       require('plugins.configs.treesitter')
     end,
-  })
+  },
 
   -- Language Server Protocol
-  use({
+  {
     'folke/neodev.nvim',
-    {
-      'neovim/nvim-lspconfig',
-      before = 'neodev',
-    },
+    'neovim/nvim-lspconfig',
     'jose-elias-alvarez/typescript.nvim',
     {
       'jose-elias-alvarez/null-ls.nvim',
-      requires = {
+      dependencies = {
         'nvim-lua/plenary.nvim',
       },
     },
     {
-      'glepnir/lspsaga.nvim',
-      -- '~/Code/misc/lspsaga.nvim',
+      'nvimdev/lspsaga.nvim',
       config = function()
         require('plugins.configs.lspsaga')
       end,
+      dependencies = {
+        'nvim-treesitter/nvim-treesitter',
+        'nvim-tree/nvim-web-devicons',
+      },
+      event = 'LspAttach',
     },
     {
       'ray-x/lsp_signature.nvim',
@@ -158,33 +159,33 @@ return packer.startup(function(use)
     },
     {
       'folke/trouble.nvim',
-      requires = {
-        'kyazdani42/nvim-web-devicons',
+      dependencies = {
+        'nvim-tree/nvim-web-devicons',
       },
       cmd = { 'Trouble', 'TroubleClose', 'TroubleToggle', 'TroubleRefresh' },
       config = function()
         require('plugins.configs.trouble')
       end,
     },
-  })
+  },
 
   -- Debug Adapter Protocol
-  use({
-    {
-      'mfussenegger/nvim-dap',
-      config = function()
-        require('plugins.configs.dap')
-      end,
-    },
-    'rcarriga/nvim-dap-ui',
-    'rcarriga/cmp-dap',
-    'theHamsta/nvim-dap-virtual-text',
-    'nvim-telescope/telescope-dap.nvim',
-    'leoluz/nvim-dap-go',
-  })
+  -- {
+  --   {
+  --     'mfussenegger/nvim-dap',
+  --     config = function()
+  --       require('plugins.configs.dap')
+  --     end,
+  --   },
+  --   'rcarriga/nvim-dap-ui',
+  --   'rcarriga/cmp-dap',
+  --   'theHamsta/nvim-dap-virtual-text',
+  --   'nvim-telescope/telescope-dap.nvim',
+  --   'leoluz/nvim-dap-go',
+  -- },
 
   -- Git
-  use({
+  {
     {
       'tpope/vim-fugitive',
       cmd = {
@@ -201,31 +202,30 @@ return packer.startup(function(use)
         require('plugins.configs.gitsigns')
       end,
     },
-  })
+  },
 
   -- Dev
-  use({
+  {
     {
       'hrsh7th/nvim-cmp',
       config = function()
         require('plugins.configs.cmp')
       end,
-      requires = {
-        { 'hrsh7th/cmp-buffer', after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-emoji', after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-path', after = 'nvim-cmp' },
-        { 'hrsh7th/cmp-nvim-lsp', before = 'nvim-lspconfig' },
-        { 'hrsh7th/cmp-nvim-lua', after = 'nvim-cmp' },
-        { 'saadparwaiz1/cmp_luasnip', after = 'nvim-cmp' },
-        { 'petertriho/cmp-git', after = 'nvim-cmp' },
-        { 'onsails/lspkind-nvim', module = 'lspkind' },
+      dependencies = {
+        'hrsh7th/cmp-buffer',
+        'hrsh7th/cmp-emoji',
+        'hrsh7th/cmp-path',
+        'hrsh7th/cmp-nvim-lsp',
+        'hrsh7th/cmp-nvim-lua',
+        'saadparwaiz1/cmp_luasnip',
+        'petertriho/cmp-git',
+        'onsails/lspkind-nvim',
         {
           'L3MON4D3/LuaSnip',
-          -- module = 'luasnip',
-          bufread = false,
-          requires = {
+          dependencies = {
             'rafamadriz/friendly-snippets',
           },
+          build = 'make install_jsregexp',
           config = function()
             require('luasnip.loaders.from_vscode').lazy_load()
           end,
@@ -283,7 +283,7 @@ return packer.startup(function(use)
     },
     {
       'iamcco/markdown-preview.nvim',
-      run = 'cd app && yarn',
+      build = 'cd app && yarn',
       setup = function()
         vim.g.mkdp_filetypes = { 'markdown' }
       end,
@@ -291,9 +291,5 @@ return packer.startup(function(use)
         'markdown',
       },
     },
-  })
-
-  if packer_bootstrap then
-    require('packer').sync()
-  end
-end)
+  },
+})

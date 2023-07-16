@@ -1,9 +1,6 @@
-local _impatient, impatient = pcall(require, 'impatient')
-if _impatient then
-  impatient.enable_profile()
-end
+vim.loader.enable()
 
-require('plugins')
 require('settings')
+require('plugins')
 require('keymappings')
 require('lsp')

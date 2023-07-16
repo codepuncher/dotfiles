@@ -56,6 +56,7 @@ cmp.setup({
   }, {
     { name = 'buffer' },
     { name = 'emoji' },
+    { name = 'path' },
   }),
   formatting = {
     format = lspkind.cmp_format({
@@ -67,7 +68,7 @@ cmp.setup({
 
 cmp.setup.filetype('gitcommit', {
   sources = cmp.config.sources({
-    { name = 'cmp_git' },
+    { name = 'git' },
     { name = 'luasnip' },
   }, {
     { name = 'buffer' },
@@ -75,7 +76,7 @@ cmp.setup.filetype('gitcommit', {
   }),
 })
 
-cmp.setup.cmdline('/', {
+cmp.setup.cmdline({ '/', '?' }, {
   mapping = cmp.mapping.preset.cmdline(),
   sources = {
     { name = 'buffer' },
@@ -88,14 +89,15 @@ cmp.setup.cmdline(':', {
     { name = 'path' },
   }, {
     { name = 'cmdline' },
+    { name = 'buffer' },
   }),
 })
 
-cmp.setup.filetype({ 'dap-repl', 'dapui_watches' }, {
-  cmp.config.sources({
-    { name = 'dap' },
-  }),
-})
+-- cmp.setup.filetype({ 'dap-repl', 'dapui_watches' }, {
+--   cmp.config.sources({
+--     { name = 'dap' },
+--   }),
+-- })
 
 local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 

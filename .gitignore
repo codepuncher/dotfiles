@@ -8,3 +8,4 @@ backups
 
 terminals/alacritty.yml # Prevent committing temporary changes
 .luarc.json
+nvim/lazy-lock.json

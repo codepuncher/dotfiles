@@ -45,31 +45,29 @@ install_arch_packages() {
 		rustup
 		nginx
 		mariadb
-		php7
-		php7-fpm
-		php7-gd
-		php7-imagick
-		php7-imap
-		php7-intl
-		php7-mcrypt
-		php7-memcache
-		php7-memcached
-		php7-xdebug
-		php7-xsl
+		php-legacy
+		php-legacy-fpm
+		php-legacy-gd
+		php-legacy-imagick
+		php-legacy-sodium
+		php-legacy-sqlite
+		php-legacy-tidy
+		php-legacy-xdebug
+		php-legacy-xsl
 
 		# Fonts
-		nerd-fonts-anonymous-pro
-		nerd-fonts-dejavu-complete
-		nerd-fonts-fira-code
-		nerd-fonts-go-mono
-		nerd-fonts-hack
-		nerd-fonts-jetbrains-mono
-		nerd-fonts-liberation-mono
-		nerd-fonts-source-code-pro
-		nerd-fonts-terminus
+		ttf-anonymouspro-nerd
+		ttf-dejavu-nerd
+		ttf-firacode-nerd
+		ttf-go-nerd
+		ttf-hack-nerd
+		ttf-jetbrains-mono-nerd
+		ttf-liberation-mono-nerd
+		ttf-sourcecodepro-nerd
+		ttf-terminus-nerd
 
 		# IDE
-		neovim-nightly-bin
+		neovim
 		lua-language-server
 		shellcheck
 
@@ -119,11 +117,17 @@ install_node_packages() {
 	PACKAGES=(
 		@ansible/ansible-language-server
 		@fsouza/prettierd
+		@volar/vue-language-server
 		bash-language-server
+		blade-formatter
+		doctoc
 		eslint_d
+		fast-cli
 		intelephense
+		lighthouse
 		markdownlint
 		markdownlint-cli
+		speed-test
 		stylelint
 		stylelint-lsp
 		stylelint-config-prettier
@@ -170,8 +174,8 @@ install_pip_packages() {
 	python -m pip install --upgrade pip
 
 	PACKAGES=(
-		yamllint
 		csvkit
+		yamllint
 	)
 
 	# shellcheck disable=2046

@@ -4,18 +4,27 @@ if not _plugin then
 end
 
 plugin.setup({
-  border_style = 'rounded',
-  diagnostic_header = { ' ', ' ', ' ', 'ﴞ ' },
+  border = 'rounded',
+  devicon = true,
+  kind = { ' ', ' ', ' ', 'ﴞ ' },
   symbol_in_winbar = {
-    in_custom = false,
     enable = true,
-    separator = '  ',
+    separator = ' › ',
+    hide_keyword = false,
     show_file = true,
-    click_support = false,
+    folder_level = 1,
+    color_mode = true,
   },
-  show_outline = {
+  code_action = {
+    num_shortcut = true,
+    show_server_name = true,
+    extend_gitsigns = true,
+  },
+  outline = {
     win_width = 50,
-    jump_key = '<cr>',
+    keys = {
+      jump = '<cr>',
+    },
   },
 })
 
