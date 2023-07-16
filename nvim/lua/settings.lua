@@ -2,11 +2,12 @@ vim.o.backspace = '2' -- Backspace deletes like most programs in insert mode
 vim.o.hlsearch = true -- highlight searches (:noh to turn off)
 vim.o.ignorecase = true -- case insensitive searching
 vim.o.smartcase = true -- overrides ignorecase when pattern contains caps
-vim.o.laststatus = 2 -- Always display the status line
+vim.o.laststatus = 1 -- Always display the status line
 vim.o.ruler = true -- show the cursor position all the time
 vim.o.showcmd = true -- display incomplete commands
 vim.o.incsearch = true -- do incremental searching
 vim.o.cursorline = true -- Enable highlighting of the current line
+vim.o.statuscolumn = '%s %l %r'
 
 -- Tabs and spaces
 vim.o.tabstop = 2
@@ -61,17 +62,6 @@ vim.o.splitright = true
 
 -- Colours
 vim.opt.termguicolors = true
-local themeExists, tokyonight = pcall(require, 'tokyonight')
-if themeExists then
-  tokyonight.setup({
-    style = 'storm',
-    transparent = true,
-    styles = {
-      sidebars = 'transparent',
-    },
-  })
-  vim.cmd([[colorscheme tokyonight]])
-end
 vim.api.nvim_set_hl(0, 'TelescopeNormal', { ctermbg = 220 })
 
 -- Misc

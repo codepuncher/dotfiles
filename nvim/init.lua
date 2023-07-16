@@ -1,6 +1,6 @@
 vim.loader.enable()
 
-require('plugins')
 require('settings')
+require('plugins')
 require('keymappings')
 require('lsp')

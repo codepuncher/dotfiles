@@ -5,7 +5,7 @@ if not vim.loop.fs_stat(lazypath) then
     'clone',
     '--filter=blob:none',
     'https://github.com/folke/lazy.nvim.git',
-    '--branch=stable', -- latest stable release
+    '--branch=stable',
     lazypath,
   })
 end
@@ -43,21 +43,45 @@ require('lazy').setup({
       lazy = false,
       priority = 1000,
       opts = {},
+      config = function()
+        require('tokyonight').setup({
+          style = 'storm',
+          transparent = true,
+          styles = {
+            sidebars = 'transparent',
+            floats = 'transparent',
+          },
+        })
+        vim.cmd([[colorscheme tokyonight]])
+      end,
     },
-    'kyazdani42/nvim-web-devicons',
-    dependencies = {
-      {
-        'nvim-lualine/lualine.nvim',
-        config = function()
-          require('plugins.configs.lualine')
-        end,
+    {
+      'nvim-lualine/lualine.nvim',
+      config = function()
+        require('plugins.configs.lualine')
+      end,
+      dependencies = {
+        'nvim-tree/nvim-web-devicons',
+        'linrongbin16/lsp-progress.nvim',
       },
-      {
-        'akinsho/bufferline.nvim',
-        tag = '*',
-        config = function()
-          require('plugins.configs.bufferline')
-        end,
+    },
+    {
+      'linrongbin16/lsp-progress.nvim',
+      dependencies = {
+        'nvim-tree/nvim-web-devicons',
+      },
+      config = function()
+        require('lsp-progress').setup()
+      end,
+    },
+    {
+      'akinsho/bufferline.nvim',
+      version = '*',
+      config = function()
+        require('plugins.configs.bufferline')
+      end,
+      dependencies = {
+        'nvim-tree/nvim-web-devicons',
       },
     },
     {
@@ -74,10 +98,11 @@ require('lazy').setup({
     {
       'rcarriga/nvim-notify',
       config = function()
-        -- notify = require('notify').setup({
-        --   background_colour = '#000000',
-        -- })
-        -- vim.notify = notify
+        local notify = require('notify')
+        vim.notify = notify
+        notify.setup({
+          background_colour = '#000000',
+        })
       end,
     },
   },
@@ -116,10 +141,15 @@ require('lazy').setup({
       },
     },
     {
-      'glepnir/lspsaga.nvim',
+      'nvimdev/lspsaga.nvim',
       config = function()
         require('plugins.configs.lspsaga')
       end,
+      dependencies = {
+        'nvim-treesitter/nvim-treesitter',
+        'nvim-tree/nvim-web-devicons',
+      },
+      event = 'LspAttach',
     },
     {
       'ray-x/lsp_signature.nvim',
@@ -130,7 +160,7 @@ require('lazy').setup({
     {
       'folke/trouble.nvim',
       dependencies = {
-        'kyazdani42/nvim-web-devicons',
+        'nvim-tree/nvim-web-devicons',
       },
       cmd = { 'Trouble', 'TroubleClose', 'TroubleToggle', 'TroubleRefresh' },
       config = function()
@@ -140,19 +170,19 @@ require('lazy').setup({
   },
 
   -- Debug Adapter Protocol
-  {
-    {
-      'mfussenegger/nvim-dap',
-      config = function()
-        require('plugins.configs.dap')
-      end,
-    },
-    'rcarriga/nvim-dap-ui',
-    'rcarriga/cmp-dap',
-    'theHamsta/nvim-dap-virtual-text',
-    'nvim-telescope/telescope-dap.nvim',
-    'leoluz/nvim-dap-go',
-  },
+  -- {
+  --   {
+  --     'mfussenegger/nvim-dap',
+  --     config = function()
+  --       require('plugins.configs.dap')
+  --     end,
+  --   },
+  --   'rcarriga/nvim-dap-ui',
+  --   'rcarriga/cmp-dap',
+  --   'theHamsta/nvim-dap-virtual-text',
+  --   'nvim-telescope/telescope-dap.nvim',
+  --   'leoluz/nvim-dap-go',
+  -- },
 
   -- Git
   {

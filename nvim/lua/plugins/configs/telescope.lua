@@ -5,6 +5,7 @@ end
 
 local actions = require('telescope.actions')
 local actions_state = require('telescope.actions.state')
+local trouble = require('trouble.providers.telescope')
 
 local M = {}
 
@@ -33,6 +34,10 @@ telescope.setup({
       prompt_position = 'top',
     },
     theme = 'dropdown',
+    mappings = {
+      i = { ['<c-t>'] = trouble.open_with_trouble },
+      n = { ['<c-t>'] = trouble.open_with_trouble },
+    },
   },
   pickers = {
     git_branches = {
@@ -70,7 +75,7 @@ telescope.load_extension('fzf')
 telescope.load_extension('node_modules')
 telescope.load_extension('gh')
 telescope.load_extension('file_browser')
-telescope.load_extension('dap')
+-- telescope.load_extension('dap')
 
 M.find_files_no_ignore = function()
   local theme = require('telescope.themes').get_dropdown({

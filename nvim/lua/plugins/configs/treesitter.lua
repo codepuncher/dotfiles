@@ -32,6 +32,8 @@ plugin.setup({
     enable = true,
   },
   ensure_installed = {
+    'markdown',
+    'markdown_inline',
     'tsx',
     'toml',
     'bash',
