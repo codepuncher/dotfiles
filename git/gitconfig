@@ -19,5 +19,5 @@
 	defaultBranch = main
 [push]
 	autoSetupRemote = true
-[includeIf "gitdir:~/work/"]
+[includeIf "gitdir:/home/work/"]
   path = ~/.dotfiles/git/users/work.gitconfig
