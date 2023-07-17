@@ -54,6 +54,9 @@ install_arch_packages() {
 		php-legacy-tidy
 		php-legacy-xdebug
 		php-legacy-xsl
+		python
+		python-pip
+		python-pipx
 
 		# Fonts
 		ttf-anonymouspro-nerd
@@ -91,7 +94,7 @@ install_arch_packages() {
 	sudo pamac install --no-confirm --no-upgrade $(
 		IFS=' '
 		echo "${PACKAGES[*]}"
-	)
+	) "$@"
 }
 
 setup_arch_services() {
@@ -141,7 +144,7 @@ install_node_packages() {
 	yarn global add $(
 		IFS=' '
 		echo "${PACKAGES[*]}"
-	)
+	) "$@"
 }
 
 install_go_packages() {
@@ -151,7 +154,7 @@ install_go_packages() {
 	)
 
 	for P in "${PACKAGES[@]}"; do
-		go install "${P}"
+		go install "${P}" "$@"
 	done
 }
 
@@ -166,23 +169,18 @@ install_composer_packages() {
 	composer global require $(
 		IFS=' '
 		echo "${PACKAGES[*]}"
-	)
+	) "$@"
 }
 
 install_pip_packages() {
-	python -m ensurepip --upgrade
-	python -m pip install --upgrade pip
-
 	PACKAGES=(
 		csvkit
 		yamllint
 	)
 
-	# shellcheck disable=2046
-	python -m pip install --user $(
-		IFS=' '
-		echo "${PACKAGES[*]}"
-	)
+	for P in "${PACKAGES[@]}"; do
+		pipx install "${P}" "$@"
+	done
 }
 
 install_cargo_packages() {
@@ -194,7 +192,7 @@ install_cargo_packages() {
 	cargo install $(
 		IFS=' '
 		echo "${PACKAGES[*]}"
-	)
+	) "$@"
 }
 
 post_install_packages() {
