@@ -94,7 +94,7 @@ install_arch_packages() {
 	sudo pamac install --no-confirm --no-upgrade $(
 		IFS=' '
 		echo "${PACKAGES[*]}"
-	)
+	) "$@"
 }
 
 setup_arch_services() {
@@ -144,7 +144,7 @@ install_node_packages() {
 	yarn global add $(
 		IFS=' '
 		echo "${PACKAGES[*]}"
-	)
+	) "$@"
 }
 
 install_go_packages() {
@@ -154,7 +154,7 @@ install_go_packages() {
 	)
 
 	for P in "${PACKAGES[@]}"; do
-		go install "${P}"
+		go install "${P}" "$@"
 	done
 }
 
@@ -169,7 +169,7 @@ install_composer_packages() {
 	composer global require $(
 		IFS=' '
 		echo "${PACKAGES[*]}"
-	)
+	) "$@"
 }
 
 install_pip_packages() {
@@ -178,7 +178,6 @@ install_pip_packages() {
 		yamllint
 	)
 
-	ARGS="${1:---force}"
 	for P in "${PACKAGES[@]}"; do
 		pipx install "${P}" "$@"
 	done
@@ -193,7 +192,7 @@ install_cargo_packages() {
 	cargo install $(
 		IFS=' '
 		echo "${PACKAGES[*]}"
-	)
+	) "$@"
 }
 
 post_install_packages() {
