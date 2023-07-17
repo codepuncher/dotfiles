@@ -62,10 +62,12 @@ install_packages() {
 		return
 	fi
 
+	# shellcheck disable=2119
 	install_arch_packages
 	post_install_packages
 	setup_arch_services
 	post_setup_arch_services
+	# shellcheck disable=2119
 	install_go_packages
 }
 
@@ -120,6 +122,7 @@ install_composer() {
 	php composer-setup.php --quiet
 	rm composer-setup.php
 	sudo mv composer.phar /usr/local/bin/composer
+	# shellcheck disable=2119
 	install_composer_packages
 }
 
