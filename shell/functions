@@ -54,6 +54,9 @@ install_arch_packages() {
 		php-legacy-tidy
 		php-legacy-xdebug
 		php-legacy-xsl
+		python
+		python-pip
+		python-pipx
 
 		# Fonts
 		ttf-anonymouspro-nerd
@@ -170,19 +173,15 @@ install_composer_packages() {
 }
 
 install_pip_packages() {
-	python -m ensurepip --upgrade
-	python -m pip install --upgrade pip
-
 	PACKAGES=(
 		csvkit
 		yamllint
 	)
 
-	# shellcheck disable=2046
-	python -m pip install --user $(
-		IFS=' '
-		echo "${PACKAGES[*]}"
-	)
+	ARGS="${1:---force}"
+	for P in "${PACKAGES[@]}"; do
+		pipx install "${P}" "$@"
+	done
 }
 
 install_cargo_packages() {
