@@ -73,6 +73,7 @@ install_arch_packages() {
 		neovim
 		lua-language-server
 		shellcheck
+		hadolint-bin
 
 		# System
 		vim
