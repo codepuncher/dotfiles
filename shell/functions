@@ -73,6 +73,7 @@ install_arch_packages() {
 		neovim
 		lua-language-server
 		shellcheck
+		hadolint-bin
 
 		# System
 		vim
@@ -185,6 +186,7 @@ install_pip_packages() {
 
 install_cargo_packages() {
 	PACKAGES=(
+		tree-sitter-cli
 		stylua
 	)
 

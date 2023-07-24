@@ -86,9 +86,10 @@ require('lazy').setup({
     },
     {
       'nvim-tree/nvim-tree.lua',
-      opt = true,
-      event = {
-        'BufEnter',
+      version = '*',
+      lazy = false,
+      dependencies = {
+        'nvim-tree/nvim-web-devicons',
       },
       config = function()
         require('plugins.configs.nvim-tree')
@@ -284,7 +285,7 @@ require('lazy').setup({
     {
       'iamcco/markdown-preview.nvim',
       build = 'cd app && yarn',
-      setup = function()
+      config = function()
         vim.g.mkdp_filetypes = { 'markdown' }
       end,
       ft = {
