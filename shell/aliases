@@ -15,7 +15,9 @@ alias gm='g merge'
 alias gp='g push'
 alias gr='g reset'
 alias gs='g status -sb'
-alias gbn='gco -b'
+function gbn() {
+	gco -b "${1:-$(date +%F)}"
+}
 alias gbr='gb -m'
 if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
 	alias git_copy_branch='gb --show-current | xclip -selection c'
