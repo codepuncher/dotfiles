@@ -17,7 +17,7 @@ fi
 if [[ -n "${1}" ]]; then
 	OPACITY_VALUE_NEW="${1}"
 elif [[ 1 == "${OPACITY_VALUE_ORIGINAL}" ]]; then
-	OPACITY_VALUE_NEW=0.9
+	OPACITY_VALUE_NEW=0.75
 fi
 
 if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
