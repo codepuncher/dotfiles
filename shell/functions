@@ -186,6 +186,7 @@ install_pip_packages() {
 
 install_cargo_packages() {
 	PACKAGES=(
+		tree-sitter-cli
 		stylua
 	)
 
