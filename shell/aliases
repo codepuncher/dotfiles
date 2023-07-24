@@ -15,7 +15,9 @@ alias gm='g merge'
 alias gp='g push'
 alias gr='g reset'
 alias gs='g status -sb'
-alias gbn='gco -b'
+function gbn() {
+	gco -b "${1:-$(date +%F)}"
+}
 alias gbr='gb -m'
 if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
 	alias git_copy_branch='gb --show-current | xclip -selection c'
@@ -56,6 +58,7 @@ function gp_create_pr {
 	sleep 5 && gh pr view -w
 }
 alias gh_check_merge='gh pr checks --watch --interval 2 && gh pr merge -md'
+alias gfrh='gf --all --prune && gr --hard "@{u}"'
 
 # Composer
 alias c='composer'
