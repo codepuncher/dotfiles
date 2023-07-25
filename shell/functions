@@ -59,6 +59,7 @@ install_arch_packages() {
 		python-pipx
 
 		# Fonts
+		noto-fonts-emoji
 		ttf-anonymouspro-nerd
 		ttf-dejavu-nerd
 		ttf-firacode-nerd

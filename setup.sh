@@ -43,6 +43,8 @@ init_links() {
 		move_link .gitconfig git/gitconfig
 		move_link .config/alacritty/alacritty.yml terminals/alacritty.yml
 		move_link .config/spotifyd/spotifyd.conf media/spotifyd.conf
+		move_link .config/fontconfig fontconfig
+
 		echo "Symlinking complete. Backups stored in ${SCRIPT_PATH}/backups."
 		return
 	fi
