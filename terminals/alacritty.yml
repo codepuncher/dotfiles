@@ -1,12 +1,12 @@
 ---
 font:
   normal:
-    family: "JetBrainsMono Nerd Font"
+    family: terminal-font
   bold:
-    family: "JetBrainsMono Nerd Font"
+    family: terminal-font
   italic:
-    family: "JetBrainsMono Nerd Font"
-  size: 10.0
+    family: terminal-font
+  size: 11.0
 
 # TokyoNight Alacritty Colors
 colors:
