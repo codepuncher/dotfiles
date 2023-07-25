@@ -44,7 +44,14 @@ colors:
     - { index: 17, color: "0xdb4b4b" }
 
 window:
-  opacity: 0.75
+  padding:
+    x: 0
+    y: 0
+  dynamic_padding: true
+  opacity: 1
+  startup_mode: Maximized
+  dynamic_title: true
+  decorations_theme_variant: Dark
 
 env:
   TERM: xterm-256color

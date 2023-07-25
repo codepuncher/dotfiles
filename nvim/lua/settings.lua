@@ -3,6 +3,7 @@ vim.o.hlsearch = true -- highlight searches (:noh to turn off)
 vim.o.ignorecase = true -- case insensitive searching
 vim.o.smartcase = true -- overrides ignorecase when pattern contains caps
 vim.o.laststatus = 1 -- Always display the status line
+vim.o.cmdheight = 0 -- Hide the command line until activated.
 vim.o.ruler = true -- show the cursor position all the time
 vim.o.showcmd = true -- display incomplete commands
 vim.o.incsearch = true -- do incremental searching
