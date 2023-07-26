@@ -79,7 +79,10 @@ wk.register({
   },
   ['<leader>fg'] = {
     name = '[TELESCOPE] Git',
-    s = { [[<cmd>lua require('telescope.builtin').git_status()<cr>]], '[TELESCOPE] Git status' },
+    s = {
+      [[<cmd>lua require('telescope.builtin').git_status(require('telescope.themes').get_dropdown({layout_config={width=0.75}}))<cr>]],
+      '[TELESCOPE] Git status',
+    },
     b = {
       [[<cmd>lua require('telescope.builtin').git_branches(require('telescope.themes').get_ivy({}))<cr>]],
       '[TELESCOPE] Git branches',
@@ -134,7 +137,7 @@ wk.register({
     },
     ['='] = {
       "<cmd>Git push -u origin @ | :execute '!gh pr create -f'<cr>",
-      '[GIT] Push new branch, create a PR and watch the Actions job',
+      '[GIT] Push new branch, create a PR',
     },
     mpr = { '<cmd>!gh pr merge -md<cr>', '[GIT] Merge PR and delete branch' },
     vpr = { '<cmd>!gh pr view -w<cr>', '[GIT] View PR in browser' },

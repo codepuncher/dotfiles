@@ -67,6 +67,7 @@ telescope.setup({
     },
     file_browser = {
       theme = 'ivy',
+      depth = 3,
     },
   },
 })
