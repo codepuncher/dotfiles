@@ -137,7 +137,7 @@ wk.register({
     },
     ['='] = {
       "<cmd>Git push -u origin @ | :execute '!gh pr create -f'<cr>",
-      '[GIT] Push new branch, create a PR and watch the Actions job',
+      '[GIT] Push new branch, create a PR',
     },
     mpr = { '<cmd>!gh pr merge -md<cr>', '[GIT] Merge PR and delete branch' },
     vpr = { '<cmd>!gh pr view -w<cr>', '[GIT] View PR in browser' },
