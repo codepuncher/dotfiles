@@ -195,6 +195,7 @@ require('lazy').setup({
         'Git commit',
         'Git push',
         'Git status',
+        'Gvdiffsplit',
       },
     },
     {

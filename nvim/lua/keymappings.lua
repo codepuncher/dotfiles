@@ -116,7 +116,7 @@ wk.register({
   ['<leader>g'] = {
     name = '[GIT]',
     da = { '<cmd>vertical Git diff<cr>', '[GIT] Diff all' },
-    df = { '<cmd>vertical Git diff %<cr>', '[GIT] Diff current file' },
+    df = { '<cmd>Gvdiffsplit<cr>', '[GIT] Diff current file' },
     s = { '<cmd>Git<cr>', '[GIT] Status' },
     h = { '<cmd>diffget //3<cr>' },
     l = { '<cmd>diffget //2<cr>' },
