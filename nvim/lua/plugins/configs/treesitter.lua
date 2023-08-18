@@ -31,6 +31,9 @@ plugin.setup({
   matchup = {
     enable = true,
   },
+  tree_setter = {
+    enable = true,
+  },
   ensure_installed = {
     'markdown',
     'markdown_inline',
