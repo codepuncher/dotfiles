@@ -84,17 +84,6 @@ install_zinit() {
 	fi
 }
 
-install_packer_nvim() {
-	NVIM_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/nvim"
-	PACKER_NVIM_FILE="${NVIM_HOME}/site/pack/packer/start/packer.nvim"
-	if [[ ! -d "${PACKER_NVIM_FILE}" ]]; then
-		echo 'packer.nvim not installed. Installing...'
-		git clone --depth 1 https://github.com/wbthomason/packer.nvim "${PACKER_NVIM_FILE}" &&
-			echo "packer.nvim installed. Don't forget to run :PackerSync when opening nvim for the first time!" ||
-			echo 'packer.nvim installation failed.'
-	fi
-}
-
 install_tpm() {
 	TMUX_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}/tmux"
 	TPM_PATH="${TMUX_HOME}/plugins/tpm"
@@ -136,7 +125,6 @@ install_tools() {
 	fi
 
 	install_zinit
-	install_packer_nvim
 	install_tpm
 	install_composer
 }
