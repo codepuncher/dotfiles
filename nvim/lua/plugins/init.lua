@@ -123,7 +123,6 @@ require('lazy').setup({
         end,
       },
       'andymass/vim-matchup',
-      'filNaj/tree-setter',
     },
     build = ':TSUpdate',
     config = function()
