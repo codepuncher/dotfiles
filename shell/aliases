@@ -137,6 +137,7 @@ wp_reset_local_user_pass() {
 }
 wp_delete_trash_revison_posts() {
 	[ -z "${1}" ] && ENVIRONMENT='development' || ENVIRONMENT="${1}"
+	[ -z "${2}" ] && URL='' || URL="${2}"
 
 	if [[ "${ENVIRONMENT}" = 'development' ]]; then
 		ALIAS=''
@@ -144,12 +145,16 @@ wp_delete_trash_revison_posts() {
 		ALIAS="@${ENVIRONMENT}"
 	fi
 
+	if [[ -n "${URL}" ]]; then
+		URL="--url=${URL}"
+	fi
+
 	echo 'Deleting revisions...'
 	# shellcheck disable=SC2046
-	wp ${ALIAS:+$ALIAS} post delete $(wp ${ALIAS:+$ALIAS} post list --post_type=revision --format=ids) --force
+	wp ${ALIAS:+$ALIAS} post delete $(wp ${ALIAS:+$ALIAS} post list --post_type=revision --format=ids ${URL:+$URL}) --force ${URL:+$URL}
 	echo 'Deleting trashed posts...'
 	# shellcheck disable=SC2046
-	wp ${ALIAS:+$ALIAS} post delete $(wp ${ALIAS:+$ALIAS} post list --post_type=any --post_status=trash --format=ids) --force
+	wp ${ALIAS:+$ALIAS} post delete $(wp ${ALIAS:+$ALIAS} post list --post_type=any --post_status=trash --format=ids ${URL:+$URL}) --force ${URL:+$URL}
 }
 generate_vault_pass() {
 	vault_pass=$(
