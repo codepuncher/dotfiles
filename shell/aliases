@@ -107,7 +107,14 @@ wp_db_export() {
 alias t='trellis'
 trellis_copy_basic_auth_pass() {
 	[ -z "${1}" ] && ENVIRONMENT='staging' || ENVIRONMENT="${1}"
-	if [ ! -f "hosts/${ENVIRONMENT}" ]; then
+	CWD="$(pwd)"
+	CWD="${CWD/trellis*/}"
+	CWD="${CWD/bedrock*/}"
+	if [ ! -d "${CWD}/trellis/hosts" ]; then
+		echo 'Trellis directory not found'
+		return 1
+	fi
+	if [ ! -f "${CWD}/trellis/hosts/${ENVIRONMENT}" ]; then
 		echo 'Invalid environment provided'
 		return 1
 	fi
