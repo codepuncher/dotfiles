@@ -52,9 +52,48 @@ function gh_actions_cache_delete_all {
 	done
 }
 function gp_create_pr {
-	DEFAULT_BRANCH=$(git_get_default_branch)
-	BASE="${1:-$DEFAULT_BRANCH}"
-	gp && gh pr create --fill --base "${BASE}"
+	for i in "${@}"; do
+		case "${i}" in
+		--base=*)
+			BASE="${i#*=}"
+			shift
+			;;
+		--fill)
+			SHOULD_FILL=true
+			shift
+			;;
+		--template=*)
+			TEMPLATE="${i#*=}"
+			shift
+			;;
+		esac
+	done
+
+	if [[ -z "${BASE}" ]]; then
+		BASE=$(git_get_default_branch)
+	fi
+	if [[ -z "${SHOULD_FILL}" ]]; then
+		SHOULD_FILL=false
+	fi
+	if [[ "${SHOULD_FILL}" != true ]] && [[ -z "${TEMPLATE}" ]]; then
+		TEMPLATE='WEB_BUILD.md'
+		TITLE=$(gb --show-current)
+	fi
+	if [[ "${SHOULD_FILL}" == true ]] && [[ -n "${TEMPLATE}" ]]; then
+		echo 'Cannot --fill and use --template.'
+		return 1
+	fi
+
+	if ! gp -u origin HEAD; then
+		return 1
+	fi
+
+	if [[ -n "${TEMPLATE}" ]]; then
+		gh pr create --base "${BASE}" --template="${TEMPLATE}" --title="${TITLE}" --body
+	elif [[ "${SHOULD_FILL}" == true ]]; then
+		gh pr create --base "${BASE}" --fill
+	fi
+
 	sleep 5 && gh pr view -w
 }
 alias gh_check_merge='gh pr checks --watch --interval 2 && gh pr merge -md'
@@ -75,6 +114,7 @@ alias cgu='cg update'
 
 # Node
 alias y='yarn'
+alias yi='yarn install --frozen-lockfile'
 alias yg='y global'
 alias ya='y add'
 alias yga='yg add'
