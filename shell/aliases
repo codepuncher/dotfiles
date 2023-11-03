@@ -75,6 +75,7 @@ alias cgu='cg update'
 
 # Node
 alias y='yarn'
+alias yi='yarn install --frozen-lockfile'
 alias yg='y global'
 alias ya='y add'
 alias yga='yg add'
