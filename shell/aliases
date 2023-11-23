@@ -89,7 +89,7 @@ function gp_create_pr {
 	fi
 
 	if [[ -n "${TEMPLATE}" ]]; then
-		gh pr create --base "${BASE}" --template="${TEMPLATE}" --title="${TITLE}" --body
+		gh pr create --base "${BASE}" --template="${TEMPLATE}" --title="${TITLE}"
 	elif [[ "${SHOULD_FILL}" == true ]]; then
 		gh pr create --base "${BASE}" --fill
 	fi
