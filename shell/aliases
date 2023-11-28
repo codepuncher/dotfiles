@@ -204,16 +204,40 @@ wp_delete_trash_revison_posts() {
 	wp ${ALIAS:+$ALIAS} post delete $(wp ${ALIAS:+$ALIAS} post list --post_type=any --post_status=trash --format=ids ${URL:+$URL}) --force ${URL:+$URL}
 }
 COMMON_UNUSED_LOCAL_PLUGINS=(
+	"acf-content-analysis-for-yoast-seo"
+	"acf-editor-palette"
+	"cms-tree-page-view"
+	"cookiebot"
+	"crop-thumbnails"
+	"crop-thumbnails-cdn-cache-busting"
+	"duplicate-post"
+	"forgravity-entryautomation"
+	"forgravity-entryautomation-ftp"
+	"gravity-forms-encrypted-fields"
+	"gravity-forms-google-analytics-event-tracking"
+	"itineris-disable-xml-rpc"
+	"iwp-client"
+	"popup-maker"
+	"redirection"
 	"stream"
+	"tinymce-advanced"
 	"tracking-code-manager"
-	"wp-rocket"
 	"wordfence-login-security"
+	"wp-all-import-pro"
+	"wp-media-folder"
+	"wp-phpmailer"
+	"wp-rocket"
+	"wp-sentry-integration"
+	"wpai-acf-add-on"
+	"yoast-acf-content-analysis-blacklist"
 )
 wp_activate_common_unused_plugins() {
 	wp plugin activate --skip-themes --skip-plugins "${COMMON_UNUSED_LOCAL_PLUGINS[@]}"
+	gco "$(git root)/web/wp-config.php"
 }
 wp_deactivate_common_unused_plugins() {
 	wp plugin deactivate --skip-themes --skip-plugins "${COMMON_UNUSED_LOCAL_PLUGINS[@]}"
+	gco "$(git root)/web/wp-config.php"
 }
 generate_vault_pass() {
 	vault_pass=$(
