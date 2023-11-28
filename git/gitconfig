@@ -19,6 +19,7 @@
 
 [alias]
 	conflicts = diff --name-only --diff-filter=U
+	root = rev-parse --show-toplevel
 
 [init]
 	defaultBranch = main
