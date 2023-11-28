@@ -205,7 +205,6 @@ wp_delete_trash_revison_posts() {
 }
 COMMON_UNUSED_LOCAL_PLUGINS=(
 	"acf-content-analysis-for-yoast-seo"
-	"acf-editor-palette"
 	"cms-tree-page-view"
 	"cookiebot"
 	"crop-thumbnails"
