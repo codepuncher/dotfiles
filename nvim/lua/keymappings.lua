@@ -141,6 +141,7 @@ wk.register({
     },
     mpr = { '<cmd>!gh pr merge -md<cr>', '[GIT] Merge PR and delete branch' },
     vpr = { '<cmd>!gh pr view -w<cr>', '[GIT] View PR in browser' },
+    frh = { '<cmd>Git fetch --all --prune | Git reset --hard "@{u}"<cr>', '[GIT] Fetch latest changes and reset state' },
   },
 
   -- Symbols Outline
