@@ -1,11 +1,11 @@
 ---
 font:
   normal:
-    family: terminal-font
+    family: JetBrainsMono NFM
   bold:
-    family: terminal-font
+    family: JetBrainsMono NFM
   italic:
-    family: terminal-font
+    family: JetBrainsMono NFM
   size: 11.0
 
 # TokyoNight Alacritty Colors
