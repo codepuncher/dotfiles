@@ -24,7 +24,12 @@ install_arch_packages() {
 		spotify-launcher
 		spotifyd
 		pandoc
-		texlive-core
+		texlive-basic
+		texlive-latex
+		texlive-latexrecommended
+		texlive-pictures
+		texlive-latexextra
+		texlive-fontsrecommended
 
 		# Social
 		discord
