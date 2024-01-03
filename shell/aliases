@@ -235,7 +235,19 @@ wp_activate_common_unused_plugins() {
 	gco "$(git root)/web/wp-config.php"
 }
 wp_deactivate_common_unused_plugins() {
-	wp plugin deactivate --skip-themes --skip-plugins "${COMMON_UNUSED_LOCAL_PLUGINS[@]}"
+	for i in "${@}"; do
+		case "${i}" in
+		--network)
+			IS_NETWORK=true
+			shift
+			;;
+		esac
+	done
+	if [[ "${IS_NETWORK}" == true ]]; then
+		wp plugin deactivate --skip-themes --skip-plugins --network "${COMMON_UNUSED_LOCAL_PLUGINS[@]}"
+	else
+		wp plugin deactivate --skip-themes --skip-plugins "${COMMON_UNUSED_LOCAL_PLUGINS[@]}"
+	fi
 	gco "$(git root)/web/wp-config.php"
 }
 generate_vault_pass() {
