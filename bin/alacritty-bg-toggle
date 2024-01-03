@@ -8,11 +8,8 @@ if [[ -z "${CONFIG_PATH}" ]]; then
 fi
 
 OPACITY_VALUE_NEW=1
-echo "${OPACITY_VALUE_NEW}"
 OPACITY_VALUE_ORIGINAL=$(rg 'opacity\s+=\s+\d.?+' "${CONFIG_PATH}")
-echo "${OPACITY_VALUE_ORIGINAL}"
 OPACITY_VALUE_ORIGINAL="${OPACITY_VALUE_ORIGINAL#*= }"
-echo "${OPACITY_VALUE_ORIGINAL}"
 if [[ -z "${OPACITY_VALUE_ORIGINAL}" ]]; then
 	exit 1
 fi
