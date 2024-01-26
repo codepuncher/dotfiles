@@ -41,7 +41,7 @@ init_links() {
 		move_link .config/tmux tmux
 		move_link .config/nvim nvim
 		move_link .gitconfig git/gitconfig
-		move_link .config/alacritty/alacritty.yml terminals/alacritty.yml
+		move_link .config/alacritty/alacritty.toml terminals/alacritty.toml
 		move_link .config/spotifyd/spotifyd.conf media/spotifyd.conf
 		move_link .config/fontconfig fontconfig
 
@@ -124,6 +124,7 @@ install_tools() {
 		return
 	fi
 
+	install_nvm
 	install_zinit
 	install_tpm
 	install_composer

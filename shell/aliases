@@ -46,11 +46,6 @@ function gp_pr_create_with_reviewer {
 
 	gp && gh pr create --fill --reviewer "${REVIEWER}"
 }
-function gh_actions_cache_delete_all {
-	for KEY in $(gh actions-cache list | awk '{print $1}' | sort -u); do
-		gh actions-cache delete "${KEY}" --confirm
-	done
-}
 function gp_create_pr {
 	for i in "${@}"; do
 		case "${i}" in
@@ -145,28 +140,6 @@ wp_db_export() {
 	fi
 }
 alias t='trellis'
-trellis_copy_basic_auth_pass() {
-	[ -z "${1}" ] && ENVIRONMENT='staging' || ENVIRONMENT="${1}"
-	CWD="$(pwd)"
-	CWD="${CWD/trellis*/}"
-	CWD="${CWD/bedrock*/}"
-	if [ ! -d "${CWD}/trellis/hosts" ]; then
-		echo 'Trellis directory not found'
-		return 1
-	fi
-	if [ ! -f "${CWD}/trellis/hosts/${ENVIRONMENT}" ]; then
-		echo 'Invalid environment provided'
-		return 1
-	fi
-
-	AUTH_PASS=$(trellis vault view "${ENVIRONMENT}" | grep -o "http_basic_auth_password: .*" | cut -f2- -d: | cut -c2-)
-	echo "${AUTH_PASS}"
-	if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
-		echo "${AUTH_PASS}" | xclip -selection c
-	elif [[ "${OSTYPE:0:6}" = 'darwin' ]]; then
-		echo "${AUTH_PASS}" | pbcopy
-	fi
-}
 wp_get_user_id() {
 	[ -z "${1}" ] && email='wordpress@itineris.co.uk' || email="${1}"
 	wp user get "${email}" --field=ID --format=csv --skip-themes --skip-plugins | head -n1 | tr -d '\n'
@@ -181,27 +154,6 @@ wp_reset_local_user_pass() {
 	else
 		wp "@${ENVIRONMENT}" user update "$(wp_get_user_id)" --user_pass=admin --skip-themes --skip-plugins
 	fi
-}
-wp_delete_trash_revison_posts() {
-	[ -z "${1}" ] && ENVIRONMENT='development' || ENVIRONMENT="${1}"
-	[ -z "${2}" ] && URL='' || URL="${2}"
-
-	if [[ "${ENVIRONMENT}" = 'development' ]]; then
-		ALIAS=''
-	else
-		ALIAS="@${ENVIRONMENT}"
-	fi
-
-	if [[ -n "${URL}" ]]; then
-		URL="--url=${URL}"
-	fi
-
-	echo 'Deleting revisions...'
-	# shellcheck disable=SC2046
-	wp ${ALIAS:+$ALIAS} post delete $(wp ${ALIAS:+$ALIAS} post list --post_type=revision --format=ids ${URL:+$URL}) --force ${URL:+$URL}
-	echo 'Deleting trashed posts...'
-	# shellcheck disable=SC2046
-	wp ${ALIAS:+$ALIAS} post delete $(wp ${ALIAS:+$ALIAS} post list --post_type=any --post_status=trash --format=ids ${URL:+$URL}) --force ${URL:+$URL}
 }
 COMMON_UNUSED_LOCAL_PLUGINS=(
 	"acf-content-analysis-for-yoast-seo"
@@ -323,6 +275,26 @@ trellis_generate_deploy_key() {
 	remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/trellis/bedrock/g')
 	known_hosts=$(rg 'ansible_host=\d.*\s' hosts/production -o | rg -o '\d.*')
 	trellis key generate --repo "${remote}" --known-hosts "${known_hosts}" --no-provision
+}
+trellis_get_environment_canonical() {
+	if [[ -z "${1}" ]]; then
+		echo 'No environment provided' >&2
+		return 1
+	fi
+
+	if [[ "${PWD}" == *bedrock ]]; then
+		local trellis_path='../trellis'
+	elif [[ "${PWD}" == *trellis ]]; then
+		local trellis_path='.'
+	fi
+
+	if [[ ! -d "${trellis_path}/group_vars/${1}" ]]; then
+		echo "trellis/group_vars/${1} does not exist"
+		return 1
+	fi
+
+	# shellcheck disable=SC2016
+	rg 'canonical:\s(.*)' "${trellis_path}/group_vars/${1}/wordpress_sites.yml" --only-matching --no-line-number --replace '$1'
 }
 gh_set_vault_pass() {
 	remote=$(g remote -v | head -n1 | rg -o 'ItinerisLtd/(.*)-(bedrock|trellis)' | sed 's/-trellis//g;s/-bedrock//g')
