@@ -77,7 +77,7 @@ local servers = {
   'tsserver',
   'volar',
   'yamlls',
-  -- 'tailwindcss',
+  'tailwindcss',
 }
 for _, server in pairs(servers) do
   local _config, config = pcall(require, 'lsp.servers.' .. server)

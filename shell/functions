@@ -124,7 +124,14 @@ setup_arch_services() {
 	)
 }
 
+install_nvm() {
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+}
+
 install_node_packages() {
+	if [[ ! -d "${NVM_DIR}" ]] || [[ ! -d "${HOME}/.nvm" ]]; then
+		install_nvm
+	fi
 	PACKAGES=(
 		@ansible/ansible-language-server
 		@fsouza/prettierd
