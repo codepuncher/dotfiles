@@ -27,7 +27,7 @@ fi
 alias gcb='git_copy_branch'
 # shellcheck disable=SC2154
 alias git_set_missing_end_of_file='git ls-files -z | while IFS= read -rd "" f; do tail -c1 < "${f}" | read -r _ || echo >> "${f}"; done'
-alias git_get_default_branch='g remote show origin | rg "HEAD branch" | cut -d" " -f5'
+alias git-get-default-branch='REF="$(git symbolic-ref refs/remotes/origin/HEAD)" && echo "${REF##*/}"'
 function git_get_repo_from_remote() {
 	GIT_PATH="${1:-${PWD}}"
 	GIT_REMOTE="${2-origin}"
