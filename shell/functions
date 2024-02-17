@@ -164,8 +164,10 @@ install_node_packages() {
 
 install_go_packages() {
 	PACKAGES=(
-		mvdan.cc/sh/v3/cmd/shfmt@latest
 		github.com/rhysd/actionlint/cmd/actionlint@latest
+		golang.org/x/tools/gopls@latest
+		mvdan.cc/sh/v3/cmd/shfmt@latest
+		mvdan.cc/xurls/v2/cmd/xurls@latest
 	)
 
 	for P in "${PACKAGES[@]}"; do
