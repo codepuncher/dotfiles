@@ -83,6 +83,7 @@ zinit light zdharma-continuum/fast-syntax-highlighting
 zinit ice wait"1" lucid
 zinit ice atload '! type node &>/dev/null && nvm install --lts'
 zinit snippet OMZP::npm
+zinit snippet OMZP::composer
 
 # Theme
 zinit light spaceship-prompt/spaceship-prompt
