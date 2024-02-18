@@ -361,11 +361,12 @@ fi
 alias mkdir='mkdir -p'
 ## Ensure coloured output on ls
 if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
-	alias ls='ls --color'
+	alias ls='ls --color -F'
 elif [[ "${OSTYPE:0:6}" = "darwin" ]]; then
-	alias ls='ls -G'
+	alias ls='ls -GF'
 fi
-alias ll='ls -alh'
+alias ll='ls -lhiF'
+alias lla='ls -lAhiF'
 if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
 	alias open='xdg-open'
 fi
