@@ -9,7 +9,7 @@ _M.setup = function(on_attach, capabilities)
     },
     settings = {
       json = {
-        -- Schemas https://www.schemastore.org
+        -- Schemas https://www.schemastore.org/json/
         schemas = {
           { fileMatch = { 'package.json' }, url = 'https://json.schemastore.org/package.json' },
           { fileMatch = { 'tsconfig*.json' }, url = 'https://json.schemastore.org/tsconfig.json' },
