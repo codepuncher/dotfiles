@@ -169,7 +169,7 @@ export PATH="${PATH}:${HOME}/.yarn/bin"
 
 # Trellis
 if ! type trellis &>/dev/null; then
-	curl -sL https://roots.io/trellis/cli/get | bash -s -- -b ~/.local/bin
+	curl -sL https://raw.githubusercontent.com/roots/trellis-cli/master/scripts/get | bash -s -- -b ~/.local/bin
 fi
 eval "$(trellis shell-init zsh)"
 
