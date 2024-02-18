@@ -65,7 +65,7 @@ function gp_create_pr {
 	done
 
 	if [[ -z "${BASE}" ]]; then
-		BASE=$(git_get_default_branch)
+		BASE=$(git-get-default-branch)
 	fi
 	if [[ -z "${SHOULD_FILL}" ]]; then
 		SHOULD_FILL=false
