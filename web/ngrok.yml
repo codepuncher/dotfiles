@@ -1,0 +1,8 @@
+---
+console_ui_color: transparent
+dns_resolver_ips:
+  - 1.1.1.1
+  - 8.8.8.8
+region: eu
+version: 2
+update_check: false

@@ -44,6 +44,7 @@ init_links() {
 		move_link .config/alacritty/alacritty.toml terminals/alacritty.toml
 		move_link .config/spotifyd/spotifyd.conf media/spotifyd.conf
 		move_link .config/fontconfig fontconfig
+		move_link .config/ngrok/ngrok.yml web/ngrok.yml
 
 		echo "Symlinking complete. Backups stored in ${SCRIPT_PATH}/backups."
 		return
