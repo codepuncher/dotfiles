@@ -18,7 +18,9 @@ alias gs='g status -sb'
 function gbn() {
 	gco -b "${1:-$(date +%F)}"
 }
-alias gbr='gb -m'
+function gbr() {
+	gb -m "${1:-$(date +%F)}"
+}
 if [[ "${OSTYPE:0:6}" =~ ^linux.* ]]; then
 	alias git_copy_branch='gb --show-current | xclip -selection c'
 elif [[ "${OSTYPE:0:6}" = 'darwin' ]]; then
