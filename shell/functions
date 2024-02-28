@@ -37,7 +37,6 @@ install_arch_packages() {
 		whatsapp-for-linux
 
 		# Work
-		teams
 		microsoft-edge-stable-bin
 		clickup
 		zoom
