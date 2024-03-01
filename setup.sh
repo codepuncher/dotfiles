@@ -55,7 +55,7 @@ init_links() {
 
 install_packages() {
 	# TODO: support macOS
-	if [[ ! "${OSTYPE}" =~ ^linux ]] || ! grep -q 'ID=manjaro' /etc/os-release; then
+	if [[ ! "${OSTYPE}" =~ ^linux ]]; then
 		return
 	fi
 
@@ -65,12 +65,14 @@ install_packages() {
 		return
 	fi
 
-	# shellcheck disable=2119
-	install_arch_packages
-	post_install_packages
-	setup_arch_services
-	post_setup_arch_services
-	# shellcheck disable=2119
+	if grep --quiet 'ID=manjaro' /etc/os-release; then
+		install_arch_packages
+		post_install_packages
+		setup_arch_services
+		post_setup_arch_services
+	elif grep --quiet --ignore-case microsoft /proc/sys/kernel/osrelease; then
+		install_wsl_packages
+	fi
 	install_go_packages
 }
 
