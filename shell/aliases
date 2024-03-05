@@ -394,6 +394,10 @@ watch_file() {
 
 # Tmux
 tmux_layout() {
+  if [[ -z "${TMUX}" ]]; then
+    echo 'You need to be in a Tmux session.' >&2
+    return 1
+  fi
 	layout_file="${HOME}/.dotfiles/tmux/layouts/${1}.sh"
 	if [[ ! -f "${layout_file}" ]]; then
 		echo 'Please specify a valid layout file'
@@ -457,6 +461,13 @@ php_switch_version() {
 	sudo rm "${ORIGINAL_UNIT_PATH}" && sudo ln -s "${NEW_UNIT_PATH}" "${ORIGINAL_UNIT_PATH}"
 	sudo systemctl restart php-fpm
 	sudo systemctl enable php-fpm
+}
+
+# WSL
+alias op='op.exe'
+settitle () {
+  export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+  echo -ne '\033]0;'"$1"'\a'
 }
 
 # vim: set filetype=bash :
