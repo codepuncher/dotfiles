@@ -156,6 +156,7 @@ wk.register({
   -- Lines
   ['<c-J>'] = { '<cmd>m .+1<cr>==', '[LINES] Move line up' },
   ['<c-K>'] = { '<cmd>m .-2<cr>==', '[LINES] Move line down' },
+  ['<c-n>'] = { '<cmd>nohls<cr>', '[LINES] Clear highlights' },
 }, nNoremapSilent)
 
 wk.setup({})
