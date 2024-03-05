@@ -147,6 +147,9 @@ install_wsl_packages() {
 	install_rustup
 	install_mailpit
 	install_neovim
+	install_git_delta
+	# ensure fd is available
+	ln -s "$(which fdfind)" ~/.local/bin/fd
 }
 
 setup_arch_services() {
@@ -177,7 +180,13 @@ install_rustup() {
 }
 
 install_mailpit() {
-	sudo bash < <(curl -sL https://raw.githubusercontent.com/axllent/mailpit/develop/install.sh)
+	if ! sudo bash < <(curl -sL https://raw.githubusercontent.com/axllent/mailpit/develop/install.sh); then
+		echo 'Failed to install Mailpit' >&2
+    return 1
+	fi
+	sudo ln -s "${HOME}/.dotfiles/templates/mailpit.service" "/etc/systemd/system/mailpit.service" 
+	sudo systemctl enable mailpit && sudo systemctl start mailpit
+	sudo ln -s /usr/local/bin/mailpit /usr/sbin/sendmail
 }
 
 install_neovim() {
@@ -187,6 +196,24 @@ install_neovim() {
 	sudo rm -rf /opt/neovim
 	sudo tar -C /opt -xzf nvim-linux64.tar.gz
 	ln -s /opt/nvim-linux64/bin/nvim ~/.local/bin/nvim
+}
+
+gh_get_latest_tag() {
+	if [[ -z "${1}" ]]; then
+		echo 'No repo provided' >&2
+		return 1
+	fi
+
+	TIMEOUT=90
+	curl --silent --location --max-time "${TIMEOUT}" "https://api.github.com/repos/${1}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/'
+}
+
+install_git_delta() {
+	REPO='dandavison/delta'
+	VERSION="$(gh_get_latest_tag "${REPO}")"
+	VERSION="${VERSION:-0.16.5}"
+	FILE="git-delta_${VERSION}_amd64.deb"
+	curl -LO "https://github.com/${REPO}/releases/latest/download/${FILE}" && sudo dpkg -i "${FILE}"
 }
 
 install_node_packages() {
