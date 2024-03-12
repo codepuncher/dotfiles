@@ -49,6 +49,9 @@ function gp_pr_create_with_reviewer {
 	gp && gh pr create --fill --reviewer "${REVIEWER}"
 }
 function gp_create_pr {
+  BASE=$(git-get-default-branch)
+  SHOULD_FILL=false
+  TEMPLATE=''
 	for i in "${@}"; do
 		case "${i}" in
 		--base=*)
@@ -66,12 +69,6 @@ function gp_create_pr {
 		esac
 	done
 
-	if [[ -z "${BASE}" ]]; then
-		BASE=$(git-get-default-branch)
-	fi
-	if [[ -z "${SHOULD_FILL}" ]]; then
-		SHOULD_FILL=false
-	fi
 	if [[ "${SHOULD_FILL}" != true ]] && [[ -z "${TEMPLATE}" ]]; then
 		TEMPLATE='WEB_BUILD.md'
 		TITLE=$(gb --show-current)
