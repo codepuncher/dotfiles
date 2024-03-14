@@ -106,8 +106,13 @@ install_arch_packages() {
 
 install_wsl_packages() {
 	PACKAGES=(
-		# General
+		# Text processing
 		pandoc
+		texlive-latex-base
+		texlive-latex-extra
+		texlive-latex-recommended
+		texlive-fonts-recommended
+		texlive-fonts-extra
 
 		# Dev
 		tmux
@@ -182,7 +187,7 @@ install_rustup() {
 install_mailpit() {
 	if ! sudo bash < <(curl -sL https://raw.githubusercontent.com/axllent/mailpit/develop/install.sh); then
 		echo 'Failed to install Mailpit' >&2
-    return 1
+		return 1
 	fi
 	sudo ln -s "${HOME}/.dotfiles/templates/mailpit.service" "/etc/systemd/system/mailpit.service" 
 	sudo systemctl enable mailpit && sudo systemctl start mailpit

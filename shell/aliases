@@ -337,9 +337,16 @@ valet() {
 	/usr/local/bin/valet "${ARGS[@]}"
 }
 wp_valet_link_all_network_sites() {
-	for domain in $(wp site list --field=url | sed 's/.*:\/\///g' | sed 's/\.test*\///g'); do
-		echo "${domain}"
-		valet link --secure "${domain}"
+	WSL_WINDOWS_HOSTS_FILE='/mnt/c/Windows/System32/drivers/etc/hosts'
+	for DOMAIN in $(wp site list --field=url); do
+		DOMAIN="${DOMAIN%.*}";
+		DOMAIN="${DOMAIN##*/}";
+		echo "${DOMAIN}"
+		valet link --secure "${DOMAIN}"
+		if [ -f "${WSL_WINDOWS_HOSTS_FILE}" ]; then
+      LINE="127.0.0.1 ${DOMAIN}.test"
+			sudo bash -c "echo ${LINE} >> ${WSL_WINDOWS_HOSTS_FILE}" && echo "${DOMAIN} added to Windows Hosts file"
+		fi
 	done
 }
 
