@@ -146,6 +146,8 @@ install_wsl_packages() {
 		bat
 	)
 
+	sudo add-apt-repository ppa:longsleep/golang-backports -y
+
 	# shellcheck disable=2046
 	sudo apt install -y "${PACKAGES[@]}"
 
