@@ -1,0 +1,13 @@
+[Unit]
+Description=Mailpit server
+Documentation=https://github.com/axllent/mailpit
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/mailpit
+Restart=on-failure
+RestartSec=10
+SyslogIdentifier=mailpit
+
+[Install]
+WantedBy=multi-user.target

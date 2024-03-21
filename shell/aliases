@@ -49,6 +49,9 @@ function gp_pr_create_with_reviewer {
 	gp && gh pr create --fill --reviewer "${REVIEWER}"
 }
 function gp_create_pr {
+  BASE=$(git-get-default-branch)
+  SHOULD_FILL=false
+  TEMPLATE=''
 	for i in "${@}"; do
 		case "${i}" in
 		--base=*)
@@ -66,12 +69,6 @@ function gp_create_pr {
 		esac
 	done
 
-	if [[ -z "${BASE}" ]]; then
-		BASE=$(git-get-default-branch)
-	fi
-	if [[ -z "${SHOULD_FILL}" ]]; then
-		SHOULD_FILL=false
-	fi
 	if [[ "${SHOULD_FILL}" != true ]] && [[ -z "${TEMPLATE}" ]]; then
 		TEMPLATE='WEB_BUILD.md'
 		TITLE=$(gb --show-current)
@@ -340,9 +337,16 @@ valet() {
 	/usr/local/bin/valet "${ARGS[@]}"
 }
 wp_valet_link_all_network_sites() {
-	for domain in $(wp site list --field=url | sed 's/.*:\/\///g' | sed 's/\.test*\///g'); do
-		echo "${domain}"
-		valet link --secure "${domain}"
+	WSL_WINDOWS_HOSTS_FILE='/mnt/c/Windows/System32/drivers/etc/hosts'
+	for DOMAIN in $(wp site list --field=url); do
+		DOMAIN="${DOMAIN%.*}";
+		DOMAIN="${DOMAIN##*/}";
+		echo "${DOMAIN}"
+		valet link --secure "${DOMAIN}"
+		if [ -f "${WSL_WINDOWS_HOSTS_FILE}" ]; then
+      LINE="127.0.0.1 ${DOMAIN}.test"
+			sudo bash -c "echo ${LINE} >> ${WSL_WINDOWS_HOSTS_FILE}" && echo "${DOMAIN} added to Windows Hosts file"
+		fi
 	done
 }
 
@@ -394,6 +398,10 @@ watch_file() {
 
 # Tmux
 tmux_layout() {
+  if [[ -z "${TMUX}" ]]; then
+    echo 'You need to be in a Tmux session.' >&2
+    return 1
+  fi
 	layout_file="${HOME}/.dotfiles/tmux/layouts/${1}.sh"
 	if [[ ! -f "${layout_file}" ]]; then
 		echo 'Please specify a valid layout file'
@@ -457,6 +465,13 @@ php_switch_version() {
 	sudo rm "${ORIGINAL_UNIT_PATH}" && sudo ln -s "${NEW_UNIT_PATH}" "${ORIGINAL_UNIT_PATH}"
 	sudo systemctl restart php-fpm
 	sudo systemctl enable php-fpm
+}
+
+# WSL
+alias op='op.exe'
+settitle () {
+  export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+  echo -ne '\033]0;'"$1"'\a'
 }
 
 # vim: set filetype=bash :

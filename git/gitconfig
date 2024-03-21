@@ -3,6 +3,12 @@
 	email = lee.hanbury@gmail.com
 	signingkey = ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6lhgN8pvPgXJpgr8e4vo6k0nwP4mI8zgQcYMvePPBCNy8zZHS9BTKHPy/EdwNrCKX87uv0HcJeIztCShfmu7OjvasO6zgNzaNTOPxmelm7osBIuGYyZYih33ruT11eK8/RfeDh81OZGzMmez+Szk+oK1mb32rZvBPZpu2iGRFu0Yxx3jWtY+Kn8kwZX1GrfGEAfd29qoJiQli0Ma6YQhpioPgO7ybL8TCEvmkQPlCvHHpPhebwII8I2nZyGVpuIZsVleJW+fUroGOPDJ3xBcAs18YTMnQa/RDfUl0zsC6ZYa0MqnXUC6INBmNSk/hwLTmeVYDXau4DOLC8OpIaFkz
 
+[gpg]
+	format = ssh
+
+[commit]
+	gpgsign = true
+
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
@@ -28,20 +34,24 @@
 	autoSetupRemote = true
 
 [core]
-  pager = delta
+	pager = delta
+	sshCommand = ssh.exe
 
 [interactive]
-  diffFilter = delta --color-only
+	diffFilter = delta --color-only
 
 [delta]
-  navigate = true
-  light = false
+	navigate = true
+	light = false
 
 [merge]
-  conflictstyle = diff3
+	conflictstyle = diff3
 
 [diff]
-  colorMoved = default
+	colorMoved = default
+
+[includeIf "gitdir:/home/itineris/"]
+	path = ~/.dotfiles/git/users/wsl.gitconfig
 
 [includeIf "gitdir:/home/work/"]
-  path = ~/.dotfiles/git/users/work.gitconfig
+	path = ~/.dotfiles/git/users/work.gitconfig

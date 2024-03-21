@@ -35,26 +35,44 @@ plugin.setup({
     enable = true,
   },
   ensure_installed = {
-    'markdown',
-    'markdown_inline',
-    'tsx',
-    'toml',
     'bash',
-    'php',
+    'css',
+    'go',
+    'html',
+    'hurl',
     'javascript',
-    'typescript',
     'jsdoc',
     'json',
-    'regex',
     'lua',
-    'go',
-    'yaml',
-    'html',
+    'markdown',
+    'markdown_inline',
+    'php',
+    'python',
+    'regex',
     'scss',
-    'css',
+    'svelte',
+    'toml',
+    'tsx',
+    'typescript',
     'vim',
     'vue',
-    'svelte',
-    'python',
+    'yaml',
   },
+})
+
+local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+parser_config.hurl = {
+  install_info = {
+    url = "~/Code/misc/tree-sitter-hurl", -- or your own path, i.e. where you cloned the repository
+    files = { "src/parser.c" },
+    branch = "main",
+    generate_requires_npm = false,
+    requires_generate_from_grammar = false,
+  },
+  filetype = "hurl",
+}
+vim.filetype.add({
+  extension = {
+    hurl = "hurl"
+  }
 })
