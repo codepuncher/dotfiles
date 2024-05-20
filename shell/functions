@@ -191,7 +191,7 @@ install_mailpit() {
 		echo 'Failed to install Mailpit' >&2
 		return 1
 	fi
-	sudo ln -s "${HOME}/.dotfiles/templates/mailpit.service" "/etc/systemd/system/mailpit.service" 
+	sudo ln -s "${HOME}/.dotfiles/templates/mailpit.service" "/etc/systemd/system/mailpit.service"
 	sudo systemctl enable mailpit && sudo systemctl start mailpit
 	sudo ln -s /usr/local/bin/mailpit /usr/sbin/sendmail
 }
@@ -230,6 +230,7 @@ install_node_packages() {
 	PACKAGES=(
 		@ansible/ansible-language-server
 		@fsouza/prettierd
+		@tailwindcss/language-server
 		@volar/vue-language-server
 		bash-language-server
 		blade-formatter
@@ -242,8 +243,8 @@ install_node_packages() {
 		markdownlint-cli
 		speed-test
 		stylelint
-		stylelint-lsp
 		stylelint-config-prettier
+		stylelint-lsp
 		typescript
 		typescript-language-server
 		vscode-langservers-extracted
