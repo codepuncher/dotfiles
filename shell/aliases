@@ -49,9 +49,9 @@ function gp_pr_create_with_reviewer {
 	gp && gh pr create --fill --reviewer "${REVIEWER}"
 }
 function gp_create_pr {
-  BASE=$(git-get-default-branch)
-  SHOULD_FILL=false
-  TEMPLATE=''
+	BASE=$(git-get-default-branch)
+	SHOULD_FILL=false
+	TEMPLATE=''
 	for i in "${@}"; do
 		case "${i}" in
 		--base=*)
@@ -226,7 +226,10 @@ project_open() {
 	if [ -z "${1}" ]; then
 		NEW_PATH="${WP_PATH}"
 	else
-		NEW_PATH="${WP_PATH}/${1}"
+		NEW_PATH="${WP_PATH}/${1}/bedrock"
+		if [[ ! -d "${NEW_PATH}" ]]; then
+			NEW_PATH="${WP_PATH}/${1}"
+		fi
 	fi
 
 	if [ -z "${2}" ]; then
@@ -238,11 +241,11 @@ project_open() {
 	fi
 
 	# Find only themes using Composer.
-	THEMES=("${NEW_PATH}/bedrock/web/app/themes/"*/composer.json)
+	THEMES=("${NEW_PATH}/web/app/themes/"*/composer.json)
 	THEME_PATH="${THEMES[1]//composer.json/}"
 	if [ -z "${THEME_PATH}" ]; then
-		echo "No theme available"
-		return
+		echo "No theme available" >&2
+		return 1
 	fi
 
 	cd "${THEME_PATH}" || return
@@ -252,8 +255,8 @@ project_edit() {
 	WP_PATH="${HOME}/Code/wordpress"
 
 	if [ -z "${1}" ]; then
-		echo 'No project specified.'
-		return
+		echo 'No project specified.' >&2
+		return 1
 	fi
 
 	NEW_PATH="${WP_PATH}/${1}"
@@ -262,8 +265,8 @@ project_edit() {
 	elif [[ -d "${NEW_PATH}/site" ]]; then
 		NEW_PATH="${NEW_PATH}/site"
 	else
-		echo 'Project is missing bedrock/site directory'
-		return
+		echo 'Project is missing bedrock/site directory' >&2
+		return 1
 	fi
 
 	cd "${NEW_PATH}" && tmux_layout dev || return
@@ -339,12 +342,12 @@ valet() {
 wp_valet_link_all_network_sites() {
 	WSL_WINDOWS_HOSTS_FILE='/mnt/c/Windows/System32/drivers/etc/hosts'
 	for DOMAIN in $(wp site list --field=url); do
-		DOMAIN="${DOMAIN%.*}";
-		DOMAIN="${DOMAIN##*/}";
+		DOMAIN="${DOMAIN%.*}"
+		DOMAIN="${DOMAIN##*/}"
 		echo "${DOMAIN}"
 		valet link --secure "${DOMAIN}"
 		if [ -f "${WSL_WINDOWS_HOSTS_FILE}" ]; then
-      LINE="127.0.0.1 ${DOMAIN}.test"
+			LINE="127.0.0.1 ${DOMAIN}.test"
 			sudo bash -c "echo ${LINE} >> ${WSL_WINDOWS_HOSTS_FILE}" && echo "${DOMAIN} added to Windows Hosts file"
 		fi
 	done
@@ -398,10 +401,10 @@ watch_file() {
 
 # Tmux
 tmux_layout() {
-  if [[ -z "${TMUX}" ]]; then
-    echo 'You need to be in a Tmux session.' >&2
-    return 1
-  fi
+	if [[ -z "${TMUX}" ]]; then
+		echo 'You need to be in a Tmux session.' >&2
+		return 1
+	fi
 	layout_file="${HOME}/.dotfiles/tmux/layouts/${1}.sh"
 	if [[ ! -f "${layout_file}" ]]; then
 		echo 'Please specify a valid layout file'
@@ -469,9 +472,9 @@ php_switch_version() {
 
 # WSL
 alias op='op.exe'
-settitle () {
-  export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-  echo -ne '\033]0;'"$1"'\a'
+settitle() {
+	export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+	echo -ne '\033]0;'"$1"'\a'
 }
 
 # vim: set filetype=bash :
