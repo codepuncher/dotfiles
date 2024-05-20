@@ -4,7 +4,11 @@ if not _plugin then
 end
 
 plugin.setup({
-  enable = true,
+  opts = {
+    enable_close = true,
+    enable_rename = true,
+    enable_close_on_slash = true,
+  },
   filetypes = {
     'blade', --Not working
     'html',

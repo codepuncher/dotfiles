@@ -4,9 +4,6 @@ if not _plugin then
 end
 
 plugin.setup({
-  autotag = {
-    enable = true,
-  },
   highlight = {
     enable = true,
     disable = {},
@@ -36,9 +33,11 @@ plugin.setup({
   },
   ensure_installed = {
     'bash',
+    'blade',
     'css',
     'go',
     'html',
+    'hurl',
     'hurl',
     'javascript',
     'jsdoc',
@@ -60,19 +59,30 @@ plugin.setup({
   },
 })
 
-local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
 parser_config.hurl = {
   install_info = {
-    url = "~/Code/misc/tree-sitter-hurl", -- or your own path, i.e. where you cloned the repository
-    files = { "src/parser.c" },
-    branch = "main",
+    url = '~/Code/misc/tree-sitter-hurl', -- or your own path, i.e. where you cloned the repository
+    files = { 'src/parser.c' },
+    branch = 'main',
     generate_requires_npm = false,
     requires_generate_from_grammar = false,
   },
-  filetype = "hurl",
+  filetype = 'hurl',
 }
+
+parser_config.blade = {
+  install_info = {
+    url = 'https://github.com/EmranMR/tree-sitter-blade',
+    files = { 'src/parser.c' },
+    branch = 'main',
+  },
+  filetype = 'blade',
+}
+
 vim.filetype.add({
   extension = {
-    hurl = "hurl"
-  }
+    hurl = 'hurl',
+    blade = 'blade',
+  },
 })
