@@ -66,6 +66,7 @@ install_packages() {
 	fi
 
 	if grep --quiet 'ID=manjaro' /etc/os-release; then
+		# shellcheck disable=2119
 		install_arch_packages
 		post_install_packages
 		setup_arch_services
@@ -73,6 +74,7 @@ install_packages() {
 	elif grep --quiet --ignore-case microsoft /proc/sys/kernel/osrelease; then
 		install_wsl_packages
 	fi
+	# shellcheck disable=2119
 	install_go_packages
 }
 

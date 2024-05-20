@@ -187,6 +187,7 @@ install_rustup() {
 }
 
 install_mailpit() {
+	# shellcheck disable=2024
 	if ! sudo bash < <(curl -sL https://raw.githubusercontent.com/axllent/mailpit/develop/install.sh); then
 		echo 'Failed to install Mailpit' >&2
 		return 1
