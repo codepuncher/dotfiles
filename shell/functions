@@ -104,6 +104,61 @@ install_arch_packages() {
 	) "$@"
 }
 
+install_wsl_packages() {
+	PACKAGES=(
+		# Text processing
+		pandoc
+		texlive-latex-base
+		texlive-latex-extra
+		texlive-latex-recommended
+		texlive-fonts-recommended
+		texlive-fonts-extra
+
+		# Dev
+		tmux
+		golang-go
+		python3
+		python3-pip
+		pipx
+
+		# Fonts
+		fonts-noto-color-emoji
+		fonts-firacode
+		fonts-hack
+		fonts-jetbrains-mono
+
+		# IDE
+		shellcheck
+
+		# System
+		vim
+		tldr
+		git
+		jq
+		ripgrep
+		exa
+		fd-find
+		# git-delta
+		xsel
+		xclip
+		imagemagick
+		dnsutils
+		bat
+	)
+
+	sudo add-apt-repository ppa:longsleep/golang-backports -y
+
+	# shellcheck disable=2046
+	sudo apt install -y "${PACKAGES[@]}"
+
+	install_rustup
+	install_mailpit
+	install_neovim
+	install_git_delta
+	# ensure fd is available
+	ln -s "$(which fdfind)" ~/.local/bin/fd
+}
+
 setup_arch_services() {
 	SERVICES=(
 		nginx
@@ -127,6 +182,48 @@ install_nvm() {
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 }
 
+install_rustup() {
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+}
+
+install_mailpit() {
+	# shellcheck disable=2024
+	if ! sudo bash < <(curl -sL https://raw.githubusercontent.com/axllent/mailpit/develop/install.sh); then
+		echo 'Failed to install Mailpit' >&2
+		return 1
+	fi
+	sudo ln -s "${HOME}/.dotfiles/templates/mailpit.service" "/etc/systemd/system/mailpit.service"
+	sudo systemctl enable mailpit && sudo systemctl start mailpit
+	sudo ln -s /usr/local/bin/mailpit /usr/sbin/sendmail
+}
+
+install_neovim() {
+	curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+	rm ~/.local/bin/nvim
+	sudo rm -rf /opt/nvim
+	sudo rm -rf /opt/neovim
+	sudo tar -C /opt -xzf nvim-linux64.tar.gz
+	ln -s /opt/nvim-linux64/bin/nvim ~/.local/bin/nvim
+}
+
+gh_get_latest_tag() {
+	if [[ -z "${1}" ]]; then
+		echo 'No repo provided' >&2
+		return 1
+	fi
+
+	TIMEOUT=90
+	curl --silent --location --max-time "${TIMEOUT}" "https://api.github.com/repos/${1}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/'
+}
+
+install_git_delta() {
+	REPO='dandavison/delta'
+	VERSION="$(gh_get_latest_tag "${REPO}")"
+	VERSION="${VERSION:-0.16.5}"
+	FILE="git-delta_${VERSION}_amd64.deb"
+	curl -LO "https://github.com/${REPO}/releases/latest/download/${FILE}" && sudo dpkg -i "${FILE}"
+}
+
 install_node_packages() {
 	if [[ ! -d "${NVM_DIR}" ]] || [[ ! -d "${HOME}/.nvm" ]]; then
 		install_nvm
@@ -134,6 +231,7 @@ install_node_packages() {
 	PACKAGES=(
 		@ansible/ansible-language-server
 		@fsouza/prettierd
+		@tailwindcss/language-server
 		@volar/vue-language-server
 		bash-language-server
 		blade-formatter
@@ -146,8 +244,8 @@ install_node_packages() {
 		markdownlint-cli
 		speed-test
 		stylelint
-		stylelint-lsp
 		stylelint-config-prettier
+		stylelint-lsp
 		typescript
 		typescript-language-server
 		vscode-langservers-extracted

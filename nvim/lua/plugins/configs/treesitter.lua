@@ -4,9 +4,6 @@ if not _plugin then
 end
 
 plugin.setup({
-  autotag = {
-    enable = true,
-  },
   highlight = {
     enable = true,
     disable = {},
@@ -35,26 +32,57 @@ plugin.setup({
     enable = true,
   },
   ensure_installed = {
-    'markdown',
-    'markdown_inline',
-    'tsx',
-    'toml',
     'bash',
-    'php',
+    'blade',
+    'css',
+    'go',
+    'html',
+    'hurl',
+    'hurl',
     'javascript',
-    'typescript',
     'jsdoc',
     'json',
-    'regex',
     'lua',
-    'go',
-    'yaml',
-    'html',
+    'markdown',
+    'markdown_inline',
+    'php',
+    'python',
+    'regex',
     'scss',
-    'css',
+    'svelte',
+    'toml',
+    'tsx',
+    'typescript',
     'vim',
     'vue',
-    'svelte',
-    'python',
+    'yaml',
+  },
+})
+
+local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
+parser_config.hurl = {
+  install_info = {
+    url = '~/Code/misc/tree-sitter-hurl', -- or your own path, i.e. where you cloned the repository
+    files = { 'src/parser.c' },
+    branch = 'main',
+    generate_requires_npm = false,
+    requires_generate_from_grammar = false,
+  },
+  filetype = 'hurl',
+}
+
+parser_config.blade = {
+  install_info = {
+    url = 'https://github.com/EmranMR/tree-sitter-blade',
+    files = { 'src/parser.c' },
+    branch = 'main',
+  },
+  filetype = 'blade',
+}
+
+vim.filetype.add({
+  extension = {
+    hurl = 'hurl',
+    blade = 'blade',
   },
 })
