@@ -225,11 +225,17 @@ project_open() {
 
 	if [ -z "${1}" ]; then
 		NEW_PATH="${WP_PATH}"
+
+		tmux setw automatic-rename
 	else
-		NEW_PATH="${WP_PATH}/${1}/bedrock"
-		if [[ ! -d "${NEW_PATH}" ]]; then
-			NEW_PATH="${WP_PATH}/${1}"
+		NEW_PATH="${WP_PATH}/${1}"
+		if [[ -d "${NEW_PATH}/bedrock" ]]; then
+			NEW_PATH="${NEW_PATH}/bedrock"
+		elif [[ -d "${NEW_PATH}/site" ]]; then
+			NEW_PATH="${NEW_PATH}/site"
 		fi
+
+		tmux rename-window "${1}"
 	fi
 
 	if [ -z "${2}" ]; then
