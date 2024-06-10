@@ -5,7 +5,7 @@ end
 
 local actions = require('telescope.actions')
 local actions_state = require('telescope.actions.state')
-local trouble = require('trouble.providers.telescope')
+local trouble = require('trouble.sources.telescope')
 
 local M = {}
 
@@ -35,8 +35,8 @@ telescope.setup({
     },
     theme = 'dropdown',
     mappings = {
-      i = { ['<c-t>'] = trouble.open_with_trouble },
-      n = { ['<c-t>'] = trouble.open_with_trouble },
+      i = { ['<c-t>'] = trouble.open },
+      n = { ['<c-t>'] = trouble.open },
     },
   },
   pickers = {
