@@ -240,21 +240,25 @@ project_open() {
 		tmux setw automatic-rename
 	else
 		NEW_PATH="${WP_PATH}/${1}"
-		if [[ -d "${NEW_PATH}/bedrock" ]]; then
-			NEW_PATH="${NEW_PATH}/bedrock"
-		elif [[ -d "${NEW_PATH}/site" ]]; then
-			NEW_PATH="${NEW_PATH}/site"
-		fi
-
 		tmux rename-window "${1}"
 	fi
 
-	if [ -z "${2}" ]; then
-		cd "${NEW_PATH}" && return || return
+	if [ -n "${2}" ] && [[ "${2}" != "theme" ]]; then
+		# shellcheck disable=SC2164
+		cd "${NEW_PATH}/${2}"
+		return
 	fi
 
-	if [[ "${2}" == @(bedrock|trellis) || "${2}" != "theme" ]]; then
-		cd "${NEW_PATH}/${2}" && return || return
+	if [[ -d "${NEW_PATH}/bedrock" ]]; then
+		NEW_PATH="${NEW_PATH}/bedrock"
+	elif [[ -d "${NEW_PATH}/site" ]]; then
+		NEW_PATH="${NEW_PATH}/site"
+	fi
+
+	if [ -z "${2}" ]; then
+		# shellcheck disable=SC2164
+		cd "${NEW_PATH}"
+		return
 	fi
 
 	# Find only themes using Composer.
