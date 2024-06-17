@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+function is_wsl() {
+	[ -f /proc/sys/kernel/osrelease ] && [[ $(</proc/sys/kernel/osrelease) =~ 'WSL' ]]
+}
+
+# SSH
+if is_wsl; then
+	alias ssh='ssh.exe'
+	alias ssh-add='ssh-add.exe'
+	alias ssh-keygen='ssh-keygen.exe'
+fi
+
 # Git
 alias g='git'
 alias ga='g add'
