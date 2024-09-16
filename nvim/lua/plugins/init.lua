@@ -95,7 +95,16 @@ require('lazy').setup({
         require('plugins.configs.nvim-tree')
       end,
     },
-    'lukas-reineke/indent-blankline.nvim',
+    {
+      'lukas-reineke/indent-blankline.nvim',
+      main = 'ibl',
+      ---@module 'ibl'
+      ---@type ibl.config
+      opts = {},
+      config = function()
+        require('plugins.configs.indent-blankline')
+      end,
+    },
     {
       'rcarriga/nvim-notify',
       config = function()
