@@ -116,6 +116,44 @@ alias cg='c global'
 alias cgrm='cg remove'
 alias cgr='cg require'
 alias cgu='cg update'
+crc() {
+	PACKAGE="${1}"
+	if [ -z "${PACKAGE}" ]; then
+		echo 'No package provided'
+		return 1
+	fi
+
+	if ! [[ "${PACKAGE}" =~ (.*)\/(.*) ]]; then
+		echo "${PACKAGE} does not match vendor/package syntax"
+		return 1
+	fi
+
+	MESSAGE="cr ${PACKAGE}"
+	if [ -n "${2}" ]; then
+		MESSAGE="${2}"
+	fi
+
+	cr "${PACKAGE}" && ga composer.* && gc -m "${MESSAGE}"
+}
+crmc() {
+	PACKAGE="${1}"
+	if [ -z "${PACKAGE}" ]; then
+		echo 'No package provided'
+		return 1
+	fi
+
+	if ! [[ "${PACKAGE}" =~ (.*)\/(.*) ]]; then
+		echo "${PACKAGE} does not match vendor/package syntax"
+		return 1
+	fi
+
+	MESSAGE="crm ${PACKAGE}"
+	if [ -n "${2}" ]; then
+		MESSAGE="${2}"
+	fi
+
+	crm "${PACKAGE}" && ga composer.* && gc -m "${MESSAGE}"
+}
 
 # Node
 alias y='yarn'
