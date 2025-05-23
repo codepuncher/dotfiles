@@ -143,7 +143,6 @@ require('lazy').setup({
   {
     'folke/neodev.nvim',
     'neovim/nvim-lspconfig',
-    'jose-elias-alvarez/typescript.nvim',
     {
       'jose-elias-alvarez/null-ls.nvim',
       dependencies = {

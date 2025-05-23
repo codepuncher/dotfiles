@@ -3,6 +3,8 @@ if [ -f "${HOME}/.shell_variables" ]; then
 	source "${HOME}/.shell_variables"
 fi
 
+# eval $(ssh-agent)
+
 # Zinit
 source ~/.zinit/bin/zinit.zsh
 
@@ -117,8 +119,8 @@ spaceship add --before char vi_mode
 
 # Setup history
 HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=1000
+HISTSIZE=100000
+SAVEHIST=10000
 setopt SHARE_HISTORY
 
 autoload -U compinit && compinit
@@ -196,3 +198,11 @@ bindkey -M vicmd 'j' history-substring-search-down
 export WORDCHARS=${WORDCHARS/\//}
 export EDITOR=nvim
 setopt HIST_IGNORE_SPACE
+
+# Because WSL does not have
+# XDG_RUNTIME_DIR unless GUI enabled
+# many programs will fail due to
+# write permission issues
+if is_wsl; then
+	unset XDG_RUNTIME_DIR
+fi

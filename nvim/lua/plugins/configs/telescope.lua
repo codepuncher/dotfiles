@@ -40,6 +40,13 @@ telescope.setup({
     },
   },
   pickers = {
+    live_grep = {
+      theme = 'dropdown',
+      layout_config = {
+        prompt_position = 'bottom',
+        width = 0.75,
+      },
+    },
     git_branches = {
       mappings = {
         i = {
@@ -82,11 +89,6 @@ M.find_files_no_ignore = function()
   local theme = require('telescope.themes').get_dropdown({
     hidden = true,
     no_ignore = true,
-    theme = 'dropdown',
-    layout_config = {
-      prompt_position = 'bottom',
-      width = 0.5,
-    },
   })
   require('telescope.builtin').find_files(theme)
 end
