@@ -217,6 +217,9 @@ require('lazy').setup({
   -- Dev
   {
     {
+      'github/copilot.vim',
+    },
+    {
       'hrsh7th/nvim-cmp',
       config = function()
         require('plugins.configs.cmp')

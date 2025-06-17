@@ -49,7 +49,7 @@ family = "JetBrainsMono NFM"
 decorations_theme_variant = "Dark"
 dynamic_padding = true
 dynamic_title = true
-opacity = 1
+opacity = 0.75
 startup_mode = "Maximized"
 
 [window.padding]
