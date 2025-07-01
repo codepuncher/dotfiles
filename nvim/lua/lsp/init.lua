@@ -8,7 +8,7 @@ local lsp_formatting = function(bufnr)
   vim.lsp.buf.format({
     bufnr = bufnr,
     filter = function(client)
-      return client.name ~= 'tsserver' and client.name ~= 'intelephense'
+      return client.name == 'null-ls'
     end,
   })
 end
@@ -61,7 +61,7 @@ end
 local servers = {
   'ansiblels',
   'bashls',
-  'cssls',
+  -- 'cssls',
   'dockerls',
   'eslint',
   'gopls',
@@ -74,7 +74,7 @@ local servers = {
   'pyright',
   'rust_analyzer',
   'stylelint_lsp',
-  'tsserver',
+  'ts_ls',
   'volar',
   'yamlls',
   'tailwindcss',
