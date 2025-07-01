@@ -217,9 +217,6 @@ require('lazy').setup({
   -- Dev
   {
     {
-      'github/copilot.vim',
-    },
-    {
       'hrsh7th/nvim-cmp',
       config = function()
         require('plugins.configs.cmp')
@@ -233,6 +230,31 @@ require('lazy').setup({
         'saadparwaiz1/cmp_luasnip',
         'petertriho/cmp-git',
         'onsails/lspkind-nvim',
+        {
+          'zbirenbaum/copilot-cmp',
+          dependencies = {
+            {
+              'zbirenbaum/copilot.lua',
+              config = function()
+                require("copilot").setup({
+                  suggestion = { enabled = false },
+                  panel = { enabled = false },
+                })
+              end,
+            },
+          },
+          config = function()
+            require('copilot_cmp').setup({
+              method = 'getCompletionsCycling',
+              format = {
+                before = function(entry, vim_item)
+                  vim_item.kind = require('lspkind').presets.default[vim_item.kind] .. ' Copilot'
+                  return vim_item
+                end,
+              },
+            })
+          end,
+        },
         {
           'L3MON4D3/LuaSnip',
           dependencies = {

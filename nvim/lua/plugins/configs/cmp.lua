@@ -44,23 +44,25 @@ cmp.setup({
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.abort(),
-    ['<CR>'] = cmp.mapping(function(fallback)
-      local fallback_key = vim.api.nvim_replace_termcodes('<Tab>', true, true, true)
-      local resolved_key = vim.fn['copilot#Accept'](fallback)
-      if fallback_key == resolved_key then
-        cmp.confirm({ select = true })
-      else
-        vim.api.nvim_feedkeys(resolved_key, 'n', true)
-      end
-    end), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    -- ['<CR>'] = cmp.mapping(function(fallback)
+    --   local fallback_key = vim.api.nvim_replace_termcodes('<Tab>', true, true, true)
+    --   local resolved_key = vim.fn['copilot#Accept'](fallback)
+    --   if fallback_key == resolved_key then
+    --     cmp.confirm({ select = true })
+    --   else
+    --     vim.api.nvim_feedkeys(resolved_key, 'n', true)
+    --   end
+    -- end), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
     ['<Tab>'] = cmp.mapping(tab, { 'c', 'i', 's' }),
     ['<S-Tab>'] = cmp.mapping(shift_tab, { 'c', 'i', 's' }),
   }),
   sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
-    { name = 'emoji' },
-    { name = 'path' },
+    { name = 'copilot', group_index = 2 },
+    { name = 'nvim_lsp', group_index = 2 },
+    { name = 'path', group_index = 2 },
+    { name = 'luasnip', group_index = 2 },
+    -- { name = 'emoji' },
   }, {
     { name = 'buffer' },
     { name = 'emoji' },
@@ -68,8 +70,9 @@ cmp.setup({
   }),
   formatting = {
     format = lspkind.cmp_format({
-      with_text = true,
+      mode = 'symbol',
       maxwidth = 50,
+      symbol_map = { Copilot = "" }
     }),
   },
 })
