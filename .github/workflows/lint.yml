@@ -1,5 +1,7 @@
+# yamllint disable-line rule:document-start
 name: Lint
 
+# yamllint disable-line rule:truthy
 on: push
 
 jobs:
@@ -20,4 +22,5 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
+          # yamllint disable-line rule:line-length
           args: --quote-style AutoPreferSingle --indent-type Spaces --indent-width 2 --check .
