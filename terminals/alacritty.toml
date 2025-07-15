@@ -46,6 +46,7 @@ family = "JetBrainsMono NFM"
 family = "JetBrainsMono NFM"
 
 [window]
+decorations = "None"
 decorations_theme_variant = "Dark"
 dynamic_padding = true
 dynamic_title = true
