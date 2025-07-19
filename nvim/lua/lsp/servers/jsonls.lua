@@ -1,8 +1,5 @@
-local _M = {}
-
-_M.setup = function(on_attach, capabilities)
-  require('lspconfig').jsonls.setup({
-    on_attach = on_attach,
+return function(capabilities)
+  return {
     capabilities = capabilities,
     flags = {
       debounce_text_changes = 150,
@@ -33,7 +30,5 @@ _M.setup = function(on_attach, capabilities)
         },
       },
     },
-  })
+  }
 end
-
-return _M

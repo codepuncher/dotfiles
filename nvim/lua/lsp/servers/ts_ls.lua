@@ -1,7 +1,6 @@
-local _M = {}
-
-_M.setup = function(on_attach, capabilities)
-  require('lspconfig').ts_ls.setup({
+return function(capabilities)
+  return {
+    capabilities = capabilities,
     init_options = {
       plugins = {
         {
@@ -18,7 +17,5 @@ _M.setup = function(on_attach, capabilities)
       'typescript.tsx',
       'vue',
     },
-  })
+  }
 end
-
-return _M

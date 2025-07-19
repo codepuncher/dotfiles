@@ -10,23 +10,21 @@ end
 local formatting = plugin.builtins.formatting
 local diagnostics = plugin.builtins.diagnostics
 
-_M.setup = function(on_attach)
+_M.setup = function(capabilities)
   plugin.setup({
+    capabilities = capabilities,
     debug = true,
     root_dir = require('null-ls.utils').root_pattern('.git', 'package.json', 'composer.json'),
     sources = {
       require('none-ls.code_actions.eslint_d'),
 
       diagnostics.actionlint,
-      -- diagnostics.ansiblelint,
-      -- diagnostics.chktex,
       require('none-ls.diagnostics.eslint_d'),
       diagnostics.hadolint,
       diagnostics.markdownlint,
       diagnostics.phpcs.with({
         prefer_local = './vendor/bin',
       }),
-      -- diagnostics.phpmd, -- FIX: doesn't work yet.
       diagnostics.stylelint.with({
         prefer_local = './node_modules/stylelint/bin',
       }),
@@ -47,7 +45,6 @@ _M.setup = function(on_attach)
       formatting.stylua,
       formatting.tidy,
     },
-    on_attach = on_attach,
   })
 end
 

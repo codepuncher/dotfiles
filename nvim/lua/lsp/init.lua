@@ -29,31 +29,35 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local servers = {
   'ansiblels',
   'bashls',
-  -- 'cssls',
   'dockerls',
-  'eslint',
+  -- 'eslint',
   'gopls',
   'html',
   'intelephense',
   'jsonls',
   'lemminx',
   'lua_ls',
-  'none_ls',
   'pyright',
   'rust_analyzer',
   'stylelint_lsp',
   'ts_ls',
-  'volar',
+  'vue_ls',
   'yamlls',
   'tailwindcss',
 }
 for _, server in pairs(servers) do
   local _config, config = pcall(require, 'lsp.servers.' .. server)
-  if not _config then
-    return
+  if _config then
+    vim.lsp.config(server, config(capabilities))
+    vim.lsp.enable(server)
+  else
+    vim.lsp.config(server, {
+      capabilities = capabilities,
+    })
+    vim.lsp.enable(server)
   end
-
-  config.setup(on_attach, capabilities)
 end
+
+require('lsp.servers.none_ls').setup()
 
 return
