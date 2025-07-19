@@ -71,7 +71,7 @@ require('lazy').setup({
         'nvim-tree/nvim-web-devicons',
       },
       config = function()
-        require('lsp-progress').setup()
+        require('lsp-progress').setup({})
       end,
     },
     {
@@ -111,6 +111,7 @@ require('lazy').setup({
         local notify = require('notify')
         vim.notify = notify
         notify.setup({
+          merge_duplicates = false,
           background_colour = '#000000',
         })
       end,
@@ -141,11 +142,24 @@ require('lazy').setup({
 
   -- Language Server Protocol
   {
-    'folke/neodev.nvim',
-    'neovim/nvim-lspconfig',
     {
-      'jose-elias-alvarez/null-ls.nvim',
+      'neovim/nvim-lspconfig',
       dependencies = {
+        'folke/lazydev.nvim',
+        ft = 'lua',
+        opts = {
+          library = {
+            -- See the configuration section for more details
+            -- Load luvit types when the `vim.uv` word is found
+            { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+          },
+        },
+      },
+    },
+    {
+      'nvimtools/none-ls.nvim',
+      dependencies = {
+        'nvimtools/none-ls-extras.nvim',
         'nvim-lua/plenary.nvim',
       },
     },
@@ -247,7 +261,7 @@ require('lazy').setup({
             require('copilot_cmp').setup({
               method = 'getCompletionsCycling',
               format = {
-                before = function(entry, vim_item)
+                before = function(_, vim_item)
                   vim_item.kind = require('lspkind').presets.default[vim_item.kind] .. ' Copilot'
                   return vim_item
                 end,
@@ -266,6 +280,13 @@ require('lazy').setup({
           end,
         },
       },
+      opts = function(_, opts)
+        opts.sources = opts.sources or {}
+        table.insert(opts.sources, {
+          name = 'lazydev',
+          group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+        })
+      end,
     },
     {
       'windwp/nvim-autopairs',

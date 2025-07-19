@@ -9,27 +9,22 @@ end
 
 local formatting = plugin.builtins.formatting
 local diagnostics = plugin.builtins.diagnostics
-local code_actions = plugin.builtins.code_actions
 
-_M.setup = function(on_attach)
+_M.setup = function(capabilities)
   plugin.setup({
+    capabilities = capabilities,
     debug = true,
     root_dir = require('null-ls.utils').root_pattern('.git', 'package.json', 'composer.json'),
     sources = {
-      code_actions.eslint_d,
-      code_actions.shellcheck,
+      require('none-ls.code_actions.eslint_d'),
 
       diagnostics.actionlint,
-      -- diagnostics.ansiblelint,
-      diagnostics.chktex,
-      diagnostics.eslint_d,
+      require('none-ls.diagnostics.eslint_d'),
       diagnostics.hadolint,
       diagnostics.markdownlint,
       diagnostics.phpcs.with({
         prefer_local = './vendor/bin',
       }),
-      -- diagnostics.phpmd, -- FIX: doesn't work yet.
-      diagnostics.shellcheck,
       diagnostics.stylelint.with({
         prefer_local = './node_modules/stylelint/bin',
       }),
@@ -38,7 +33,7 @@ _M.setup = function(on_attach)
       diagnostics.zsh,
 
       formatting.blade_formatter,
-      formatting.eslint_d,
+      require('none-ls.formatting.eslint_d'),
       formatting.gofmt,
       formatting.phpcbf.with({
         prefer_local = './vendor/bin',
@@ -48,16 +43,8 @@ _M.setup = function(on_attach)
         prefer_local = './node_modules/stylelint/bin',
       }),
       formatting.stylua,
-      formatting.shfmt.with({
-        filetypes = {
-          'sh',
-          'bash',
-          'zsh',
-        },
-      }),
       formatting.tidy,
     },
-    on_attach = on_attach,
   })
 end
 

@@ -1,14 +1,11 @@
-local _M = {}
-
-_M.setup = function(on_attach, capabilities)
+return function(capabilities)
   local filetypes = {
     'sass',
     'scss',
     'postcss',
   }
 
-  require('lspconfig').stylelint_lsp.setup({
-    on_attach = on_attach,
+  return {
     capabilities = capabilities,
     flags = {
       debounce_text_changes = 150,
@@ -21,7 +18,5 @@ _M.setup = function(on_attach, capabilities)
         filetypes = filetypes,
       },
     },
-  })
+  }
 end
-
-return _M
