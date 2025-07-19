@@ -50,6 +50,17 @@ wk.register({
   ['ª'] = { '<Cmd>BufferLineGoToBuffer 9<cr>', '[BUFFER] Go to #9' },
   ['ç'] = { '<Cmd>Bdelete<cr>', '[BUFFER] Delete' },
 
+  -- LSP
+  ['<leader>ca'] = { '<cmd>Lspsaga code_action<CR>', '[LSP] Code Action' },
+  ['<leader>fm'] = { '<cmd>lua vim.lsp.buf.format()<CR>', '[LSP] Format' },
+  ['gd'] = { '<cmd>lua vim.lsp.buf.definition()<CR>', '[LSP] Go to definition' },
+  ['K'] = { '<cmd>Lspsaga hover_doc<CR>', '[LSP] Hover documentation' },
+  ['<leader><space>'] = { '<cmd>lua vim.lsp.buf.signature_help()<CR>', '[LSP] Get signature help' },
+  ['<leader>rn'] = { '<cmd>Lspsaga rename<CR>', '[LSP] Rename' },
+  ['gr'] = { '<cmd>lua vim.lsp.buf.references()<CR>', '[LSP] Get references' },
+  ['[d'] = { '<cmd>lua vim.diagnostic.goto_prev()<CR>', '[LSP] Go to previous diagnostic' },
+  [']d'] = { '<cmd>lua vim.diagnostic.goto_next()<CR>', '[LSP] Go to next diagnostic' },
+
   -- NvimTree
   ['<C-e>'] = { '<cmd>NvimTreeToggle<cr>', '[NVIMTREE] Toggle' },
 

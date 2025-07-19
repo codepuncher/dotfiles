@@ -1,4 +1,4 @@
-local _plugin, plugin = pcall(require, 'neodev')
+local _plugin, plugin = pcall(require, 'lazydev')
 if not _plugin then
   return
 end

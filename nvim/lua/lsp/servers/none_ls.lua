@@ -16,7 +16,6 @@ _M.setup = function(on_attach)
     root_dir = require('null-ls.utils').root_pattern('.git', 'package.json', 'composer.json'),
     sources = {
       require('none-ls.code_actions.eslint_d'),
-      -- code_actions.shellcheck,
 
       diagnostics.actionlint,
       -- diagnostics.ansiblelint,
@@ -28,7 +27,6 @@ _M.setup = function(on_attach)
         prefer_local = './vendor/bin',
       }),
       -- diagnostics.phpmd, -- FIX: doesn't work yet.
-      -- diagnostics.shellcheck,
       diagnostics.stylelint.with({
         prefer_local = './node_modules/stylelint/bin',
       }),
@@ -47,13 +45,6 @@ _M.setup = function(on_attach)
         prefer_local = './node_modules/stylelint/bin',
       }),
       formatting.stylua,
-      formatting.shfmt.with({
-        filetypes = {
-          'sh',
-          'bash',
-          'zsh',
-        },
-      }),
       formatting.tidy,
     },
     on_attach = on_attach,
