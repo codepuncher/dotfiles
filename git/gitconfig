@@ -1,6 +1,7 @@
 [user]
 	name = codepuncher
 	email = lee.hanbury@gmail.com
+	signingkey = ~/.ssh/id_ed25519.pub
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f
@@ -22,6 +23,12 @@
 
 [init]
 	defaultBranch = main
+
+[gpg]
+	format = ssh
+
+[commit]
+	gpgsign = true
 
 [push]
 	autoSetupRemote = true
