@@ -71,7 +71,7 @@ require('lazy').setup({
         'nvim-tree/nvim-web-devicons',
       },
       config = function()
-        require('lsp-progress').setup()
+        require('lsp-progress').setup({})
       end,
     },
     {
@@ -111,6 +111,7 @@ require('lazy').setup({
         local notify = require('notify')
         vim.notify = notify
         notify.setup({
+          merge_duplicates = false,
           background_colour = '#000000',
         })
       end,
@@ -248,7 +249,7 @@ require('lazy').setup({
             require('copilot_cmp').setup({
               method = 'getCompletionsCycling',
               format = {
-                before = function(entry, vim_item)
+                before = function(_, vim_item)
                   vim_item.kind = require('lspkind').presets.default[vim_item.kind] .. ' Copilot'
                   return vim_item
                 end,
