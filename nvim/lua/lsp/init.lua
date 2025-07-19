@@ -70,7 +70,7 @@ local servers = {
   'jsonls',
   'lemminx',
   'lua_ls',
-  'null_ls',
+  'none_ls',
   'pyright',
   'rust_analyzer',
   'stylelint_lsp',
