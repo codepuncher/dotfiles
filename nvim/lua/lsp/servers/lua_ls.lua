@@ -5,12 +5,9 @@ end
 
 plugin.setup({})
 
-local _M = {}
-
-_M.setup = function(on_attach, capabilities)
-  require('lspconfig').lua_ls.setup({
+return function(capabilities)
+  return {
     lspconfig = {
-      on_attach = on_attach,
       capabilities = capabilities,
       settings = {
         Lua = {
@@ -34,7 +31,5 @@ _M.setup = function(on_attach, capabilities)
         debounce_text_changes = 150,
       },
     },
-  })
+  }
 end
-
-return _M
