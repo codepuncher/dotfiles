@@ -3,176 +3,206 @@ if not _wk then
   return
 end
 
-local nNoremap = {
+wk.add({
   mode = 'n',
   prefix = '',
   silent = false,
   noremap = true,
   nowait = true,
-}
-wk.register({
-  ['<leader>w'] = { '<cmd>update<cr>', '[BUFFER] Write unsaved buffer contents' },
-}, nNoremap)
+  { '<leader>w', '<cmd>update<cr>', group = 'buffers', desc = 'Write unsaved buffer contents' },
+})
 
-local nNoremapSilent = nNoremap
-nNoremapSilent.silent = true
-wk.register({
-  -- Buffers
+-- Buffers
+wk.add({
+  group = 'buffers',
+  mode = 'n',
+  prefix = '',
+  silent = true,
+  noremap = true,
+  nowait = true,
   ---- BufferLine
   ------ Linux
-  ['<A-,>'] = { '<Cmd>BufferLineCyclePrev<cr>', '[BUFFER] Cycle to previous' },
-  ['<A-.>'] = { '<Cmd>BufferLineCycleNext<cr>', '[BUFFER] Cycle to next' },
-  ['<A-<>'] = { '<Cmd>BufferLineMovePrev<cr>', '[BUFFER] Move to previous' },
-  ['<A->>'] = { '<Cmd>BufferLineMoveNext<cr>', '[BUFFER] Move to next' },
-  ['<A-1>'] = { '<Cmd>BufferLineGoToBuffer 1<cr>', '[BUFFER] Go to #1' },
-  ['<A-2>'] = { '<Cmd>BufferLineGoToBuffer 2<cr>', '[BUFFER] Go to #2' },
-  ['<A-3>'] = { '<Cmd>BufferLineGoToBuffer 3<cr>', '[BUFFER] Go to #3' },
-  ['<A-4>'] = { '<Cmd>BufferLineGoToBuffer 4<cr>', '[BUFFER] Go to #4' },
-  ['<A-5>'] = { '<Cmd>BufferLineGoToBuffer 5<cr>', '[BUFFER] Go to #5' },
-  ['<A-6>'] = { '<Cmd>BufferLineGoToBuffer 6<cr>', '[BUFFER] Go to #6' },
-  ['<A-7>'] = { '<Cmd>BufferLineGoToBuffer 7<cr>', '[BUFFER] Go to #7' },
-  ['<A-8>'] = { '<Cmd>BufferLineGoToBuffer 8<cr>', '[BUFFER] Go to #8' },
-  ['<A-9>'] = { '<Cmd>BufferLineGoToBuffer 9<cr>', '[BUFFER] Go to #9' },
-  ['<A-c>'] = { '<Cmd>Bdelete<cr>', '[BUFFER] Delete' },
+  { '<A-,>', '<Cmd>BufferLineCyclePrev<cr>', desc = 'Cycle to previous' },
+  { '<A-.>', '<Cmd>BufferLineCycleNext<cr>', desc = 'Cycle to next' },
+  { '<A-<>', '<Cmd>BufferLineMovePrev<cr>', desc = 'Move to previous' },
+  { '<A->>', '<Cmd>BufferLineMoveNext<cr>', desc = 'Move to next' },
+  { '<A-1>', '<Cmd>BufferLineGoToBuffer 1<cr>', desc = 'Go to #1' },
+  { '<A-2>', '<Cmd>BufferLineGoToBuffer 2<cr>', desc = 'Go to #2' },
+  { '<A-3>', '<Cmd>BufferLineGoToBuffer 3<cr>', desc = 'Go to #3' },
+  { '<A-4>', '<Cmd>BufferLineGoToBuffer 4<cr>', desc = 'Go to #4' },
+  { '<A-5>', '<Cmd>BufferLineGoToBuffer 5<cr>', desc = 'Go to #5' },
+  { '<A-6>', '<Cmd>BufferLineGoToBuffer 6<cr>', desc = 'Go to #6' },
+  { '<A-7>', '<Cmd>BufferLineGoToBuffer 7<cr>', desc = 'Go to #7' },
+  { '<A-8>', '<Cmd>BufferLineGoToBuffer 8<cr>', desc = 'Go to #8' },
+  { '<A-9>', '<Cmd>BufferLineGoToBuffer 9<cr>', desc = 'Go to #9' },
+  { '<A-c>', '<Cmd>Bdelete<cr>', desc = 'Delete' },
   ------ Mac
-  ['≤'] = { '<Cmd>BufferLineCyclePrev<cr>', '[BUFFER] Cycle to previous' },
-  ['≥'] = { '<Cmd>BufferLineCycleNext<cr>', '[BUFFER] Cycle to next' },
-  ['¯'] = { '<Cmd>BufferLineMovePrev<cr>', '[BUFFER] Move to previous' },
-  ['˘'] = { '<Cmd>BufferLineMoveNext<cr>', '[BUFFER] Move to next' },
-  ['¡'] = { '<Cmd>BufferLineGoToBuffer 1<cr>', '[BUFFER] Go to #1' },
-  ['™'] = { '<Cmd>BufferLineGoToBuffer 2<cr>', '[BUFFER] Go to #2' },
-  ['£'] = { '<Cmd>BufferLineGoToBuffer 3<cr>', '[BUFFER] Go to #3' },
-  ['€'] = { '<Cmd>BufferLineGoToBuffer 4<cr>', '[BUFFER] Go to #4' },
-  ['∞'] = { '<Cmd>BufferLineGoToBuffer 5<cr>', '[BUFFER] Go to #5' },
-  ['§'] = { '<Cmd>BufferLineGoToBuffer 6<cr>', '[BUFFER] Go to #6' },
-  ['¶'] = { '<Cmd>BufferLineGoToBuffer 7<cr>', '[BUFFER] Go to #7' },
-  ['•'] = { '<Cmd>BufferLineGoToBuffer 8<cr>', '[BUFFER] Go to #8' },
-  ['ª'] = { '<Cmd>BufferLineGoToBuffer 9<cr>', '[BUFFER] Go to #9' },
-  ['ç'] = { '<Cmd>Bdelete<cr>', '[BUFFER] Delete' },
+  { '≤', '<Cmd>BufferLineCyclePrev<cr>', desc = 'Cycle to previous' },
+  { '≥', '<Cmd>BufferLineCycleNext<cr>', desc = 'Cycle to next' },
+  { '¯', '<Cmd>BufferLineMovePrev<cr>', desc = 'Move to previous' },
+  { '˘', '<Cmd>BufferLineMoveNext<cr>', desc = 'Move to next' },
+  { '¡', '<Cmd>BufferLineGoToBuffer 1<cr>', desc = 'Go to #1' },
+  { '™', '<Cmd>BufferLineGoToBuffer 2<cr>', desc = 'Go to #2' },
+  { '£', '<Cmd>BufferLineGoToBuffer 3<cr>', desc = 'Go to #3' },
+  { '€', '<Cmd>BufferLineGoToBuffer 4<cr>', desc = 'Go to #4' },
+  { '∞', '<Cmd>BufferLineGoToBuffer 5<cr>', desc = 'Go to #5' },
+  { '§', '<Cmd>BufferLineGoToBuffer 6<cr>', desc = 'Go to #6' },
+  { '¶', '<Cmd>BufferLineGoToBuffer 7<cr>', desc = 'Go to #7' },
+  { '•', '<Cmd>BufferLineGoToBuffer 8<cr>', desc = 'Go to #8' },
+  { 'ª', '<Cmd>BufferLineGoToBuffer 9<cr>', desc = 'Go to #9' },
+  { 'ç', '<Cmd>Bdelete<cr>', desc = 'Delete' },
+})
 
-  -- LSP
-  ['<leader>ca'] = { '<cmd>Lspsaga code_action<CR>', '[LSP] Code Action' },
-  ['<leader>fm'] = { '<cmd>lua vim.lsp.buf.format()<CR>', '[LSP] Format' },
-  ['gd'] = { '<cmd>lua vim.lsp.buf.definition()<CR>', '[LSP] Go to definition' },
-  ['K'] = { '<cmd>Lspsaga hover_doc<CR>', '[LSP] Hover documentation' },
-  ['<leader><space>'] = { '<cmd>lua vim.lsp.buf.signature_help()<CR>', '[LSP] Get signature help' },
-  ['<leader>rn'] = { '<cmd>Lspsaga rename<CR>', '[LSP] Rename' },
-  ['gr'] = { '<cmd>lua vim.lsp.buf.references()<CR>', '[LSP] Get references' },
-  ['[d'] = { '<cmd>lua vim.diagnostic.goto_prev()<CR>', '[LSP] Go to previous diagnostic' },
-  [']d'] = { '<cmd>lua vim.diagnostic.goto_next()<CR>', '[LSP] Go to next diagnostic' },
+-- LSP
+wk.add({
+  group = 'lsp',
+  mode = 'n',
+  prefix = '',
+  silent = true,
+  noremap = true,
+  nowait = true,
+  { '<leader>ca', '<cmd>Lspsaga code_action<CR>', desc = 'Code Action' },
+  { '<leader>fm', '<cmd>lua vim.lsp.buf.format()<CR>', desc = 'Format' },
+  { 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', desc = 'Go to definition' },
+  { 'K', '<cmd>Lspsaga hover_doc<CR>', desc = 'Hover documentation' },
+  { '<leader><space>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', desc = 'Get signature help' },
+  { '<leader>rn', '<cmd>Lspsaga rename<CR>', desc = 'Rename' },
+  { 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', desc = 'Get references' },
+  { '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', desc = 'Go to previous diagnostic' },
+  { ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', desc = 'Go to next diagnostic' },
+  { '<leader>so', '<cmd>Lspsaga outline<cr>', desc = '[LSP] Outline symbols' },
+})
 
-  -- NvimTree
-  ['<C-e>'] = { '<cmd>NvimTreeToggle<cr>', '[NVIMTREE] Toggle' },
+-- NvimTree
+wk.add({
+  group = 'nvimtree',
+  { '<C-e>', '<cmd>NvimTreeToggle<cr>', desc = 'Toggle' },
+})
 
-  -- Telescope
-  ['<leader>f'] = {
-    name = '[TELESCOPE]',
-    f = {
-      [[<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown({layout_config={width=0.5}}))<cr>]],
-      '[TELESCOPE] Find files (ignore=true)',
-    },
-    t = { [[<cmd>lua require('telescope.builtin').live_grep()<cr>]], '[TELESCOPE] Grep files (ignore=true)' },
-    T = {
-      [[<cmd>lua require('plugins.configs.telescope').live_grep_with_file_type ()<cr>]],
-      '[TELESCOPE] Grep files by file type',
-    },
-    b = { [[<cmd>lua require('telescope').extensions.file_browser.file_browser()<cr>]], '[TELESCOPE] Buffers' },
-    h = { [[<cmd>lua require('telescope.builtin').help_tags()<cr>]], '[TELESCOPE] Help tags' },
-    r = { [[<cmd>lua require('telescope.builtin').lsp_references()<cr>]], '[TELESCOPE] LSP references' },
+-- Telescope
+wk.add({
+  group = 'telescope',
+  { '<leader>F', group = '[TELESCOPE] ignore=false' },
+  {
+    '<leader>FF',
+    "<cmd>lua require('plugins.configs.telescope').find_files_no_ignore()<cr>",
+    desc = '[TELESCOPE] Find files (ignore=false)',
   },
-  ['<leader>F'] = {
-    name = '[TELESCOPE] ignore=false',
-    F = {
-      [[<cmd>lua require('plugins.configs.telescope').find_files_no_ignore()<cr>]],
-      '[TELESCOPE] Find files (ignore=false)',
-    },
-    T = { [[<cmd>lua require('plugins.configs.telescope').live_grep()<cr>]], '[TELESCOPE] Grep files (ignore=false)' },
+  {
+    '<leader>FT',
+    "<cmd>lua require('plugins.configs.telescope').live_grep()<cr>",
+    desc = '[TELESCOPE] Grep files (ignore=false)',
   },
-  ['<leader>fg'] = {
-    name = '[TELESCOPE] Git',
-    s = {
-      [[<cmd>lua require('telescope.builtin').git_status(require('telescope.themes').get_dropdown({layout_config={width=0.75}}))<cr>]],
-      '[TELESCOPE] Git status',
-    },
-    b = {
-      [[<cmd>lua require('telescope.builtin').git_branches(require('telescope.themes').get_ivy({}))<cr>]],
-      '[TELESCOPE] Git branches',
-    },
-    r = { '<cmd>Telescope gh run<cr>', '[TELESCOPE] GitHub view workflow runs' },
+  { '<leader>f', group = '[TELESCOPE]' },
+  {
+    '<leader>fT',
+    "<cmd>lua require('plugins.configs.telescope').live_grep_with_file_type ()<cr>",
+    desc = '[TELESCOPE] Grep files by file type',
   },
-  ['<leader>fl'] = {
-    name = '[TELESCOPE] LSP',
-    w = {
-      [[<cmd>lua require('plugins.configs.telescope').lsp_workspace_symbols()<cr>]],
-      '[TELESCOPE] LSP workspace symbols',
-    },
+  {
+    '<leader>fb',
+    "<cmd>lua require('telescope').extensions.file_browser.file_browser()<cr>",
+    desc = '[TELESCOPE] Buffers',
   },
-
-  -- Trouble
-  ['<leader>x'] = {
-    name = '[TROUBLE]',
-    x = { '<cmd>Trouble toggle diagnostics<cr>', '[TROUBLE] Toggle' },
-    w = { '<cmd>Trouble workspace_diagnostics<cr>', '[TROUBLE] Workspace diagnostics' },
-    d = { '<cmd>Trouble document_diagnostics<cr>', '[TROUBLE] Document diagnostics' },
-    l = { '<cmd>Trouble loclist<cr>', '[TROUBLE] Loclist' },
-    q = { '<cmd>Trouble quickfix<cr>', '[TROUBLE] Quickfix' },
-    r = { '<cmd>Trouble lsp_references<cr>', '[TROUBLE] References' },
+  {
+    '<leader>ff',
+    "<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown({layout_config={width=0.5}}))<cr>",
+    desc = '[TELESCOPE] Find files (ignore=true)',
   },
-
-  -- Misc
-  ['+'] = { '<c-a>', 'Increment number' },
-  ['-'] = { '<c-x>', 'Decrement number' },
-
-  -- Git/Fugitive
-  ['<leader>g'] = {
-    name = '[GIT]',
-    da = { '<cmd>vertical Git diff<cr>', '[GIT] Diff all' },
-    df = { '<cmd>Gvdiffsplit<cr>', '[GIT] Diff current file' },
-    s = { '<cmd>Git<cr>', '[GIT] Status' },
-    h = { '<cmd>diffget //3<cr>' },
-    l = { '<cmd>diffget //2<cr>' },
-    cc = { '<cmd>Git commit<cr>', '[GIT] Commit' },
-    ca = { '<cmd>Git commit -a<cr>', '[GIT] Commit all tracked files' },
-    af = { "<Cmd>Git add % <bar> echo 'Staged ' . expand('%')<cr>", '[GIT] Stage current file' },
-    aa = { "<Cmd>Git add . <bar> echo 'Staged tracked files'<cr>", '[GIT] Stage tracked files' },
-    aA = {
-      "<Cmd>Git add -A <bar> echo 'Staged tracked and untracked files'<cr>",
-      '[GIT] Stage tracked and untracked files',
-    },
-    p = { '<cmd>Git push<cr>', '[GIT] Push' },
-    P = { '<cmd>Git push -f<cr>', '[GIT] Push (force)' },
-    bn = { "<Cmd>lua require('utils').git_branch_new()<cr>", '[GIT] Create new branch' },
-    br = { "<Cmd>lua require('utils').git_branch_rename()<cr>", '[GIT] Rename current branch' },
-    bf = {
-      "<Cmd>lua vim.api.nvim_command('!gh browse ' .. vim.fn.expand('%') .. ':' .. vim.api.nvim_win_get_cursor(0)[1])",
-    },
-    ['='] = {
-      "<cmd>Git push -u origin @ | :execute '!gh pr create -f'<cr>",
-      '[GIT] Push new branch, create a PR',
-    },
-    mpr = { '<cmd>!gh pr merge -md<cr>', '[GIT] Merge PR and delete branch' },
-    vpr = { '<cmd>!gh pr view -w<cr>', '[GIT] View PR in browser' },
-    frh = { '<cmd>Git fetch --all --prune | Git reset --hard "@{u}"<cr>', '[GIT] Fetch latest changes and reset state' },
+  { '<leader>fg', group = '[TELESCOPE] Git' },
+  {
+    '<leader>fgb',
+    "<cmd>lua require('telescope.builtin').git_branches(require('telescope.themes').get_ivy({}))<cr>",
+    desc = '[TELESCOPE] Git branches',
   },
-
-  -- Symbols Outline
-  ['<leader>so'] = { '<cmd>LSoutlineToggle<cr>', '[LSP] Outline symbols' },
-
-  -- Lua stuff
-  ['<leader>l'] = {
-    name = '[LUA]',
-    rk = { "<cmd>source ~/.config/nvim/lua/keymappings.lua | echo 'Keymaps reloaded'<cr>", '[LUA] Reload keymaps' },
+  { '<leader>fgr', '<cmd>Telescope gh run<cr>', desc = '[TELESCOPE] GitHub view workflow runs' },
+  {
+    '<leader>fgs',
+    "<cmd>lua require('telescope.builtin').git_status(require('telescope.themes').get_dropdown({layout_config={width=0.75}}))<cr>",
+    desc = '[TELESCOPE] Git status',
   },
+  { '<leader>fh', "<cmd>lua require('telescope.builtin').help_tags()<cr>", desc = '[TELESCOPE] Help tags' },
+  { '<leader>fl', group = '[TELESCOPE] LSP' },
+  {
+    '<leader>flw',
+    "<cmd>lua require('plugins.configs.telescope').lsp_workspace_symbols()<cr>",
+    desc = '[TELESCOPE] LSP workspace symbols',
+  },
+  { '<leader>fr', "<cmd>lua require('telescope.builtin').lsp_references()<cr>", desc = '[TELESCOPE] LSP references' },
+  {
+    '<leader>ft',
+    "<cmd>lua require('telescope.builtin').live_grep()<cr>",
+    desc = '[TELESCOPE] Grep files (ignore=true)',
+  },
+})
 
-  -- Lines
-  ['<c-J>'] = { '<cmd>m .+1<cr>==', '[LINES] Move line up' },
-  ['<c-K>'] = { '<cmd>m .-2<cr>==', '[LINES] Move line down' },
-  ['<c-n>'] = { '<cmd>nohls<cr>', '[LINES] Clear highlights' },
-}, nNoremapSilent)
+-- Misc
+wk.add({
+  group = 'misc',
+  { '+', '<c-a>', desc = 'Increment number' },
+  { '-', '<c-x>', desc = 'Decrement number' },
+  { '<c-J>', '<cmd>m .+1<cr>==', desc = '[LINES] Move line up' },
+  { '<c-K>', '<cmd>m .-2<cr>==', desc = '[LINES] Move line down' },
+  { '<c-n>', '<cmd>nohls<cr>', desc = '[LINES] Clear highlights' },
+  { '<leader>l', group = '[LUA]' },
+  {
+    '<leader>lrk',
+    "<cmd>source ~/.config/nvim/lua/keymappings.lua | echo 'Keymaps reloaded'<cr>",
+    desc = '[LUA] Reload keymaps',
+  },
+})
+
+wk.add({
+  { '<leader>g', group = '[GIT]' },
+  {
+    '<leader>g=',
+    "<cmd>Git push -u origin @ | :execute '!gh pr create -f'<cr>",
+    desc = '[GIT] Push new branch, create a PR',
+  },
+  { '<leader>gP', '<cmd>Git push -f<cr>', desc = '[GIT] Push (force)' },
+  {
+    '<leader>gaA',
+    "<Cmd>Git add -A <bar> echo 'Staged tracked and untracked files'<cr>",
+    desc = '[GIT] Stage tracked and untracked files',
+  },
+  { '<leader>gaa', "<Cmd>Git add . <bar> echo 'Staged tracked files'<cr>", desc = '[GIT] Stage tracked files' },
+  { '<leader>gaf', "<Cmd>Git add % <bar> echo 'Staged ' . expand('%')<cr>", desc = '[GIT] Stage current file' },
+  {
+    '<leader>gbf',
+    desc = "<Cmd>lua vim.api.nvim_command('!gh browse ' .. vim.fn.expand('%') .. ':' .. vim.api.nvim_win_get_cursor(0)[1])",
+  },
+  { '<leader>gbn', "<Cmd>lua require('utils').git_branch_new()<cr>", desc = '[GIT] Create new branch' },
+  { '<leader>gbr', "<Cmd>lua require('utils').git_branch_rename()<cr>", desc = '[GIT] Rename current branch' },
+  { '<leader>gca', '<cmd>Git commit -a<cr>', desc = '[GIT] Commit all tracked files' },
+  { '<leader>gcc', '<cmd>Git commit<cr>', desc = '[GIT] Commit' },
+  { '<leader>gda', '<cmd>vertical Git diff<cr>', desc = '[GIT] Diff all' },
+  { '<leader>gdf', '<cmd>Gvdiffsplit<cr>', desc = '[GIT] Diff current file' },
+  {
+    '<leader>gfrh',
+    '<cmd>Git fetch --all --prune | Git reset --hard "@{u}"<cr>',
+    desc = '[GIT] Fetch latest changes and reset state',
+  },
+  { '<leader>gh', desc = '<cmd>diffget //3<cr>' },
+  { '<leader>gl', desc = '<cmd>diffget //2<cr>' },
+  { '<leader>gmpr', '<cmd>!gh pr merge -md<cr>', desc = '[GIT] Merge PR and delete branch' },
+  { '<leader>gp', '<cmd>Git push<cr>', desc = '[GIT] Push' },
+  { '<leader>gs', '<cmd>Git<cr>', desc = '[GIT] Status' },
+  { '<leader>gvpr', '<cmd>!gh pr view -w<cr>', desc = '[GIT] View PR in browser' },
+})
+
+wk.add({
+  { '<leader>x', group = '[TROUBLE]' },
+  { '<leader>xd', '<cmd>Trouble document_diagnostics<cr>', desc = '[TROUBLE] Document diagnostics' },
+  { '<leader>xl', '<cmd>Trouble loclist<cr>', desc = '[TROUBLE] Loclist' },
+  { '<leader>xq', '<cmd>Trouble quickfix<cr>', desc = '[TROUBLE] Quickfix' },
+  { '<leader>xr', '<cmd>Trouble lsp_references<cr>', desc = '[TROUBLE] References' },
+  { '<leader>xw', '<cmd>Trouble workspace_diagnostics<cr>', desc = '[TROUBLE] Workspace diagnostics' },
+  { '<leader>xx', '<cmd>Trouble toggle diagnostics<cr>', desc = '[TROUBLE] Toggle' },
+})
 
 wk.setup({})
 
 ---- Lines
 ---- TODO: Migrate to Lua
-vim.api.nvim_command([[vnoremap J :m '>+1<cr>gv=gv]])
 vim.api.nvim_command([[vnoremap K :m '<-2<cr>gv=gv]])
+vim.api.nvim_command([[vnoremap J :m '>+1<cr>gv=gv]])
