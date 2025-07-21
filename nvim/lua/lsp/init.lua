@@ -49,13 +49,13 @@ for _, server in pairs(servers) do
   local _config, config = pcall(require, 'lsp.servers.' .. server)
   if _config then
     vim.lsp.config(server, config(capabilities))
-    vim.lsp.enable(server)
   else
     vim.lsp.config(server, {
       capabilities = capabilities,
     })
-    vim.lsp.enable(server)
   end
+
+  vim.lsp.enable(server)
 end
 
 require('lsp.servers.none_ls').setup()
