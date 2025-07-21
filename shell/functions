@@ -198,12 +198,16 @@ install_mailpit() {
 }
 
 install_neovim() {
-	curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+	set -x
+	local DIRNAME='nvim-linux-x86_64'
+	local FILENAME="${DIRNAME}.tar.gz"
+	curl -LO "https://github.com/neovim/neovim/releases/latest/download/${FILENAME}" -o "/tmp/${FILENAME}"
 	rm ~/.local/bin/nvim
 	sudo rm -rf /opt/nvim
 	sudo rm -rf /opt/neovim
-	sudo tar -C /opt -xzf nvim-linux64.tar.gz
-	ln -s /opt/nvim-linux64/bin/nvim ~/.local/bin/nvim
+	sudo tar -C /opt -xzf "${FILENAME}"
+	ln -s "/opt/${DIRNAME}/bin/nvim" ~/.local/bin/nvim
+	set +x
 }
 
 gh_get_latest_tag() {

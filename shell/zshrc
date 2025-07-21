@@ -196,7 +196,7 @@ bindkey -M vicmd 'j' history-substring-search-down
 
 # Misc
 export WORDCHARS=${WORDCHARS/\//}
-export EDITOR=nvim
+export EDITOR="$(which nvim)"
 setopt HIST_IGNORE_SPACE
 
 # Because WSL does not have

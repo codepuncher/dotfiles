@@ -118,7 +118,7 @@ wk.add({
   { '<leader>fgr', '<cmd>Telescope gh run<cr>', desc = '[TELESCOPE] GitHub view workflow runs' },
   {
     '<leader>fgs',
-    "<cmd>lua require('telescope.builtin').git_status(require('telescope.themes').get_dropdown({layout_config={width=0.75}}))<cr>",
+    "<cmd>lua require('telescope.builtin').git_status(require('telescope.themes').get_dropdown({layout_strategy='vertical', layout_config={width=0.75, height=0.95}}))<cr>",
     desc = '[TELESCOPE] Git status',
   },
   { '<leader>fh', "<cmd>lua require('telescope.builtin').help_tags()<cr>", desc = '[TELESCOPE] Help tags' },

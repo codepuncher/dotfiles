@@ -42,9 +42,11 @@ telescope.setup({
   pickers = {
     live_grep = {
       theme = 'dropdown',
+      layout_strategy = 'horizontal',
       layout_config = {
         prompt_position = 'bottom',
         width = 0.75,
+        height = 0.95,
       },
     },
     git_branches = {
