@@ -1,350 +1,351 @@
 #!/usr/bin/env bash
 
 section_start() {
-	printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-	echo "${1}"
+  printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+  echo "${1}"
 }
 
 reinstall_dotfiles() {
-	rm -rf ~/.{local/bin,npm,nvm,zinit,go/bin,config/composer/vendor}
-	cd ~/.dotfiles && ./setup.sh
+  rm -rf ~/.{local/bin,npm,nvm,zinit,go/bin,config/composer/vendor}
+  cd ~/.dotfiles && ./setup.sh
 }
 
 install_arch_packages() {
-	echo 'Enabling the AUR...'
-	sudo sed -Ei '/EnableAUR/s/^#//' /etc/pamac.conf
+  echo 'Enabling the AUR...'
+  sudo sed -Ei '/EnableAUR/s/^#//' /etc/pamac.conf
 
-	PACKAGES=(
-		# General
-		redshift
-		ulauncher
-		variety
-		bitwarden
-		plank
-		spotify-launcher
-		spotifyd
-		pandoc
-		texlive-basic
-		texlive-latex
-		texlive-latexrecommended
-		texlive-pictures
-		texlive-latexextra
-		texlive-fontsrecommended
+  PACKAGES=(
+    # General
+    redshift
+    ulauncher
+    variety
+    bitwarden
+    plank
+    spotify-launcher
+    spotifyd
+    pandoc
+    texlive-basic
+    texlive-latex
+    texlive-latexrecommended
+    texlive-pictures
+    texlive-latexextra
+    texlive-fontsrecommended
 
-		# Social
-		discord
-		caprine
-		whatsapp-for-linux
+    # Social
+    discord
+    caprine
+    whatsapp-for-linux
 
-		# Work
-		microsoft-edge-stable-bin
-		clickup
-		zoom
+    # Work
+    microsoft-edge-stable-bin
+    clickup
+    zoom
 
-		# Dev
-		alacritty
-		tmux
-		github-cli
-		go
-		rustup
-		nginx
-		mailpit
-		mariadb
-		php-legacy
-		php-legacy-fpm
-		php-legacy-gd
-		php-legacy-imagick
-		php-legacy-sodium
-		php-legacy-sqlite
-		php-legacy-tidy
-		php-legacy-xdebug
-		php-legacy-xsl
-		python
-		python-pip
-		python-pipx
+    # Dev
+    alacritty
+    ghostty
+    tmux
+    github-cli
+    go
+    rustup
+    nginx
+    mailpit
+    mariadb
+    php-legacy
+    php-legacy-fpm
+    php-legacy-gd
+    php-legacy-imagick
+    php-legacy-sodium
+    php-legacy-sqlite
+    php-legacy-tidy
+    php-legacy-xdebug
+    php-legacy-xsl
+    python
+    python-pip
+    python-pipx
 
-		# Fonts
-		noto-fonts-emoji
-		ttf-anonymouspro-nerd
-		ttf-dejavu-nerd
-		ttf-firacode-nerd
-		ttf-go-nerd
-		ttf-hack-nerd
-		ttf-jetbrains-mono-nerd
-		ttf-liberation-mono-nerd
-		ttf-sourcecodepro-nerd
-		ttf-terminus-nerd
+    # Fonts
+    noto-fonts-emoji
+    ttf-anonymouspro-nerd
+    ttf-dejavu-nerd
+    ttf-firacode-nerd
+    ttf-go-nerd
+    ttf-hack-nerd
+    ttf-jetbrains-mono-nerd
+    ttf-liberation-mono-nerd
+    ttf-sourcecodepro-nerd
+    ttf-terminus-nerd
 
-		# IDE
-		neovim
-		lua-language-server
-		shellcheck
-		hadolint-bin
+    # IDE
+    neovim
+    lua-language-server
+    shellcheck
+    hadolint-bin
 
-		# System
-		vim
-		tldr
-		git
-		jq
-		ripgrep
-		exa
-		fd
-		git-delta
-		xsel
-		xclip
-		imagemagick
-		dnsutils
-		bat
-	)
+    # System
+    vim
+    tldr
+    git
+    jq
+    ripgrep
+    exa
+    fd
+    git-delta
+    xsel
+    xclip
+    imagemagick
+    dnsutils
+    bat
+  )
 
-	# shellcheck disable=2046
-	sudo pamac install --no-confirm --no-upgrade $(
-		IFS=' '
-		echo "${PACKAGES[*]}"
-	) "$@"
+  # shellcheck disable=2046
+  sudo pamac install --no-confirm --no-upgrade $(
+    IFS=' '
+    echo "${PACKAGES[*]}"
+  ) "$@"
 }
 
 install_wsl_packages() {
-	PACKAGES=(
-		# Text processing
-		pandoc
-		texlive-latex-base
-		texlive-latex-extra
-		texlive-latex-recommended
-		texlive-fonts-recommended
-		texlive-fonts-extra
+  PACKAGES=(
+    # Text processing
+    pandoc
+    texlive-latex-base
+    texlive-latex-extra
+    texlive-latex-recommended
+    texlive-fonts-recommended
+    texlive-fonts-extra
 
-		# Dev
-		tmux
-		golang-go
-		python3
-		python3-pip
-		pipx
+    # Dev
+    tmux
+    golang-go
+    python3
+    python3-pip
+    pipx
 
-		# Fonts
-		fonts-noto-color-emoji
-		fonts-firacode
-		fonts-hack
-		fonts-jetbrains-mono
+    # Fonts
+    fonts-noto-color-emoji
+    fonts-firacode
+    fonts-hack
+    fonts-jetbrains-mono
 
-		# IDE
-		shellcheck
+    # IDE
+    shellcheck
 
-		# System
-		vim
-		tldr
-		git
-		jq
-		ripgrep
-		exa
-		fd-find
-		# git-delta
-		xsel
-		xclip
-		imagemagick
-		dnsutils
-		bat
-	)
+    # System
+    vim
+    tldr
+    git
+    jq
+    ripgrep
+    exa
+    fd-find
+    # git-delta
+    xsel
+    xclip
+    imagemagick
+    dnsutils
+    bat
+  )
 
-	sudo add-apt-repository ppa:longsleep/golang-backports -y
+  sudo add-apt-repository ppa:longsleep/golang-backports -y
 
-	# shellcheck disable=2046
-	sudo apt install -y "${PACKAGES[@]}"
+  # shellcheck disable=2046
+  sudo apt install -y "${PACKAGES[@]}"
 
-	install_rustup
-	install_mailpit
-	install_neovim
-	install_git_delta
-	# ensure fd is available
-	ln -s "$(which fdfind)" ~/.local/bin/fd
+  install_rustup
+  install_mailpit
+  install_neovim
+  install_git_delta
+  # ensure fd is available
+  ln -s "$(which fdfind)" ~/.local/bin/fd
 }
 
 setup_arch_services() {
-	SERVICES=(
-		nginx
-		mariadb
-		php-fpm
-	)
+  SERVICES=(
+    nginx
+    mariadb
+    php-fpm
+  )
 
-	# shellcheck disable=2046
-	sudo systemctl start $(
-		IFS=' '
-		echo "${SERVICES[*]}"
-	)
-	# shellcheck disable=2046
-	sudo systemctl enable $(
-		IFS=' '
-		echo "${SERVICES[*]}"
-	)
+  # shellcheck disable=2046
+  sudo systemctl start $(
+    IFS=' '
+    echo "${SERVICES[*]}"
+  )
+  # shellcheck disable=2046
+  sudo systemctl enable $(
+    IFS=' '
+    echo "${SERVICES[*]}"
+  )
 }
 
 install_nvm() {
-	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 }
 
 install_rustup() {
-	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 }
 
 install_mailpit() {
-	# shellcheck disable=2024
-	if ! sudo bash < <(curl -sL https://raw.githubusercontent.com/axllent/mailpit/develop/install.sh); then
-		echo 'Failed to install Mailpit' >&2
-		return 1
-	fi
-	sudo ln -s "${HOME}/.dotfiles/templates/mailpit.service" "/etc/systemd/system/mailpit.service"
-	sudo systemctl enable mailpit && sudo systemctl start mailpit
-	sudo ln -s /usr/local/bin/mailpit /usr/sbin/sendmail
+  # shellcheck disable=2024
+  if ! sudo bash < <(curl -sL https://raw.githubusercontent.com/axllent/mailpit/develop/install.sh); then
+    echo 'Failed to install Mailpit' >&2
+    return 1
+  fi
+  sudo ln -s "${HOME}/.dotfiles/templates/mailpit.service" "/etc/systemd/system/mailpit.service"
+  sudo systemctl enable mailpit && sudo systemctl start mailpit
+  sudo ln -s /usr/local/bin/mailpit /usr/sbin/sendmail
 }
 
 install_neovim() {
-	set -x
-	local DIRNAME='nvim-linux-x86_64'
-	local FILENAME="${DIRNAME}.tar.gz"
-	curl -LO "https://github.com/neovim/neovim/releases/latest/download/${FILENAME}" -o "/tmp/${FILENAME}"
-	rm ~/.local/bin/nvim
-	sudo rm -rf /opt/nvim
-	sudo rm -rf /opt/neovim
-	sudo tar -C /opt -xzf "${FILENAME}"
-	ln -s "/opt/${DIRNAME}/bin/nvim" ~/.local/bin/nvim
-	set +x
+  set -x
+  local DIRNAME='nvim-linux-x86_64'
+  local FILENAME="${DIRNAME}.tar.gz"
+  curl -LO "https://github.com/neovim/neovim/releases/latest/download/${FILENAME}" -o "/tmp/${FILENAME}"
+  rm ~/.local/bin/nvim
+  sudo rm -rf /opt/nvim
+  sudo rm -rf /opt/neovim
+  sudo tar -C /opt -xzf "${FILENAME}"
+  ln -s "/opt/${DIRNAME}/bin/nvim" ~/.local/bin/nvim
+  set +x
 }
 
 gh_get_latest_tag() {
-	if [[ -z "${1}" ]]; then
-		echo 'No repo provided' >&2
-		return 1
-	fi
+  if [[ -z "${1}" ]]; then
+    echo 'No repo provided' >&2
+    return 1
+  fi
 
-	TIMEOUT=90
-	curl --silent --location --max-time "${TIMEOUT}" "https://api.github.com/repos/${1}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/'
+  TIMEOUT=90
+  curl --silent --location --max-time "${TIMEOUT}" "https://api.github.com/repos/${1}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/'
 }
 
 install_git_delta() {
-	REPO='dandavison/delta'
-	VERSION="$(gh_get_latest_tag "${REPO}")"
-	VERSION="${VERSION:-0.16.5}"
-	FILE="git-delta_${VERSION}_amd64.deb"
-	curl -LO "https://github.com/${REPO}/releases/latest/download/${FILE}" && sudo dpkg -i "${FILE}"
+  REPO='dandavison/delta'
+  VERSION="$(gh_get_latest_tag "${REPO}")"
+  VERSION="${VERSION:-0.16.5}"
+  FILE="git-delta_${VERSION}_amd64.deb"
+  curl -LO "https://github.com/${REPO}/releases/latest/download/${FILE}" && sudo dpkg -i "${FILE}"
 }
 
 install_node_packages() {
-	if [[ ! -d "${NVM_DIR}" ]] || [[ ! -d "${HOME}/.nvm" ]]; then
-		install_nvm
-	fi
-	PACKAGES=(
-		@ansible/ansible-language-server
-		@fsouza/prettierd
-		@tailwindcss/language-server
-		@volar/vue-language-server
-		bash-language-server
-		blade-formatter
-		doctoc
-		eslint_d
-		fast-cli
-		intelephense
-		lighthouse
-		markdownlint
-		markdownlint-cli
-		speed-test
-		stylelint
-		stylelint-config-prettier
-		stylelint-lsp
-		typescript
-		typescript-language-server
-		vscode-langservers-extracted
-		yaml-language-server
-	)
+  if [[ ! -d "${NVM_DIR}" ]] || [[ ! -d "${HOME}/.nvm" ]]; then
+    install_nvm
+  fi
+  PACKAGES=(
+    @ansible/ansible-language-server
+    @fsouza/prettierd
+    @tailwindcss/language-server
+    @volar/vue-language-server
+    bash-language-server
+    blade-formatter
+    doctoc
+    eslint_d
+    fast-cli
+    intelephense
+    lighthouse
+    markdownlint
+    markdownlint-cli
+    speed-test
+    stylelint
+    stylelint-config-prettier
+    stylelint-lsp
+    typescript
+    typescript-language-server
+    vscode-langservers-extracted
+    yaml-language-server
+  )
 
-	# shellcheck disable=2046
-	yarn global add $(
-		IFS=' '
-		echo "${PACKAGES[*]}"
-	) "$@"
+  # shellcheck disable=2046
+  yarn global add $(
+    IFS=' '
+    echo "${PACKAGES[*]}"
+  ) "$@"
 }
 
 install_go_packages() {
-	PACKAGES=(
-		github.com/rhysd/actionlint/cmd/actionlint@latest
-		golang.org/x/tools/gopls@latest
-		mvdan.cc/sh/v3/cmd/shfmt@latest
-		mvdan.cc/xurls/v2/cmd/xurls@latest
-	)
+  PACKAGES=(
+    github.com/rhysd/actionlint/cmd/actionlint@latest
+    golang.org/x/tools/gopls@latest
+    mvdan.cc/sh/v3/cmd/shfmt@latest
+    mvdan.cc/xurls/v2/cmd/xurls@latest
+  )
 
-	for P in "${PACKAGES[@]}"; do
-		go install "${P}" "$@"
-	done
+  for P in "${PACKAGES[@]}"; do
+    go install "${P}" "$@"
+  done
 }
 
 install_composer_packages() {
-	PACKAGES=(
-		cpriego/valet-linux:dev-master
-		wp-cli/wp-cli-bundle
-		itinerisltd/itineris-wp-coding-standards
-	)
+  PACKAGES=(
+    cpriego/valet-linux:dev-master
+    wp-cli/wp-cli-bundle
+    itinerisltd/itineris-wp-coding-standards
+  )
 
-	# shellcheck disable=2046
-	composer global require $(
-		IFS=' '
-		echo "${PACKAGES[*]}"
-	) "$@"
+  # shellcheck disable=2046
+  composer global require $(
+    IFS=' '
+    echo "${PACKAGES[*]}"
+  ) "$@"
 }
 
 install_pip_packages() {
-	PACKAGES=(
-		csvkit
-		yamllint
-	)
+  PACKAGES=(
+    csvkit
+    yamllint
+  )
 
-	for P in "${PACKAGES[@]}"; do
-		pipx install "${P}" "$@"
-	done
+  for P in "${PACKAGES[@]}"; do
+    pipx install "${P}" "$@"
+  done
 }
 
 install_cargo_packages() {
-	PACKAGES=(
-		tree-sitter-cli
-		stylua
-	)
+  PACKAGES=(
+    tree-sitter-cli
+    stylua
+  )
 
-	# shellcheck disable=2046
-	cargo install $(
-		IFS=' '
-		echo "${PACKAGES[*]}"
-	) "$@"
+  # shellcheck disable=2046
+  cargo install $(
+    IFS=' '
+    echo "${PACKAGES[*]}"
+  ) "$@"
 }
 
 post_install_packages() {
-	section_start 'Post package install'
+  section_start 'Post package install'
 
-	# shellcheck disable=2016
-	echo 'Running `mariadb-install-db`'
-	sudo mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
+  # shellcheck disable=2016
+  echo 'Running `mariadb-install-db`'
+  sudo mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
 
-	echo 'Enabling PHP extensions'
-	sudo sed -Ei '/^;extension=mysqli/s/^;//' /etc/php7/php.ini
-	sudo sed -Ei '/^;extension=gd/s/^;//' /etc/php7/php.ini
+  echo 'Enabling PHP extensions'
+  sudo sed -Ei '/^;extension=mysqli/s/^;//' /etc/php7/php.ini
+  sudo sed -Ei '/^;extension=gd/s/^;//' /etc/php7/php.ini
 
-	echo 'Installing `spotify-tui'
-	mkdir "${HOME}/.rustup"
-	rustup default stable
-	pamac install --no-confirm --no-upgrade spotify-tui
+  echo 'Installing `spotify-tui'
+  mkdir "${HOME}/.rustup"
+  rustup default stable
+  pamac install --no-confirm --no-upgrade spotify-tui
 }
 
 post_setup_arch_services() {
-	section_start 'Post setup arch services'
+  section_start 'Post setup arch services'
 
-	# shellcheck disable=2016
-	echo 'Running `mysql_secure_installation`'
-	sudo mysql_secure_installation
+  # shellcheck disable=2016
+  echo 'Running `mysql_secure_installation`'
+  sudo mysql_secure_installation
 
-	echo -e 'Creating wp mysql user'
-	sudo mysql -e "CREATE USER 'wp'@'localhost' IDENTIFIED BY 'wp'"
-	sudo mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'wp'@'localhost' WITH GRANT OPTION"
-	sudo mysql -e "FLUSH PRIVILEGES"
+  echo -e 'Creating wp mysql user'
+  sudo mysql -e "CREATE USER 'wp'@'localhost' IDENTIFIED BY 'wp'"
+  sudo mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'wp'@'localhost' WITH GRANT OPTION"
+  sudo mysql -e "FLUSH PRIVILEGES"
 }
 
 setup_arch_system_emoji_support() {
-	sudo pamac install noto-fonts-emoji
-	sudo cp ~/.dotfiles/templates/fonts-local.conf /etc/fonts/local.conf
+  sudo pamac install noto-fonts-emoji
+  sudo cp ~/.dotfiles/templates/fonts-local.conf /etc/fonts/local.conf
 }
