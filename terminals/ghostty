@@ -1,7 +1,13 @@
-background-opacity=0.75
+#background-opacity=0.75
+background-opacity=0.9
 maximize=true
 window-decoration=none
-theme=tokyonight-storm
+
+gtk-custom-css = ~/.dotfiles/terminals/ghostty.css
+gtk-wide-tabs = false
+gtk-tabs-location = top
+theme=TokyoNight Storm
+
 keybind = ctrl+alt+shift+up=resize_split:up,10
 keybind = ctrl+alt+shift+left=resize_split:left,10
 keybind = ctrl+alt+shift+down=resize_split:down,10

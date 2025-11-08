@@ -4,8 +4,12 @@ if not _plugin then
 end
 
 plugin.setup({
-  auto_open = false,
-  auto_close = true,
-  auto_preview = false,
   mode = 'document_diagnostics',
+  modes = {
+    diagnostics = {
+      auto_open = true,
+      auto_close = true,
+      auto_preview = true,
+    },
+  },
 })

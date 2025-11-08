@@ -206,3 +206,5 @@ setopt HIST_IGNORE_SPACE
 if is_wsl; then
 	unset XDG_RUNTIME_DIR
 fi
+
+export PATH=$PATH:/home/lee/.spicetify
