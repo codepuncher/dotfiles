@@ -203,6 +203,7 @@ install_neovim() {
   local DIRNAME='nvim-linux-x86_64'
   local FILENAME="${DIRNAME}.tar.gz"
   curl -LO "https://github.com/neovim/neovim/releases/latest/download/${FILENAME}" -o "/tmp/${FILENAME}"
+  mkdir -p ~/.local/bin
   rm ~/.local/bin/nvim
   sudo rm -rf /opt/nvim
   sudo rm -rf /opt/neovim
