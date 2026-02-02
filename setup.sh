@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-# Uncomment below line for 'debug mode'
-# set -x
+# Set "strict mode"
+set -euo pipefail
 
-SCRIPT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+SCRIPT_PATH="${BASH_SOURCE%/*}"
 if [[ -f "${SCRIPT_PATH}/shell/functions" ]]; then
   source "${SCRIPT_PATH}/shell/functions"
 fi
