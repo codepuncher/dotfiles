@@ -106,6 +106,8 @@ install_arch_packages() {
 }
 
 install_wsl_packages() {
+  add_eza_ppa
+
   PACKAGES=(
     # Text processing
     pandoc
@@ -135,11 +137,11 @@ install_wsl_packages() {
     vim
     tldr
     git
+    gpg
     jq
     ripgrep
-    exa
+    eza
     fd-find
-    # git-delta
     xsel
     xclip
     imagemagick
@@ -148,6 +150,8 @@ install_wsl_packages() {
   )
 
   sudo add-apt-repository ppa:longsleep/golang-backports -y
+
+  sudo apt update
 
   # shellcheck disable=2046
   sudo apt install -y "${PACKAGES[@]}"
@@ -349,4 +353,11 @@ post_setup_arch_services() {
 setup_arch_system_emoji_support() {
   sudo pamac install noto-fonts-emoji
   sudo cp ~/.dotfiles/templates/fonts-local.conf /etc/fonts/local.conf
+}
+
+add_eza_ppa() {
+  sudo mkdir -p /etc/apt/keyrings
+  wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
+  echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list
+  sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
 }
