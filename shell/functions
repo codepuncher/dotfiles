@@ -156,29 +156,31 @@ install_wsl_packages() {
   )
 
   PHP_PACKAGES=(
-    php8.1-bcmath
-    php8.1-bz2
-    php8.1-cli
-    php8.1-common
-    php8.1-curl
-    php8.1-fpm
-    php8.1-gd
-    php8.1-gmp
-    php8.1-intl
-    php8.1-mbstring
-    php8.1-mysql
-    php8.1-opcache
-    php8.1-readline
-    php8.1-soap
-    php8.1-tidy
-    php8.1-xdebug
-    php8.1-xml
-    php8.1-xsl
-    php8.1-zip
+    bcmath
+    bz2
+    cli
+    common
+    curl
+    fpm
+    gd
+    gmp
+    intl
+    mbstring
+    mysql
+    opcache
+    readline
+    soap
+    tidy
+    xdebug
+    xml
+    xsl
+    zip
   )
-
-  # Join PACKAGES and PHP_PACKAGES
-  PACKAGES=( "${PACKAGES[@]}" "${PHP_PACKAGES[@]}" )
+  PHP_VERSIONS=(8.1 8.2)
+  for VERSION in "${PHP_VERSIONS[@]}"; do
+    mapfile -t PHP_COMBINED_PACKAGES < <(printf '%s\n' "${PHP_PACKAGES[@]}" | sed "s/^/php${VERSION}-/")
+    PACKAGES=( "${PACKAGES[@]}" "${PHP_COMBINED_PACKAGES[@]}" )
+  done
 
   sudo add-apt-repository ppa:longsleep/golang-backports -y
 
