@@ -23,7 +23,7 @@ require('lazy').setup({
         'nvim-lua/plenary.nvim',
         {
           'nvim-telescope/telescope-fzf-native.nvim',
-          build = 'make',
+          build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release --target install',
         },
         'nvim-telescope/telescope-github.nvim',
         'nvim-telescope/telescope-node-modules.nvim',
@@ -121,10 +121,14 @@ require('lazy').setup({
   -- Treesitter
   {
     'nvim-treesitter/nvim-treesitter',
+    lazy = false,
+    build = ':TSUpdate',
+    config = function()
+      require('plugins.configs.treesitter')
+    end,
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
-      'nvim-treesitter/nvim-treesitter-refactor',
-      'p00f/nvim-ts-rainbow',
+      'nvim-treesitter/nvim-treesitter-locals',
       'JoosepAlviste/nvim-ts-context-commentstring',
       {
         'windwp/nvim-ts-autotag',
@@ -134,10 +138,6 @@ require('lazy').setup({
       },
       'andymass/vim-matchup',
     },
-    build = ':TSUpdate',
-    config = function()
-      require('plugins.configs.treesitter')
-    end,
   },
 
   -- Language Server Protocol

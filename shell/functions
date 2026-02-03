@@ -136,6 +136,7 @@ install_wsl_packages() {
     shellcheck
 
     # System
+    cmake
     vim
     tldr
     git
@@ -145,6 +146,7 @@ install_wsl_packages() {
     ripgrep
     eza
     fd-find
+    fzf
     xsel
     xclip
     imagemagick
