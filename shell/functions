@@ -107,6 +107,7 @@ install_arch_packages() {
 
 install_wsl_packages() {
   add_eza_ppa
+  add_php_ppa
 
   PACKAGES=(
     # Text processing
@@ -148,6 +149,31 @@ install_wsl_packages() {
     dnsutils
     bat
   )
+
+  PHP_PACKAGES=(
+    php8.1-bcmath
+    php8.1-bz2
+    php8.1-cli
+    php8.1-common
+    php8.1-curl
+    php8.1-fpm
+    php8.1-gd
+    php8.1-gmp
+    php8.1-intl
+    php8.1-mbstring
+    php8.1-mysql
+    php8.1-opcache
+    php8.1-readline
+    php8.1-soap
+    php8.1-tidy
+    php8.1-xdebug
+    php8.1-xml
+    php8.1-xsl
+    php8.1-zip
+  )
+
+  # Join PACKAGES and PHP_PACKAGES
+  PACKAGES=( "${PACKAGES[@]}" "${PHP_PACKAGES[@]}" )
 
   sudo add-apt-repository ppa:longsleep/golang-backports -y
 
@@ -349,3 +375,8 @@ add_eza_ppa() {
   echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list
   sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
 }
+
+add_php_ppa() {
+  sudo add-apt-repository ppa:ondrej/php -y
+}
+
