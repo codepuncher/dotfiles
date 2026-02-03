@@ -227,17 +227,22 @@ install_rustup() {
 }
 
 install_neovim() {
-  set -x
   local DIRNAME='nvim-linux-x86_64'
   local FILENAME="${DIRNAME}.tar.gz"
-  curl -LO "https://github.com/neovim/neovim/releases/latest/download/${FILENAME}" -o "/tmp/${FILENAME}"
+  local OUTPUT_PATH="/tmp/${FILENAME}"
+
+  curl -L "https://github.com/neovim/neovim/releases/latest/download/${FILENAME}" --output "${OUTPUT_PATH}"
+
   mkdir -p ~/.local/bin
+
   [ -e ~/.local/bin/nvim ] && rm ~/.local/bin/nvim
+
   sudo rm -rf /opt/nvim
   sudo rm -rf /opt/neovim
-  sudo tar -C /opt -xzf "${FILENAME}"
+
+  sudo tar -C /opt -xzf "${OUTPUT_PATH}"
+
   ln -s "/opt/${DIRNAME}/bin/nvim" ~/.local/bin/nvim
-  set +x
 }
 
 gh_get_latest_tag() {
@@ -255,7 +260,7 @@ install_git_delta() {
   VERSION="$(gh_get_latest_tag "${REPO}")"
   VERSION="${VERSION:-0.16.5}"
   FILE="git-delta_${VERSION}_amd64.deb"
-  curl -LO "https://github.com/${REPO}/releases/latest/download/${FILE}" && sudo dpkg -i "${FILE}"
+  curl -LO "https://github.com/${REPO}/releases/latest/download/${FILE}" && sudo dpkg -i "${FILE}" && rm "${FILE}"
 }
 
 install_node_packages() {

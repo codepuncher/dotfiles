@@ -148,5 +148,7 @@ init_links
 
 if [[ "${SHELL}" != */zsh ]]; then
   chsh -s "$(which zsh)"
+  command zsh
+else
+  echo 'Restart your terminal'
 fi
-command zsh
