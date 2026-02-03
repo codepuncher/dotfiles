@@ -157,7 +157,6 @@ install_wsl_packages() {
   sudo apt install -y "${PACKAGES[@]}"
 
   install_rustup
-  install_mailpit
   install_neovim
   install_git_delta
   # ensure fd is available
@@ -189,17 +188,6 @@ install_nvm() {
 
 install_rustup() {
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-}
-
-install_mailpit() {
-  # shellcheck disable=2024
-  if ! sudo bash < <(curl -sL https://raw.githubusercontent.com/axllent/mailpit/develop/install.sh); then
-    echo 'Failed to install Mailpit' >&2
-    return 1
-  fi
-  sudo ln -s "${HOME}/.dotfiles/templates/mailpit.service" "/etc/systemd/system/mailpit.service"
-  sudo systemctl enable mailpit && sudo systemctl start mailpit
-  sudo ln -s /usr/local/bin/mailpit /usr/sbin/sendmail
 }
 
 install_neovim() {
