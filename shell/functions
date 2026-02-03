@@ -160,7 +160,7 @@ install_wsl_packages() {
   install_neovim
   install_git_delta
   # ensure fd is available
-  ln -s "$(which fdfind)" ~/.local/bin/fd
+  ln -sf "$(which fdfind)" ~/.local/bin/fd
 }
 
 setup_arch_services() {
