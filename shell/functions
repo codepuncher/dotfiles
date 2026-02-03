@@ -137,6 +137,7 @@ install_wsl_packages() {
 
     # System
     cmake
+    libnss3-tools
     vim
     tldr
     git

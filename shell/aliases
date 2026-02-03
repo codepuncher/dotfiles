@@ -377,6 +377,17 @@ gh_set_repo_pat() {
 	gh secret set REPO_PAT -b "${1}" --repo "${remote}-bedrock"
 }
 valet() {
+  if [ ! -f /usr/local/bin/valet ]; then
+    COMPOSER_BIN_PATH="$(composer config -g home)/vendor/bin"
+    if [ -f "${COMPOSER_BIN_PATH}/valet" ]; then
+      "${COMPOSER_BIN_PATH}/valet" "${@}"
+    else
+      echo 'Valet is not installed. Please re-run setup.sh'
+    fi
+
+    return
+  fi
+
 	case "${1}" in
 	open)
 		ARGS=("open")
