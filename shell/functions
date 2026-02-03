@@ -6,7 +6,7 @@ section_start() {
 }
 
 reinstall_dotfiles() {
-  rm -rf ~/.{local/bin,npm,nvm,zinit,go/bin,config/composer/vendor}
+  rm -rf ~/.{local/bin,npm,nvm,zinit,go/bin,config/composer/vendor,nvim,config/nvim}
   cd ~/.dotfiles && ./setup.sh
 }
 
@@ -148,6 +148,7 @@ install_wsl_packages() {
     imagemagick
     dnsutils
     bat
+    zsh
   )
 
   PHP_PACKAGES=(
@@ -209,7 +210,9 @@ setup_arch_services() {
 }
 
 install_nvm() {
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+  export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.config/nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")" && \
+    mkdir -p "${NVM_DIR}" && \
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 }
 
 install_rustup() {
@@ -222,7 +225,7 @@ install_neovim() {
   local FILENAME="${DIRNAME}.tar.gz"
   curl -LO "https://github.com/neovim/neovim/releases/latest/download/${FILENAME}" -o "/tmp/${FILENAME}"
   mkdir -p ~/.local/bin
-  rm ~/.local/bin/nvim
+  [ -e ~/.local/bin/nvim ] && rm ~/.local/bin/nvim
   sudo rm -rf /opt/nvim
   sudo rm -rf /opt/neovim
   sudo tar -C /opt -xzf "${FILENAME}"
@@ -252,6 +255,7 @@ install_node_packages() {
   if [[ ! -d "${NVM_DIR}" ]] || [[ ! -d "${HOME}/.nvm" ]]; then
     install_nvm
   fi
+
   PACKAGES=(
     @ansible/ansible-language-server
     @fsouza/prettierd

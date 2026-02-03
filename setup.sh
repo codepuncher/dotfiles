@@ -3,7 +3,7 @@
 # Set "strict mode"
 set -euo pipefail
 
-SCRIPT_PATH="${BASH_SOURCE%/*}"
+SCRIPT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 if [[ -f "${SCRIPT_PATH}/shell/functions" ]]; then
   source "${SCRIPT_PATH}/shell/functions"
 fi
@@ -21,12 +21,15 @@ backup() {
 }
 
 move_link() {
-  backup "${1}" "${2}"
+  if backup "${1}" "${2}"; then
+    echo "${1} backed up"
+  fi
+
   from="${SCRIPT_PATH}/${2}"
   to="${HOME}/${1}"
   new_path="$(dirname "${to}")"
   mkdir -p "${new_path}"
-  ln -s "${from}" "${to}"
+  ln -sf "${from}" "${to}"
 }
 
 init_links() {
@@ -140,6 +143,7 @@ install_packages
 install_tools
 init_dirs
 init_links
+
 if [[ "${SHELL}" != */zsh ]]; then
   chsh -s "$(which zsh)"
 fi
