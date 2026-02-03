@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Uncomment below line for 'debug mode'
-# set -x
+# Set "strict mode"
+set -euo pipefail
 
 SCRIPT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 if [[ -f "${SCRIPT_PATH}/shell/functions" ]]; then
@@ -21,12 +21,15 @@ backup() {
 }
 
 move_link() {
-  backup "${1}" "${2}"
+  if backup "${1}" "${2}"; then
+    echo "${1} backed up"
+  fi
+
   from="${SCRIPT_PATH}/${2}"
   to="${HOME}/${1}"
   new_path="$(dirname "${to}")"
   mkdir -p "${new_path}"
-  ln -s "${from}" "${to}"
+  ln -sf "${from}" "${to}"
 }
 
 init_links() {
@@ -91,6 +94,7 @@ install_zinit() {
 }
 
 install_tpm() {
+  # shellcheck disable=SC2031
   TMUX_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}/tmux"
   TPM_PATH="${TMUX_HOME}/plugins/tpm"
   if [[ -d "${TPM_PATH}" ]]; then
@@ -140,6 +144,7 @@ install_packages
 install_tools
 init_dirs
 init_links
+
 if [[ "${SHELL}" != */zsh ]]; then
   chsh -s "$(which zsh)"
 fi
