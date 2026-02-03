@@ -94,6 +94,7 @@ install_zinit() {
 }
 
 install_tpm() {
+  # shellcheck disable=SC2031
   TMUX_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}/tmux"
   TPM_PATH="${TMUX_HOME}/plugins/tpm"
   if [[ -d "${TPM_PATH}" ]]; then

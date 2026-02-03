@@ -212,6 +212,7 @@ setup_arch_services() {
 }
 
 install_nvm() {
+  # shellcheck disable=SC2155
   export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.config/nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")" && \
     mkdir -p "${NVM_DIR}" && \
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
@@ -387,6 +388,7 @@ add_php_ppa() {
 }
 
 add_gh_cli_ppa() {
+  # shellcheck disable=SC2086,SC2002
   (type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) \
     && sudo mkdir -p -m 755 /etc/apt/keyrings \
     && out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg \
