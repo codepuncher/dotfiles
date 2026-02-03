@@ -31,7 +31,7 @@ plugin.setup({
   tree_setter = {
     enable = true,
   },
-  ensure_installed = {
+  install = {
     'bash',
     'blade',
     'css',
