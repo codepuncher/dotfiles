@@ -106,6 +106,7 @@ install_arch_packages() {
 }
 
 install_wsl_packages() {
+  add_wslu_ppa
   add_eza_ppa
   add_php_ppa
   add_gh_cli_ppa
@@ -120,6 +121,7 @@ install_wsl_packages() {
     texlive-fonts-extra
 
     # Dev
+    mariadb-server
     tmux
     golang-go
     python3
@@ -137,6 +139,7 @@ install_wsl_packages() {
 
     # System
     cmake
+    libnss3-tools
     vim
     tldr
     git
@@ -153,32 +156,35 @@ install_wsl_packages() {
     dnsutils
     bat
     zsh
+    wslu
   )
 
   PHP_PACKAGES=(
-    php8.1-bcmath
-    php8.1-bz2
-    php8.1-cli
-    php8.1-common
-    php8.1-curl
-    php8.1-fpm
-    php8.1-gd
-    php8.1-gmp
-    php8.1-intl
-    php8.1-mbstring
-    php8.1-mysql
-    php8.1-opcache
-    php8.1-readline
-    php8.1-soap
-    php8.1-tidy
-    php8.1-xdebug
-    php8.1-xml
-    php8.1-xsl
-    php8.1-zip
+    bcmath
+    bz2
+    cli
+    common
+    curl
+    fpm
+    gd
+    gmp
+    intl
+    mbstring
+    mysql
+    opcache
+    readline
+    soap
+    tidy
+    xdebug
+    xml
+    xsl
+    zip
   )
-
-  # Join PACKAGES and PHP_PACKAGES
-  PACKAGES=( "${PACKAGES[@]}" "${PHP_PACKAGES[@]}" )
+  PHP_VERSIONS=(8.1 8.2)
+  for VERSION in "${PHP_VERSIONS[@]}"; do
+    mapfile -t PHP_COMBINED_PACKAGES < <(printf '%s\n' "${PHP_PACKAGES[@]}" | sed "s/^/php${VERSION}-/")
+    PACKAGES=( "${PACKAGES[@]}" "${PHP_COMBINED_PACKAGES[@]}" )
+  done
 
   sudo add-apt-repository ppa:longsleep/golang-backports -y
 
@@ -225,17 +231,22 @@ install_rustup() {
 }
 
 install_neovim() {
-  set -x
   local DIRNAME='nvim-linux-x86_64'
   local FILENAME="${DIRNAME}.tar.gz"
-  curl -LO "https://github.com/neovim/neovim/releases/latest/download/${FILENAME}" -o "/tmp/${FILENAME}"
+  local OUTPUT_PATH="/tmp/${FILENAME}"
+
+  curl -L "https://github.com/neovim/neovim/releases/latest/download/${FILENAME}" --output "${OUTPUT_PATH}"
+
   mkdir -p ~/.local/bin
+
   [ -e ~/.local/bin/nvim ] && rm ~/.local/bin/nvim
+
   sudo rm -rf /opt/nvim
   sudo rm -rf /opt/neovim
-  sudo tar -C /opt -xzf "${FILENAME}"
+
+  sudo tar -C /opt -xzf "${OUTPUT_PATH}"
+
   ln -s "/opt/${DIRNAME}/bin/nvim" ~/.local/bin/nvim
-  set +x
 }
 
 gh_get_latest_tag() {
@@ -253,7 +264,7 @@ install_git_delta() {
   VERSION="$(gh_get_latest_tag "${REPO}")"
   VERSION="${VERSION:-0.16.5}"
   FILE="git-delta_${VERSION}_amd64.deb"
-  curl -LO "https://github.com/${REPO}/releases/latest/download/${FILE}" && sudo dpkg -i "${FILE}"
+  curl -LO "https://github.com/${REPO}/releases/latest/download/${FILE}" && sudo dpkg -i "${FILE}" && rm "${FILE}"
 }
 
 install_node_packages() {
@@ -363,19 +374,16 @@ post_install_packages() {
 post_setup_arch_services() {
   section_start 'Post setup arch services'
 
-  # shellcheck disable=2016
-  echo 'Running `mysql_secure_installation`'
-  sudo mysql_secure_installation
-
-  echo -e 'Creating wp mysql user'
-  sudo mysql -e "CREATE USER 'wp'@'localhost' IDENTIFIED BY 'wp'"
-  sudo mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'wp'@'localhost' WITH GRANT OPTION"
-  sudo mysql -e "FLUSH PRIVILEGES"
+  setup_mysql
 }
 
 setup_arch_system_emoji_support() {
   sudo pamac install noto-fonts-emoji
   sudo cp ~/.dotfiles/templates/fonts-local.conf /etc/fonts/local.conf
+}
+
+add_wslu_ppa() {
+  sudo add-apt-repository ppa:wslutilities/wslu -y
 }
 
 add_eza_ppa() {
@@ -398,4 +406,19 @@ add_gh_cli_ppa() {
     sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg && \
     sudo mkdir -p -m 755 /etc/apt/sources.list.d && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+}
+
+setup_mysql() {
+  # shellcheck disable=2016
+  echo 'Running `mysql_secure_installation`'
+  sudo mysql_secure_installation
+
+  echo -e 'Creating wp mysql user'
+  sudo mysql -e "CREATE USER IF NOT EXISTS 'wp'@'localhost' IDENTIFIED BY 'wp'"
+  sudo mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'wp'@'localhost' WITH GRANT OPTION"
+  sudo mysql -e "FLUSH PRIVILEGES"
+}
+
+post_setup_wsl_services() {
+  setup_mysql
 }

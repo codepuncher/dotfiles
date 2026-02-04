@@ -78,6 +78,7 @@ install_packages() {
     post_setup_arch_services
   elif grep --quiet --ignore-case microsoft /proc/sys/kernel/osrelease; then
     install_wsl_packages
+    post_setup_wsl_services
   fi
   # shellcheck disable=2119
   install_go_packages
@@ -148,5 +149,7 @@ init_links
 
 if [[ "${SHELL}" != */zsh ]]; then
   chsh -s "$(which zsh)"
+  command zsh
+else
+  echo 'Restart your terminal'
 fi
-command zsh
