@@ -106,7 +106,7 @@ wk.add({
   },
   {
     '<leader>ff',
-    "<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown({layout_config={width=0.5}}))<cr>",
+    "<cmd>lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown({layout_config={width=100, height=0.75}}))<cr>",
     desc = '[TELESCOPE] Find files (ignore=true)',
   },
   { '<leader>fg', group = '[TELESCOPE] Git' },

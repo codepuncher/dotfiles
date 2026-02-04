@@ -52,5 +52,8 @@
 [includeIf "gitdir:/home/itineris/"]
 	path = ~/.dotfiles/git/users/wsl.gitconfig
 
+[includeIf "gitdir:/tmp/"]
+	path = ~/.dotfiles/git/users/wsl.gitconfig
+
 [includeIf "gitdir:/home/work/"]
 	path = ~/.dotfiles/git/users/work.gitconfig
