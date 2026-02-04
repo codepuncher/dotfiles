@@ -44,6 +44,7 @@ init_links() {
     move_link .config/tmux tmux
     move_link .config/nvim nvim
     move_link .gitconfig git/gitconfig
+    move_link .config/spacezhip.zsh shell/spacezhip.zsh
     move_link .config/alacritty/alacritty.toml terminals/alacritty.toml
     move_link .config/ghostty/config terminals/ghostty
     move_link .config/spotifyd/spotifyd.conf media/spotifyd.conf
