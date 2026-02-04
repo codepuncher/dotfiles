@@ -183,7 +183,7 @@ install_wsl_packages() {
   PHP_VERSIONS=(8.1 8.2)
   for VERSION in "${PHP_VERSIONS[@]}"; do
     mapfile -t PHP_COMBINED_PACKAGES < <(printf '%s\n' "${PHP_PACKAGES[@]}" | sed "s/^/php${VERSION}-/")
-    PACKAGES=( "${PACKAGES[@]}" "${PHP_COMBINED_PACKAGES[@]}" )
+    PACKAGES=("${PACKAGES[@]}" "${PHP_COMBINED_PACKAGES[@]}")
   done
 
   sudo add-apt-repository ppa:longsleep/golang-backports -y
@@ -222,9 +222,11 @@ setup_arch_services() {
 install_nvm() {
   section_start 'Installing NVM'
   # shellcheck disable=SC2155
-  export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.config/nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")" && \
-    mkdir -p "${NVM_DIR}" && \
+  export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.config/nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")" &&
+    mkdir -p "${NVM_DIR}" &&
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+
+  corepack enable
 }
 
 install_rustup() {
@@ -401,13 +403,13 @@ add_php_ppa() {
 
 add_gh_cli_ppa() {
   # shellcheck disable=SC2086,SC2002
-  (type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) && \
-    sudo mkdir -p -m 755 /etc/apt/keyrings && \
-    out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg && \
-    cat $out | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null && \
-    sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg && \
-    sudo mkdir -p -m 755 /etc/apt/sources.list.d && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+  (type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) &&
+    sudo mkdir -p -m 755 /etc/apt/keyrings &&
+    out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg &&
+    cat $out | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null &&
+    sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg &&
+    sudo mkdir -p -m 755 /etc/apt/sources.list.d &&
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
 }
 
 setup_mysql() {
