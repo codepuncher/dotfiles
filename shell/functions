@@ -277,14 +277,15 @@ install_node_packages() {
   PACKAGES=(
     @ansible/ansible-language-server
     @fsouza/prettierd
+    @github/copilot
     @tailwindcss/language-server
     @vue/language-server
     bash-language-server
     blade-formatter
+    devsense-php-ls
     doctoc
     eslint_d
     fast-cli
-    devsense-php-ls
     lighthouse
     markdownlint
     markdownlint-cli
