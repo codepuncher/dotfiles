@@ -136,9 +136,9 @@ install_tools() {
     return
   fi
 
-  install_nvm
   install_zinit
   install_tpm
+  install_node_packages
   install_composer
 }
 
