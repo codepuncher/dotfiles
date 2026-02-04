@@ -284,7 +284,7 @@ install_node_packages() {
     doctoc
     eslint_d
     fast-cli
-    intelephense
+    devsense-php-ls
     lighthouse
     markdownlint
     markdownlint-cli
