@@ -138,6 +138,7 @@ install_tools() {
 
   install_zinit
   install_tpm
+  # shellcheck disable=SC2119
   install_node_packages
   install_composer
 }
