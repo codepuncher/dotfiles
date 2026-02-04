@@ -121,6 +121,7 @@ install_wsl_packages() {
     texlive-fonts-extra
 
     # Dev
+    mariadb-server
     tmux
     golang-go
     python3
@@ -373,14 +374,7 @@ post_install_packages() {
 post_setup_arch_services() {
   section_start 'Post setup arch services'
 
-  # shellcheck disable=2016
-  echo 'Running `mysql_secure_installation`'
-  sudo mysql_secure_installation
-
-  echo -e 'Creating wp mysql user'
-  sudo mysql -e "CREATE USER 'wp'@'localhost' IDENTIFIED BY 'wp'"
-  sudo mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'wp'@'localhost' WITH GRANT OPTION"
-  sudo mysql -e "FLUSH PRIVILEGES"
+  setup_mysql
 }
 
 setup_arch_system_emoji_support() {
@@ -412,4 +406,19 @@ add_gh_cli_ppa() {
     sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg && \
     sudo mkdir -p -m 755 /etc/apt/sources.list.d && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+}
+
+setup_mysql() {
+  # shellcheck disable=2016
+  echo 'Running `mysql_secure_installation`'
+  sudo mysql_secure_installation
+
+  echo -e 'Creating wp mysql user'
+  sudo mysql -e "CREATE USER IF NOT EXISTS 'wp'@'localhost' IDENTIFIED BY 'wp'"
+  sudo mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'wp'@'localhost' WITH GRANT OPTION"
+  sudo mysql -e "FLUSH PRIVILEGES"
+}
+
+post_setup_wsl_services() {
+  setup_mysql
 }
