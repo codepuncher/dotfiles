@@ -220,6 +220,7 @@ setup_arch_services() {
 }
 
 install_nvm() {
+  section_start 'Installing NVM'
   # shellcheck disable=SC2155
   export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.config/nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")" && \
     mkdir -p "${NVM_DIR}" && \
@@ -272,17 +273,19 @@ install_node_packages() {
     install_nvm
   fi
 
+  section_start 'Instaling NPM packages'
   PACKAGES=(
     @ansible/ansible-language-server
     @fsouza/prettierd
+    @github/copilot
     @tailwindcss/language-server
     @vue/language-server
     bash-language-server
     blade-formatter
+    devsense-php-ls
     doctoc
     eslint_d
     fast-cli
-    intelephense
     lighthouse
     markdownlint
     markdownlint-cli
@@ -297,7 +300,7 @@ install_node_packages() {
   )
 
   # shellcheck disable=2046
-  yarn global add $(
+  npm install --global $(
     IFS=' '
     echo "${PACKAGES[*]}"
   ) "$@"

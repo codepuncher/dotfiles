@@ -42,7 +42,9 @@ Personal dotfiles for Ubuntu, Arch, and macOS systems with comprehensive shell c
 - **Go** - Go language support and tools
 - **Rust** - Rustup and Cargo package management
 - **Composer** - PHP dependency manager
+- **Valet Linux** - Laravel Valet for Linux development environment
 - **GitHub CLI** - GitHub command-line tool integration
+- **GitHub Copilot CLI** - AI-powered command-line assistance
 - **Trellis CLI** - virtualenv integration for WordPress development
 
 ### Media & System
@@ -100,10 +102,10 @@ The setup script will prompt you to:
    - Sets up system services on Arch
 
 2. **Install Tools** (optional) - Install development tools
-   - NVM (Node Version Manager)
    - Zinit (ZSH plugin manager)
    - TPM (Tmux Plugin Manager)
-   - Composer (PHP dependency manager)
+   - NVM and Node.js packages (language servers, formatters, linters)
+   - Composer (PHP dependency manager + Valet Linux)
 
 3. **Symlink Dotfiles** (recommended) - Creates symlinks for:
    - Shell configs (`.zshrc`, `.bashrc`, `.profile`)
@@ -154,12 +156,19 @@ After first tmux launch, install plugins with: `prefix + I` (default: `Ctrl+b` t
 - **Work**: Microsoft Edge, ClickUp, Zoom
 - **Dev**: Alacritty, Ghostty, Tmux, GitHub CLI, Go, Rust
 
+### WSL Packages
+- **Database**: MariaDB Server
+- **PHP**: Multi-version PHP support (8.1 and 8.2) with common extensions
+  - bcmath, bz2, cli, common, curl, fpm, gd, gmp, intl, mbstring, mysql, opcache, readline, soap, tidy, xdebug, xml, xsl, zip
+- **Tools**: wslu (WSL utilities for interoperability)
+
 ### Package Managers & Tools
-- Node.js (via NVM)
-- Go packages (development tools)
-- Composer packages (PHP tools)
-- Pip packages (Python tools)
-- Cargo packages (Rust tools)
+- **Node.js** (via NVM)
+- **Language Servers**: GitHub Copilot, Devsense PHP LS, Intelephense, Ansible, TailwindCSS, Vue, Bash
+- **Go packages** (development tools)
+- **Composer packages** (PHP tools + Valet Linux)
+- **Pip packages** (Python tools)
+- **Cargo packages** (Rust tools)
 
 ## 🗂️ Repository Structure
 ```

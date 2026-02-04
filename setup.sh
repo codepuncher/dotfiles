@@ -136,9 +136,10 @@ install_tools() {
     return
   fi
 
-  install_nvm
   install_zinit
   install_tpm
+  # shellcheck disable=SC2119
+  install_node_packages
   install_composer
 }
 
