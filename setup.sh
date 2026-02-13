@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# Set "strict mode"
-set -euo pipefail
-
 SCRIPT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 if [[ -f "${SCRIPT_PATH}/shell/functions" ]]; then
   source "${SCRIPT_PATH}/shell/functions"
