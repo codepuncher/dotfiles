@@ -249,10 +249,25 @@ require('lazy').setup({
           dependencies = {
             {
               'zbirenbaum/copilot.lua',
+              dependencies = {
+                'copilotlsp-nvim/copilot-lsp', -- (optional) for NES functionality
+              },
               config = function()
                 require('copilot').setup({
-                  suggestion = { enabled = false },
-                  panel = { enabled = false },
+                  suggestion = {
+                    enabled = true,
+                  },
+                  panel = {
+                    enabled = true,
+                  },
+                  nes = {
+                    enabled = true,
+                    keymap = {
+                      accept_and_goto = '<leader>p',
+                      accept = false,
+                      dismiss = '<Esc>',
+                    },
+                  },
                 })
               end,
             },

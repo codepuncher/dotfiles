@@ -127,6 +127,7 @@ install_wsl_packages() {
     python3
     python3-pip
     pipx
+    tidy
 
     # Fonts
     fonts-noto-color-emoji
@@ -154,6 +155,7 @@ install_wsl_packages() {
     xclip
     imagemagick
     dnsutils
+    moreutils
     bat
     zsh
     wslu
@@ -180,7 +182,7 @@ install_wsl_packages() {
     xsl
     zip
   )
-  PHP_VERSIONS=(8.1 8.2)
+  PHP_VERSIONS=(8.1 8.2 8.3 8.4)
   for VERSION in "${PHP_VERSIONS[@]}"; do
     mapfile -t PHP_COMBINED_PACKAGES < <(printf '%s\n' "${PHP_PACKAGES[@]}" | sed "s/^/php${VERSION}-/")
     PACKAGES=("${PACKAGES[@]}" "${PHP_COMBINED_PACKAGES[@]}")

@@ -80,8 +80,11 @@ install_packages() {
     install_wsl_packages
     post_setup_wsl_services
   fi
+
   # shellcheck disable=2119
   install_go_packages
+  # shellcheck disable=SC2119
+  install_pip_packages
 }
 
 install_zinit() {
