@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Set "strict mode"
-set -euo pipefail
+# set -euo pipefail
 
 section_start() {
   printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
@@ -227,11 +227,23 @@ setup_arch_services() {
 install_nvm() {
   section_start 'Installing NVM'
   # shellcheck disable=SC2155
-  export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.config/nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")" &&
-    mkdir -p "${NVM_DIR}" &&
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+  export NVM_DIR="$(
+    [ -z "${XDG_CONFIG_HOME-}" ]
+    printf %s "${HOME}/.config/nvm" || printf %s "${XDG_CONFIG_HOME}/nvm"
+  )"
+  mkdir -p "${NVM_DIR}"
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 
-  corepack enable
+  # Load NVM after installing it.
+  [ -s "${NVM_DIR}/nvm.sh" ] && \."${NVM_DIR}/nvm.sh" # This loads nvm
+
+  nvm install --lts
+  nvm use --lts
+  nvm alias default node
+
+  if command -v corepack >/dev/null 2>&1; then
+    corepack enable
+  fi
 }
 
 install_rustup() {
