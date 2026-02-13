@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Set "strict mode"
+set -euo pipefail
+
 section_start() {
   printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
   echo "${1}"
@@ -273,7 +276,7 @@ install_git_delta() {
 }
 
 install_node_packages() {
-  if [[ ! -d "${NVM_DIR}" ]] || [[ ! -d "${HOME}/.nvm" ]]; then
+  if [[ ! -d "${NVM_DIR:-}" ]] || [[ ! -d "${HOME}/.nvm" ]]; then
     install_nvm
   fi
 
