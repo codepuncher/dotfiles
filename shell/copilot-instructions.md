@@ -4,6 +4,7 @@
 
 **Critical Rules (Read First):**
 - [Scope & When These Apply](#scope--when-these-apply)
+- [Communication Guidelines](#communication-guidelines) - When to ask vs. proceed
 - [Critical: Lint Checks](#️-critical-always-run-lint-checks-locally-before-pushing)
 - [What NOT to Do](#-what-not-to-do)
 - [Common Mistakes](#-common-mistakes-to-avoid)
@@ -11,14 +12,19 @@
 **Workflows & Patterns:**
 - [Quick Reference Commands](#quick-reference-commands) - Copy-paste ready commands
 - [Common Task Patterns](#common-task-patterns) - Full workflow examples
-- [Git Workflow](#git-workflow) - Branching, PRs, deployment
+- [Git Workflow](#git-workflow) - Branching, PRs, deployment, conflicts
 
 **Code Standards:**
 - [Language & Spelling](#language--spelling)
-- [PHP & WordPress](#php--wordpress-best-practices)
+- [PHP & WordPress](#php--wordpress-best-practices) - Security included
 - [JavaScript & CSS](#javascriptcss-changes)
 - [Bash Scripting](#bash-scripting-standards)
 - [Before Committing](#before-committing) - Pre-commit checklists
+
+**Operations & Troubleshooting:**
+- [Database Operations](#database-operations) - Migrations, backups, safety
+- [Rollback Procedures](#rollback-procedures) - Emergency recovery
+- [Troubleshooting](#troubleshooting) - Common issues and solutions
 
 **Reference:**
 - [Performance Best Practices](#performance-best-practices)
@@ -43,6 +49,68 @@
 - WordPress projects: `~/Code/wordpress/<client-name>/bedrock`
 - Utilities and scripts: `~/Code/misc/itineris-bin/`
 - Default branch: Usually `main`, `master`, or `develop` (check with `git symbolic-ref refs/remotes/origin/HEAD`)
+
+---
+
+## Communication Guidelines
+
+**When to ask the user vs. proceed autonomously:**
+
+### Always Ask When:
+- **Requirements are ambiguous** - Multiple valid interpretations exist
+- **Scope is unclear** - Don't know what's in/out of scope
+- **Destructive operations** - About to delete/modify critical data
+- **Security implications** - Change could affect security posture
+- **Breaking changes** - Will break existing functionality
+- **Multiple valid approaches** - Need to choose between different architectures
+- **User preference matters** - Styling, naming, organizational choices
+
+### Proceed Autonomously When:
+- **Requirements are clear** - User specified exact behavior
+- **Standard patterns apply** - Following established conventions
+- **Safe operations** - No risk of data loss or breaking changes
+- **Single correct approach** - Only one way to solve the problem
+- **Fixing obvious bugs** - Clear error, clear fix
+
+### How to Report Progress:
+**DO:**
+- Be concise (3 sentences or less typically)
+- Focus on outcomes, not process
+- Report completion, not intentions
+- Let code and commits speak
+
+**DON'T:**
+- Explain every step before doing it
+- Ask permission for standard operations
+- Over-communicate routine tasks
+- Describe what you're about to do in detail
+
+### Examples:
+
+**Good:**
+```
+User: "Fix the broken image positioning"
+You: [Makes fix, commits, pushes]
+     "Fixed image positioning using relative positioning with z-index adjustment.
+     Deployed to staging for review."
+```
+
+**Bad:**
+```
+User: "Fix the broken image positioning"
+You: "I'm going to investigate the CSS file to identify the positioning issue.
+     Then I'll create a feature branch and make the necessary changes.
+     After that I'll run the linters and commit the fix.
+     Finally I'll push and deploy to staging.
+     Does this approach sound good to you?"
+```
+
+**When uncertain:**
+```
+User: "Add a contact form"
+You: "Should the form send to a specific email address or integrate with
+     an existing service (e.g., Gravity Forms, Contact Form 7)?"
+```
 
 ---
 
@@ -402,6 +470,68 @@ gh pr merge <pr-number> -m -d --admin
 - Example: `use function strlen; strlen($str)` instead of `strlen($str)` in namespaced code
 - This is a micro-optimisation but matters when functions are called frequently
 
+### Security Best Practices
+
+**Input Sanitization:**
+- **ALWAYS sanitize user input** - Never trust any user-supplied data
+- Use WordPress sanitization functions:
+  - `sanitize_text_field()` - for text inputs
+  - `sanitize_email()` - for email addresses
+  - `sanitize_url()` - for URLs
+  - `absint()` - for positive integers
+  - `sanitize_key()` - for keys/slugs
+- Validate before sanitizing - check format, length, allowed values
+
+**Output Escaping:**
+- **ALWAYS escape output** - Already covered in Code Quality section
+- `esc_html()`, `esc_attr()`, `esc_url()`, `esc_js()`
+- Use context-appropriate escaping
+
+**SQL Injection Prevention:**
+- **NEVER use raw SQL with user input** - Always use prepared statements
+- Use `$wpdb->prepare()` for all queries with variables:
+  ```php
+  $wpdb->get_results($wpdb->prepare(
+      "SELECT * FROM {$wpdb->posts} WHERE post_author = %d AND post_status = %s",
+      $author_id,
+      $status
+  ));
+  ```
+- Use WP_Query with parameters instead of raw queries when possible
+
+**Nonce Verification:**
+- **ALWAYS verify nonces for forms and AJAX** - Prevent CSRF attacks
+  ```php
+  // Generate nonce
+  wp_nonce_field('my_action', 'my_nonce');
+  
+  // Verify nonce
+  if (!isset($_POST['my_nonce']) || !wp_verify_nonce($_POST['my_nonce'], 'my_action')) {
+      wp_die('Security check failed');
+  }
+  ```
+
+**Capability Checks:**
+- **ALWAYS check user capabilities** - Never trust user roles
+  ```php
+  if (!current_user_can('edit_posts')) {
+      wp_die('Permission denied');
+  }
+  ```
+
+**Never Log Credentials:**
+- ❌ Never log passwords, API keys, tokens
+- ❌ Never commit credentials to repos
+- ❌ Never echo sensitive data for debugging
+- ✅ Use 1Password CLI for credentials
+- ✅ Store secrets in environment variables
+
+**File Upload Security:**
+- Validate file types and sizes
+- Use `wp_check_filetype()` for MIME type verification
+- Store uploads outside webroot if possible
+- Never execute uploaded files
+
 ## Git Workflow
 
 ### Critical Pre-Push Requirements
@@ -563,6 +693,77 @@ Use `gh-pr-get-comments` script to retrieve all comments on a PR:
 3. Check for any new review comments or feedback
 4. If all checks pass, move PR from draft to "Ready for Review" (if applicable)
 
+### Conflict Resolution
+
+**Git Merge Conflicts:**
+
+When you encounter merge conflicts during pull, merge, or rebase:
+
+```bash
+# 1. Check which files have conflicts
+git status
+
+# 2. Open conflicted files and look for conflict markers:
+# <<<<<<< HEAD
+# Your changes
+# =======
+# Their changes
+# >>>>>>> branch-name
+
+# 3. For each conflict, decide:
+# - Keep your changes (remove their changes and markers)
+# - Keep their changes (remove your changes and markers)
+# - Combine both (merge manually and remove markers)
+# - Ask user if unclear which to keep
+
+# 4. Mark as resolved
+git add <resolved-file>
+
+# 5. Continue the operation
+git merge --continue    # if merging
+git rebase --continue   # if rebasing
+```
+
+**When to ask user about conflicts:**
+- Business logic conflicts (can't determine correct behavior)
+- Both changes look intentional and valid
+- Security-sensitive code conflicts
+- Database schema conflicts
+
+**When to resolve automatically:**
+- Formatting-only conflicts (whitespace, line endings)
+- Obvious merge mistakes (duplicate imports, etc.)
+- Auto-generated file conflicts (package-lock.json, composer.lock)
+
+**Package Dependency Conflicts:**
+
+```bash
+# composer.lock conflicts (PHP)
+composer update --lock
+git add composer.lock
+git commit -m "fix: resolve composer.lock conflict"
+
+# package-lock.json conflicts (Node)
+npm install
+git add package-lock.json
+git commit -m "fix: resolve package-lock.json conflict"
+```
+
+**Database Migration Conflicts:**
+- If two branches both add migrations with same timestamp → rename one
+- If migrations conflict in logic → ask user which to apply first
+- Always test migrations on staging after resolving
+
+**When conflicts are complex:**
+```bash
+# Abort and ask for help
+git merge --abort   # or git rebase --abort
+
+# Ask user: "Merge conflict in critical files: file1.php, file2.php.
+# Both changes appear intentional. Should I keep your changes,
+# their changes, or would you like to review manually?"
+```
+
 ## Before Committing
 
 **CRITICAL: ALWAYS run lint checks locally BEFORE committing or pushing. Do not skip this step.**
@@ -649,6 +850,239 @@ git diff main --name-only --diff-filter=ACMR | \
 - **Remove trailing whitespace** - Run `git diff --check` to verify, `sed -i 's/[[:space:]]*$//' <file>` to fix
 - **Format with shfmt** - Run `shfmt -w <file>` for consistent indentation (tabs), `shfmt -d <file>` to verify
 - **Lint with shellcheck** - Run `shellcheck --severity=style <file>` to match CI severity
+
+## Performance Best Practices
+
+### Resource Loading
+
+- Use `preload` for critical CSS/JS with `fetchpriority="high"`
+- Add `dns-prefetch` and `preconnect` hints for external resources
+- Make resource hints conditional - only add when actually needed
+- Avoid render-blocking resources where possible
+
+**Example:**
+```php
+// Only preload hero image on pages that use the hero block
+add_action('wp_head', function() {
+    if (has_block('acf/hero-banner')) {
+        echo '<link rel="preload" as="image" href="' . esc_url(get_template_directory_uri() . '/assets/hero.webp') . '" fetchpriority="high">';
+    }
+});
+```
+
+### Conditional Loading
+
+- Check if blocks/features exist before loading their assets
+- Use WordPress's `has_block()` function to detect block usage in content
+- Check if scripts are enqueued before adding related resources
+
+**Example:**
+```php
+// Only load animations script when hero block is present
+add_action('wp_enqueue_scripts', function() {
+    if (has_block('acf/hero-banner')) {
+        wp_enqueue_script('hero-animations', get_template_directory_uri() . '/dist/hero.js', [], '1.0', true);
+    }
+});
+```
+
+## Database Operations
+
+**CRITICAL: Database operations can be destructive. Always follow safety procedures.**
+
+### Before Any Database Changes:
+
+1. **Backup first** - ALWAYS
+   ```bash
+   # Export database
+   wp @staging db export backup-$(date +%Y%m%d-%H%M%S).sql
+   
+   # Or use WP CLI on production (with caution)
+   wp @production db export backup-$(date +%Y%m%d-%H%M%S).sql
+   ```
+
+2. **Test on staging first** - NEVER run migrations directly on production
+3. **Have rollback plan** - Know how to undo the change
+4. **Verify backup** - Check file size, test restore on local
+
+### Safe Migration Patterns:
+
+**Adding columns (safe):**
+```sql
+-- Add column with default value
+ALTER TABLE wp_tablename ADD COLUMN new_field VARCHAR(255) DEFAULT '' NOT NULL;
+```
+
+**Removing columns (DANGEROUS - backup first):**
+```sql
+-- Check column isn't used first
+-- Backup database
+-- Remove column
+ALTER TABLE wp_tablename DROP COLUMN old_field;
+```
+
+**Changing data (test thoroughly):**
+```bash
+# Always test on staging first
+wp @staging db query "UPDATE wp_options SET option_value = 'new' WHERE option_name = 'specific_option'"
+
+# Verify change worked
+wp @staging option get specific_option
+
+# Then apply to production only after verification
+wp @production db query "UPDATE wp_options SET option_value = 'new' WHERE option_name = 'specific_option'"
+```
+
+### WP CLI Database Commands:
+
+```bash
+# Search and replace (e.g., domain changes)
+wp @staging search-replace 'old-domain.com' 'new-domain.com' --dry-run
+wp @staging search-replace 'old-domain.com' 'new-domain.com' --skip-columns=guid
+
+# Query database
+wp @staging db query "SELECT * FROM wp_options WHERE option_name LIKE '%cache%'"
+
+# Optimize tables
+wp @staging db optimize
+
+# Check database
+wp @staging db check
+
+# Reset database (DANGEROUS - staging only)
+wp @staging db reset --yes
+```
+
+### Migration Workflow:
+
+1. Write migration in feature branch
+2. Test locally with fresh database
+3. Commit migration file
+4. Deploy to staging
+5. Run migration on staging: `wp @staging migrate`
+6. Verify staging works correctly
+7. Merge to default branch
+8. Migration runs automatically on production deploy
+9. Monitor production for errors
+
+### Rollback Database:
+
+If migration breaks production:
+```bash
+# 1. Restore from backup (if available)
+wp @production db import backup-YYYYMMDD-HHMMSS.sql
+
+# 2. Or rollback deployment and revert migration
+# See Rollback Procedures section
+```
+
+## Rollback Procedures
+
+**When deployment breaks production, act fast:**
+
+### Emergency Rollback Steps:
+
+**1. Revert the deployment immediately:**
+```bash
+# Get the last good commit SHA
+git log origin/main --oneline -10
+
+# Create hotfix branch from last good commit
+git checkout <last-good-commit-sha>
+git checkout -b hotfix/rollback-bad-deployment
+
+# Force push to default branch (EXTREME EMERGENCY ONLY)
+git push origin HEAD:main --force
+
+# Or better: Revert the bad commit
+git checkout main
+git revert <bad-commit-sha>
+git push origin main
+```
+
+**2. Verify production is working:**
+```bash
+# Check site loads
+curl -I https://production-site.com
+
+# Check for PHP errors
+wp @production cli version  # If WP CLI responds, PHP is working
+
+# Clear caches
+wp @production cache flush
+```
+
+**3. Communicate:**
+- Notify team immediately in Slack/appropriate channel
+- Document what broke and what you did
+- Create incident report after resolution
+
+### Rollback Database Migration:
+
+**If migration broke database:**
+
+```bash
+# Option 1: Restore from backup (fastest)
+wp @production db import backup-YYYYMMDD-HHMMSS.sql
+wp @production cache flush
+
+# Option 2: Write reverse migration
+# Create migration that undoes the changes
+# Test on staging first, then apply to production
+
+# Option 3: Manual SQL rollback
+wp @production db query "ALTER TABLE wp_tablename DROP COLUMN added_field"
+```
+
+### Rollback Code Changes:
+
+**If specific feature broke:**
+
+```bash
+# Revert the specific commit
+git revert <commit-sha>
+git push origin main
+
+# Or revert multiple commits
+git revert <oldest-bad-commit>..<newest-bad-commit>
+git push origin main
+```
+
+### Rollback Node/PHP Dependencies:
+
+**If dependency update broke build:**
+
+```bash
+# Restore old package files
+git checkout HEAD~1 package.json package-lock.json
+npm install
+npm run build
+
+# Or for PHP
+git checkout HEAD~1 composer.json composer.lock
+composer install
+```
+
+### Prevention:
+
+- ✅ Always test on staging before merging
+- ✅ Keep backups current (automated daily backups)
+- ✅ Use small, incremental changes (easier to rollback)
+- ✅ Monitor after deployment (first 15 minutes critical)
+- ✅ Have communication plan (know who to notify)
+
+### Incident Communication:
+
+**During incident:**
+1. Immediate notification: "Production issue - investigating"
+2. Status updates every 10-15 minutes
+3. Resolution notification: "Fixed - deployed rollback"
+
+**After incident:**
+1. Write incident report
+2. Document root cause
+3. Create prevention tasks
+4. Update runbooks if needed
 
 ## Performance Best Practices
 
@@ -859,6 +1293,227 @@ op.exe item get "Item Name" --vault "Vault Name" --fields username,password
 | FreshDesk | `freshdesk/<ticket-id>/<description>` | `freshdesk/21170/intro-section-image-position` |
 | GitHub Issues | `issue/<number>/<description>` | `issue/123/fix-navigation-bug` |
 | No ticket | `feature/<description>` or `fix/<description>` | `feature/add-caching`, `fix/header-spacing` |
+
+---
+
+## Troubleshooting
+
+**Common issues and their solutions:**
+
+### CI/CD Failures
+
+**"ShellCheck failed":**
+```bash
+# Problem: Script has shellcheck violations
+# Solution: Run shellcheck locally with correct severity
+shellcheck --severity=style script.sh
+
+# Fix issues, then verify
+git diff --check  # No trailing whitespace
+shfmt -d script.sh  # Properly formatted
+shellcheck --severity=style script.sh  # Passes
+```
+
+**"PHPCS errors":**
+```bash
+# Problem: PHP code doesn't meet coding standards
+# Solution: Auto-fix with phpcbf, then manual fixes
+./vendor/bin/phpcbf --standard=phpcs.xml file.php
+./vendor/bin/phpcs --standard=phpcs.xml file.php
+
+# If auto-fix doesn't work, read the errors and fix manually
+```
+
+**"Tests timeout":**
+```bash
+# Problem: Tests taking too long or hanging
+# Causes: Database connection issues, infinite loops, external API calls
+# Solution: Check test logs, add timeouts, mock external services
+```
+
+**"Build failed - npm/composer errors":**
+```bash
+# Problem: Dependencies can't install or build fails
+# Solution: Clear caches and reinstall
+
+# Node
+rm -rf node_modules package-lock.json
+npm install
+npm run build
+
+# PHP
+rm -rf vendor composer.lock
+composer install
+```
+
+### Git Issues
+
+**"Permission denied (publickey)":**
+```bash
+# Problem: SSH key not configured or not added to agent
+# Solution: Check SSH key exists and is added
+ls -la ~/.ssh/id_*
+ssh-add ~/.ssh/id_rsa  # or id_ed25519
+ssh -T git@github.com  # Test connection
+```
+
+**"Detached HEAD state":**
+```bash
+# Problem: Not on a branch
+# Solution: Create branch from current position or checkout existing branch
+git checkout -b new-branch-name  # Create new branch
+# Or
+git checkout main  # Go back to main branch
+```
+
+**"Merge conflict" (see Conflict Resolution section above)**
+
+**"fatal: refusing to merge unrelated histories":**
+```bash
+# Problem: Trying to merge branches with different roots
+# Solution: Use --allow-unrelated-histories (rare, ask user first)
+git merge --allow-unrelated-histories <branch>
+```
+
+### WP CLI Connection Issues
+
+**"Error establishing database connection":**
+```bash
+# Problem: Can't connect to remote database
+# Causes: SSH tunnel issues, credentials wrong, firewall
+# Solution: Test SSH connection first
+ssh user@staging-server.com
+
+# Check wp-cli.yml configuration
+cat wp-cli.yml
+
+# Verify SSH key is added
+ssh-add -l
+```
+
+**"Connection timeout":**
+```bash
+# Problem: WP CLI command hangs
+# Solution: Increase timeout or check network
+wp @staging option get home --ssh=ssh-user@host:/path --timeout=60
+```
+
+**"Command not found: wp":**
+```bash
+# Problem: WP CLI not installed or not in PATH on remote
+# Solution: Check WP CLI is installed on remote server
+ssh user@server 'which wp'
+```
+
+### Deployment Issues
+
+**"Staging not updating after push":**
+```bash
+# Problem: Push succeeded but changes not visible
+# Causes: Cache, CD workflow didn't run, wrong branch
+# Solution: Check GitHub Actions, clear cache
+
+# Check if deployment ran
+gh run list --branch staging --limit 5
+
+# Force clear cache
+wp @staging cache flush
+
+# Check correct commit is deployed
+ssh user@staging-server 'cd /path/to/site && git log -1'
+```
+
+**"Production is broken after merge":**
+```bash
+# Problem: Bug reached production
+# Solution: See Rollback Procedures section above
+# Immediate: Revert commit and push
+git revert <bad-commit>
+git push origin main
+```
+
+### Linting Issues
+
+**"Lint passes locally but fails in CI":**
+```bash
+# Problem: Different tool versions or configurations
+# Solution: Check CI versions match local
+
+# Check versions
+shellcheck --version
+./vendor/bin/phpcs --version
+node --version
+
+# Pull latest from repo (may have config changes)
+git pull origin main
+```
+
+**"Can't find command: shellcheck/phpcs/eslint":**
+```bash
+# Problem: Tools not installed
+# Solution: Install tools
+
+# ShellCheck (varies by OS)
+brew install shellcheck  # macOS
+apt install shellcheck   # Linux
+
+# PHPCS
+composer install
+
+# ESLint
+npm install
+```
+
+### Build Issues
+
+**"Module not found" errors:**
+```bash
+# Problem: Missing dependencies
+# Solution: Install dependencies
+npm install
+composer install
+```
+
+**"Out of memory" during build:**
+```bash
+# Problem: Node/PHP running out of memory
+# Solution: Increase memory limit
+export NODE_OPTIONS="--max-old-space-size=4096"
+npm run build
+```
+
+### Performance Issues
+
+**"Site is slow after deployment":**
+```bash
+# Problem: Cache not working or query issues
+# Solution: Check object cache, database queries
+
+# Flush all caches
+wp @production cache flush
+
+# Check if object cache is working
+wp @production cache type
+
+# Check slow queries (requires access to database)
+```
+
+### When to Ask for Help
+
+**Always ask the user when:**
+- Error message is unclear or unfamiliar
+- Multiple attempted solutions have failed
+- Issue involves production data or security
+- Problem requires access you don't have
+- Issue is blocking critical work
+
+**Example:**
+```
+"I've encountered a ShellCheck error (SC2086) that I'm not sure how to resolve
+without changing the intended behavior. The script uses unquoted variable
+expansion intentionally for word splitting. Should I disable this specific
+check or refactor the approach?"
+```
 
 ---
 
