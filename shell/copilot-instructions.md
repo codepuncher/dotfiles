@@ -1,5 +1,51 @@
 # Copilot CLI Instructions for Itineris Development
 
+## 📋 Table of Contents
+
+**Critical Rules (Read First):**
+- [Scope & When These Apply](#scope--when-these-apply)
+- [Critical: Lint Checks](#️-critical-always-run-lint-checks-locally-before-pushing)
+- [What NOT to Do](#-what-not-to-do)
+- [Common Mistakes](#-common-mistakes-to-avoid)
+
+**Workflows & Patterns:**
+- [Quick Reference Commands](#quick-reference-commands) - Copy-paste ready commands
+- [Common Task Patterns](#common-task-patterns) - Full workflow examples
+- [Git Workflow](#git-workflow) - Branching, PRs, deployment
+
+**Code Standards:**
+- [Language & Spelling](#language--spelling)
+- [PHP & WordPress](#php--wordpress-best-practices)
+- [JavaScript & CSS](#javascriptcss-changes)
+- [Bash Scripting](#bash-scripting-standards)
+- [Before Committing](#before-committing) - Pre-commit checklists
+
+**Reference:**
+- [Performance Best Practices](#performance-best-practices)
+- [WordPress Specific](#wordpress-specific)
+- [Project Information](#project-information)
+
+---
+
+## Scope & When These Apply
+
+**These instructions apply to:**
+- ✅ All Itineris client projects (WordPress sites in `~/Code/wordpress/`)
+- ✅ Internal Itineris tools and utilities
+- ✅ Projects using Itineris workflows (ClickUp, FreshDesk, custom scripts)
+
+**These instructions may NOT apply to:**
+- ❌ Personal projects outside `~/Code/wordpress/`
+- ❌ Open source contributions to non-Itineris projects
+- ❌ Non-WordPress projects (ignore PHP/WordPress sections)
+
+**Project structure:**
+- WordPress projects: `~/Code/wordpress/<client-name>/bedrock`
+- Utilities and scripts: `~/Code/misc/itineris-bin/`
+- Default branch: Usually `main`, `master`, or `develop` (check with `git symbolic-ref refs/remotes/origin/HEAD`)
+
+---
+
 ## ⚠️ CRITICAL: Always Run Lint Checks Locally Before Pushing
 
 **NEVER push to GitHub without running local lint checks first.**
@@ -24,6 +70,276 @@ For PHP, JavaScript, CSS: see "Before Committing" section (line 269 below) for s
 - Ideally: Before committing (catches issues early)
 - Mandatory: Before pushing (prevents CI failures)
 - Best practice: Set up pre-commit hooks to automate this
+
+---
+
+## ❌ What NOT to Do
+
+**NEVER do these things - they violate core workflows:**
+
+### Git & Deployment
+- ❌ **NEVER commit directly to the default branch** - Always create a feature branch first
+- ❌ **NEVER merge without staging verification** - Deploy to staging and test before merging
+- ❌ **NEVER push without running lints locally** - Zero tolerance for CI failures
+- ❌ **NEVER force push to default branch** - Can break production
+
+### Code Review & PRs
+- ❌ **NEVER use `gh api` directly for PR comments** - Always use `~/Code/misc/itineris-bin/gh-pr-get-comments` and `gh-pr-reply-to-thread`
+- ❌ **NEVER use combined short flags** - Use `-m -d` not `-md` (gh doesn't support combined short flags)
+- ❌ **NEVER skip staging deployment** - Always verify changes on staging before merging
+
+### Code Standards
+- ❌ **NEVER use `global $post`** in PHP - Use `get_post()` instead
+- ❌ **NEVER use `get_posts()` or `get_terms()`** - Use `WP_Query` and `WP_Term_Query` instead
+- ❌ **NEVER mix escaping with Blade `{{ }}`** - Use `{!! esc_html($var) !!}` not `{{ esc_html($var) }}`
+- ❌ **NEVER use American English** - Use British English (colour, optimise, behaviour, etc.)
+
+### Testing & Production
+- ❌ **NEVER test on production first** - Always test on staging
+- ❌ **NEVER use `@production` for write operations** without explicit approval - Prefer read-only commands
+- ❌ **NEVER skip the CI checks** - Wait for `gh pr checks` to pass before merging
+
+---
+
+## 🚨 Common Mistakes to Avoid
+
+**These are mistakes Copilot has made in the past - don't repeat them:**
+
+### 1. Committing Directly to Default Branch
+**Mistake:** Making changes and committing without checking current branch  
+**Fix:** Always check `git branch` and create feature branch if on default branch
+```bash
+# Check current branch first
+git branch --show-current
+
+# If on default branch (main/master/develop), create feature branch
+git checkout -b clickup/task-id/description
+```
+
+### 2. Using Wrong gh Command Flags
+**Mistake:** Using `gh pr merge <pr> -md` (combined short flags)  
+**Fix:** Use separate flags: `gh pr merge <pr> -m -d`
+
+### 3. Forgetting to Run Lints Locally
+**Mistake:** Pushing code and letting CI catch linting errors  
+**Fix:** ALWAYS run lints before pushing (see "Before Committing" section)
+
+### 4. Using `gh api` Instead of Custom Scripts
+**Mistake:** Using `gh api graphql -f query='...'` for PR comments  
+**Fix:** Use `~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number>`
+
+### 5. Merging Without Staging Verification
+**Mistake:** Merging PR after CI passes without testing on staging  
+**Fix:** Always deploy to staging first: `git push origin <branch>:staging --force`, then test
+
+### 6. Using Wrong ShellCheck Severity
+**Mistake:** Running `shellcheck script.sh` (defaults to warning level)  
+**Fix:** Use `shellcheck --severity=style script.sh` to match CI
+
+### 7. Creating Multi-File Instructions
+**Mistake:** Splitting instructions into multiple linked files  
+**Fix:** Keep everything in ONE file - Copilot CLI doesn't follow relative links
+
+### 8. Forgetting Branch Naming Convention
+**Mistake:** Using generic names like `feature/fix` without ticket reference  
+**Fix:** Include ticket source: `clickup/<task-id>/description` or `freshdesk/<ticket-id>/description`
+
+---
+
+## Common Task Patterns
+
+**Full workflow examples for common scenarios:**
+
+### Pattern 1: Fix a Bug from FreshDesk Ticket
+
+**Scenario:** You receive a FreshDesk ticket #21170 reporting broken image positioning on the intro section.
+
+**Complete workflow:**
+```bash
+# 1. Check current branch and create feature branch
+git branch --show-current
+git checkout -b freshdesk/21170/intro-section-image-position
+
+# 2. Push branch immediately for visibility
+git push -u origin HEAD
+
+# 3. Open draft PR early
+gh pr create --draft --fill
+# In description: Add ticket link, describe issue, outline fix approach
+
+# 4. Make the fix, test locally
+# ... edit files ...
+
+# 5. Run lints before committing
+./vendor/bin/phpcs --standard=phpcs.xml path/to/changed-file.php
+./vendor/bin/phpcbf --standard=phpcs.xml path/to/changed-file.php  # auto-fix if needed
+npm run lint:css  # if CSS was changed
+
+# 6. Commit with clear message
+git add -A
+git commit -m "fix: correct intro section image positioning
+
+Image was overlapping text on mobile due to incorrect z-index
+and positioning. Updated CSS to use relative positioning with
+proper stacking context.
+
+Fixes FreshDesk ticket #21170"
+
+# 7. Push commit
+git push
+
+# 8. Deploy to staging and test
+git push origin HEAD:staging --force
+# Test on staging environment
+wp @staging cache flush
+# Visit staging site and verify fix
+
+# 9. Mark PR as ready for review
+gh pr ready
+
+# 10. Wait for CI and merge
+gh pr checks <pr-number> --watch && gh pr merge <pr-number> -m -d --admin
+```
+
+### Pattern 2: Address PR Code Review Comments
+
+**Scenario:** You have a PR with 10 unresolved review comments from GitHub Advanced Security bot and human reviewers.
+
+**Complete workflow:**
+```bash
+# 1. Get all unresolved comments (note the thread IDs)
+~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
+
+# 2. For each comment, fix the issue
+# ... make code changes ...
+
+# 3. Run lints after each fix
+./vendor/bin/phpcs --standard=phpcs.xml file.php
+
+# 4. Commit the fix
+git commit -am "fix: address security vulnerability in user input handling
+
+Added proper sanitization and validation for user-submitted data.
+Addresses review comment thread PRRT_xxx."
+
+# 5. Reply to the specific thread and resolve it
+~/Code/misc/itineris-bin/gh-pr-reply-to-thread <pr-number> \
+  --thread-id='PRRT_xxx' \
+  --message='Fixed in commit abc1234' \
+  --resolve
+
+# 6. Repeat steps 2-5 for each comment
+
+# 7. After all comments addressed, push all commits
+git push
+
+# 8. Request new review
+gh pr edit <pr-number> --add-reviewer @copilot
+
+# 9. Deploy to staging to verify all fixes
+git push origin HEAD:staging --force
+
+# 10. After re-approval, merge
+gh pr checks <pr-number> --watch && gh pr merge <pr-number> -m -d --admin
+```
+
+### Pattern 3: Implement New Feature from ClickUp
+
+**Scenario:** ClickUp task 86bzphaee asks for landing page amendments - new hero section with CTA.
+
+**Complete workflow:**
+```bash
+# 1. Create feature branch
+git checkout -b clickup/86bzphaee/landing-page-amendments
+
+# 2. Push and create draft PR with implementation plan
+git push -u origin HEAD
+gh pr create --draft --fill
+# Add in PR description:
+# - Link to ClickUp task
+# - Implementation plan with phases
+# - Expected timeline
+# - Screenshots/mockups if available
+
+# 3. Implement in phases, committing after each
+# Phase 1: Create hero block
+# ... create ACF fields, templates ...
+git commit -am "feat: add hero section ACF block"
+git push
+
+# Phase 2: Style the hero
+# ... add CSS ...
+git commit -am "style: add hero section styles with mobile responsive layout"
+git push
+
+# Phase 3: Add CTA functionality
+# ... add JS if needed ...
+git commit -am "feat: add CTA tracking and form handling"
+git push
+
+# 4. Run all lints before marking ready
+./vendor/bin/phpcs --standard=phpcs.xml web/app/themes/*/
+npm run lint:js
+npm run lint:css
+
+# 5. Deploy to staging for client review
+git push origin HEAD:staging --force
+
+# 6. Update PR description with:
+# - Before/After screenshots
+# - Testing notes
+# - Staging URL for review
+
+# 7. Mark ready and get review
+gh pr ready
+
+# 8. After approval, merge
+gh pr checks <pr-number> --watch && gh pr merge <pr-number> -m -d --admin
+
+# 9. Verify production deployment
+# (happens automatically when default branch is pushed)
+```
+
+### Pattern 4: Emergency Hotfix
+
+**Scenario:** Production site is down, need immediate fix.
+
+**Fast workflow:**
+```bash
+# 1. Create hotfix branch from default
+git checkout main  # or master/develop
+git pull
+git checkout -b hotfix/critical-issue-description
+
+# 2. Make minimal fix only
+# ... edit only what's necessary ...
+
+# 3. Test locally FIRST
+# ... verify fix works ...
+
+# 4. Quick lint check
+./vendor/bin/phpcs --standard=phpcs.xml changed-file.php
+
+# 5. Commit and push
+git commit -am "hotfix: resolve critical production issue
+
+[Describe issue and fix]"
+git push -u origin HEAD
+
+# 6. Create PR and deploy to staging IMMEDIATELY
+gh pr create --fill
+git push origin HEAD:staging --force
+
+# 7. Test on staging quickly
+wp @staging cache flush
+# Verify fix works
+
+# 8. If verified, merge immediately
+gh pr merge <pr-number> -m -d --admin
+
+# 9. Monitor production
+# Watch logs, verify issue is resolved
+```
 
 ---
 
@@ -543,3 +859,39 @@ op.exe item get "Item Name" --vault "Vault Name" --fields username,password
 | FreshDesk | `freshdesk/<ticket-id>/<description>` | `freshdesk/21170/intro-section-image-position` |
 | GitHub Issues | `issue/<number>/<description>` | `issue/123/fix-navigation-bug` |
 | No ticket | `feature/<description>` or `fix/<description>` | `feature/add-caching`, `fix/header-spacing` |
+
+---
+
+## Project Information
+
+**Project locations:**
+- WordPress projects: `~/Code/wordpress/<client-name>/bedrock`
+- Utility scripts: `~/Code/misc/itineris-bin/`
+
+**Common default branches:**
+- Usually `main`, `master`, or `develop`
+- Check with: `git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'`
+
+**Environments:**
+- **Staging:** Accessed via `@staging` WP CLI alias, deployed by pushing to `staging` branch
+- **Production:** Deployed automatically when default branch is updated
+
+**CI/CD:**
+- GitHub Actions runs on all PRs
+- Tests include: PHPUnit, PHPCS, ShellCheck, ESLint, Stylelint (varies by project)
+- Must pass before merging
+
+**Key tools:**
+- WP CLI with remote aliases configured in `wp-cli.yml`
+- Custom PR management scripts in `~/Code/misc/itineris-bin/`
+- 1Password CLI for credentials (`op` command)
+- GitHub Actions local testing with `act` (`gh act`)
+
+**Support:**
+- ClickUp for task management: `~/Code/misc/itineris-bin/clickup-get-task <id>`
+- FreshDesk for support tickets: `~/Code/misc/itineris-bin/freshdesk-get-ticket <id>`
+- Sentry for error tracking (check project documentation for URL)
+
+**Credentials:**
+- Stored in 1Password, accessed via CLI: `op item get "Item Name" --vault "Vault Name"`
+- Never commit credentials to repos
