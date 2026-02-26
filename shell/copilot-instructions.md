@@ -399,11 +399,31 @@ gh act -P ubuntu-latest=catthehacker/ubuntu:full-latest
 - Make resource hints conditional - only add when actually needed
 - Avoid render-blocking resources where possible
 
+**Example:**
+```php
+// Only preload hero image on pages that use the hero block
+add_action('wp_head', function() {
+    if (has_block('acf/hero-banner')) {
+        echo '<link rel="preload" as="image" href="' . esc_url(get_template_directory_uri() . '/assets/hero.webp') . '" fetchpriority="high">';
+    }
+});
+```
+
 ### Conditional Loading
 
 - Check if blocks/features exist before loading their assets
 - Use WordPress's `has_block()` function to detect block usage in content
 - Check if scripts are enqueued before adding related resources
+
+**Example:**
+```php
+// Only load animations script when hero block is present
+add_action('wp_enqueue_scripts', function() {
+    if (has_block('acf/hero-banner')) {
+        wp_enqueue_script('hero-animations', get_template_directory_uri() . '/dist/hero.js', [], '1.0', true);
+    }
+});
+```
 
 ## WordPress Specific
 
