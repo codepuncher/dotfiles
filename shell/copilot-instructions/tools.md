@@ -4,12 +4,17 @@ Scripts, utilities, and tools available for Itineris development workflows.
 
 ## GitHub PR Comment Management
 
-### Get PR Comments
+### Workflow Overview
 
-Use `gh-pr-get-comments` script to retrieve all comments on a PR:
+1. **First:** Get PR comments to see thread IDs
+2. **Then:** Reply/resolve specific threads using the thread IDs from step 1
+
+### Step 1: Get PR Comments
+
+Use `gh-pr-get-comments` to retrieve all comments and their thread IDs:
 
 ```bash
-# Get all comments in pretty format
+# Get all comments in pretty format (includes thread IDs)
 ~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number>
 
 # Filter by author (e.g., Copilot bot)
@@ -22,9 +27,11 @@ Use `gh-pr-get-comments` script to retrieve all comments on a PR:
 ~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --format=json
 ```
 
-### Reply to PR Comments
+**Note:** The output includes `thread-id` values (e.g., `PRRT_kwDOABCDEF`) which you need for the next step.
 
-Use `gh-pr-reply-to-thread` script to reply and resolve review threads:
+### Step 2: Reply to PR Comments
+
+Use `gh-pr-reply-to-thread` with the thread-id from step 1:
 
 ```bash
 # Reply to a review thread (use thread-id from gh-pr-get-comments output)

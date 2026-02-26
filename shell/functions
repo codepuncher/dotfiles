@@ -203,7 +203,8 @@ install_wsl_packages() {
   install_git_delta
   # ensure fd is available
   ln -sf "$(which fdfind)" ~/.local/bin/fd
-
+  # ensure bat is available
+  ln -sf "$(which batcat)" ~/.local/bin/bat
   # Generate the `rg` zsh completion file for zinit.
   rg --generate=complete-zsh >~/.zinit/completions/_rg
 }

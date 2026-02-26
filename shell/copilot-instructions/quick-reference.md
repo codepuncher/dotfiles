@@ -112,9 +112,11 @@ wp @production cache flush         # Write operation: be careful
 
 ## PR Comment Management
 
+**Workflow:** Get comments first (to find thread IDs), then reply/resolve using those IDs.
+
 ### Get Comments
 ```bash
-# All comments in pretty format
+# Step 1: Get all comments (includes thread IDs in output)
 ~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number>
 
 # Filter by author
@@ -130,9 +132,9 @@ wp @production cache flush         # Write operation: be careful
 
 ### Reply to Comments
 ```bash
-# Reply to thread
+# Step 2: Reply using thread-id from step 1
 ~/Code/misc/itineris-bin/gh-pr-reply-to-thread <pr-number> \
-  --thread-id='PRRT_kwDOABCDEF' \
+  --thread-id='PRRT_xxx' \
   --message='Fixed in commit abc1234'
 
 # Reply and resolve
