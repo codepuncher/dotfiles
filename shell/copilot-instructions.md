@@ -1,19 +1,34 @@
 # Copilot CLI Instructions for Itineris Development
 
+## Table of Contents
+- [Critical: Lint Checks Before Pushing](#️-critical-always-run-lint-checks-locally-before-pushing)
+- [Language & Spelling](#language--spelling)
+- [PHP & WordPress Best Practices](#php--wordpress-best-practices)
+- [Git Workflow](#git-workflow)
+  - [Complete Workflow](#complete-workflow-order-of-operations)
+  - [Feature Branch Workflow](#feature-branch-workflow)
+  - [Code Review](#code-review)
+  - [Merging & Deployment](#merging-to-default-branch)
+- [Development Workflow](#development-workflow)
+  - [Before Committing](#before-committing)
+  - [Testing GitHub Actions](#testing-github-actions-locally)
+- [Performance Best Practices](#performance-best-practices)
+- [WordPress Specific](#wordpress-specific)
+- [Bash Scripting](#bash-scripting)
+- [Communication](#communication)
+- [Quick Reference](#quick-reference)
+
+---
+
 ## ⚠️ CRITICAL: Always Run Lint Checks Locally Before Pushing
 
 **NEVER push to GitHub without running local lint checks first.**
 
-For Bash scripts, ALWAYS run before pushing:
+For Bash scripts, ALWAYS run before pushing (see detailed checklist at line 286):
 ```bash
-# 1. Check and remove trailing whitespace
-git diff --check && sed -i 's/[[:space:]]*$//' script-name
-
-# 2. Format with shfmt
-shfmt -w script-name && shfmt -d script-name
-
-# 3. Run ShellCheck at style severity (matches CI)
-shellcheck --format=gcc --severity=style script-name
+git diff --check                                    # Check trailing whitespace
+shfmt -w script-name && shfmt -d script-name       # Format
+shellcheck --severity=style script-name             # Lint
 ```
 
 For PHP, JavaScript, CSS: see "Before Committing" section (line 269 below) for specific commands.
@@ -277,8 +292,23 @@ See the "Branch Deployment" section above for complete deployment instructions.
 
 #### For JavaScript/CSS Changes
 
-1. For JS changes, run linter with auto-fix if available (e.g., `eslint --fix`)
-2. For CSS changes, run linter with auto-fix if available (e.g., `stylelint --fix`)
+1. For JS changes, run linter with auto-fix if available:
+   ```bash
+   # Check package.json for project-specific commands
+   npm run lint:js
+   # Or if using eslint directly
+   npx eslint --fix path/to/file.js
+   ```
+
+2. For CSS changes, run linter with auto-fix if available:
+   ```bash
+   # Check package.json for project-specific commands
+   npm run lint:css
+   # Or if using stylelint directly
+   npx stylelint --fix path/to/file.css
+   ```
+
+**Note:** Specific commands vary by project. Check `package.json` scripts section for available lint commands.
 
 #### For Bash Script Changes
 
@@ -402,10 +432,76 @@ gh act -P ubuntu-latest=catthehacker/ubuntu:full-latest
 ### Variable References
 
 - **Always use `${FOO}` syntax** instead of `$FOO` for variable references - provides consistency and safety
-- **Use UPPERCASE for all variables** - Both script-level and local function variables should be SCREAMING_SNAKE_CASE
+- **Use UPPERCASE for all variables** - Itineris standard: Both script-level and local function variables should be SCREAMING_SNAKE_CASE (note: this differs from typical Bash convention of lowercase for local variables)
 
 ### Formatting
 
-- **Remove trailing whitespace** - Run `sed -i 's/[[:space:]]*$//' <file>` on all modified bash scripts before committing
-- **Run shfmt** - Run `shfmt -w <file>` to format bash scripts with consistent indentation (tabs)
-- **Run shellcheck** - Always run `shellcheck --severity=style <file>` to check for issues before committing (matches CI severity)
+- **Remove trailing whitespace** - Run `git diff --check` to verify, `sed -i 's/[[:space:]]*$//' <file>` to fix
+- **Format with shfmt** - Run `shfmt -w <file>` for consistent indentation (tabs), `shfmt -d <file>` to verify
+- **Lint with shellcheck** - Run `shellcheck --severity=style <file>` to match CI severity
+
+See "Before Committing > For Bash Script Changes" section for complete pre-commit checklist.
+
+## Quick Reference
+
+### Common Git Commands
+```bash
+# Create and push feature branch
+git checkout -b clickup/<task-id>/<description>
+git push -u origin HEAD
+
+# Open draft PR
+gh pr create --draft --fill
+
+# Deploy to staging
+git push origin HEAD:staging --force
+
+# Check CI and merge PR
+gh pr checks <pr-number> --watch && gh pr merge <pr-number> -m -d --admin
+```
+
+### Linting Commands
+
+**Bash:**
+```bash
+git diff --check                          # Check trailing whitespace
+shfmt -w script.sh && shfmt -d script.sh  # Format
+shellcheck --severity=style script.sh     # Lint
+```
+
+**PHP:**
+```bash
+php -l file.php                                    # Syntax check
+./vendor/bin/phpcs --standard=phpcs.xml file.php   # Lint
+./vendor/bin/phpcbf --standard=phpcs.xml file.php  # Auto-fix
+```
+
+**JavaScript/CSS:**
+```bash
+npm run lint:js    # or: npx eslint --fix file.js
+npm run lint:css   # or: npx stylelint --fix file.css
+```
+
+### WP CLI Remote Testing
+```bash
+wp @staging option get home      # Test staging
+wp @production cache flush       # ⚠️ Use with caution
+```
+
+### PR Comment Management
+```bash
+# Get PR comments
+~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number>
+
+# Reply and resolve
+~/Code/misc/itineris-bin/gh-pr-reply-to-thread <pr-number> \
+  --thread-id='PRRT_xxx' \
+  --message='Fixed in commit abc1234' \
+  --resolve
+```
+
+### Branch Naming Conventions
+- ClickUp: `clickup/<task-id>/<description>`
+- FreshDesk: `freshdesk/<ticket-id>/<description>`
+- GitHub: `issue/<number>/<description>`
+- General: `feature/<description>` or `fix/<description>`
