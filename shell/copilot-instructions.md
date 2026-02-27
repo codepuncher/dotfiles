@@ -235,7 +235,11 @@ while true; do
     sleep 30
 done
 
-# 3. Now safe to merge
+# 3. Check for review comments that need addressing
+~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
+
+# 4. If there are unresolved comments, address them first (see Pattern 2)
+# If no comments or all addressed, then merge
 gh pr merge <pr-number> -m -d --admin
 ```
 
@@ -310,7 +314,11 @@ while true; do
     sleep 30
 done
 
-# 12. After BOTH CI and Copilot workflow complete, merge
+# 12. Check for review comments
+~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
+
+# 13. If unresolved comments exist, address them (see Pattern 2)
+# If no comments or all addressed, merge
 gh pr merge <pr-number> -m -d --admin
 ```
 
@@ -363,7 +371,11 @@ while true; do
     sleep 30
 done
 
-# 12. After both CI and Copilot workflow complete, merge
+# 12. Check for review comments
+~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
+
+# 13. If unresolved comments exist, address them first
+# If no comments or all addressed, merge
 gh pr merge <pr-number> -m -d --admin
 ```
 
@@ -431,7 +443,11 @@ while true; do
     sleep 30
 done
 
-# 10. After both CI and Copilot workflow complete, merge
+# 10. Check for review comments
+~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
+
+# 11. If unresolved comments exist, address them first
+# If no comments or all addressed, merge
 gh pr merge <pr-number> -m -d --admin
 
 # 9. Verify production deployment
@@ -632,8 +648,10 @@ When implementing a feature or fix:
 9. **Verify changes on staging** - Test that the fix/feature works correctly
 10. **Wait for CI checks to pass** - `gh pr checks <pr> --watch`
 11. **Wait for Copilot review workflow to complete** - Check `gh run list --workflow="Copilot code review"` until status is "completed"
-12. **Merge to default branch** - `gh pr merge <pr> -m -d --admin` (only after both CI and Copilot review complete)
-13. **Production deployment** - Happens automatically when default branch is pushed
+12. **Check for review comments** - Use `gh-pr-get-comments <pr> --resolved=false` to see unresolved comments
+13. **Address any review comments** - Fix issues, reply to threads, resolve when fixed
+14. **Merge to default branch** - `gh pr merge <pr> -m -d --admin` (only after all review comments addressed)
+15. **Production deployment** - Happens automatically when default branch is pushed
 
 **Key points:**
 - Always verify on staging BEFORE merging to default branch
@@ -782,17 +800,25 @@ while true; do
     sleep 30
 done
 
-# 3. Now safe to merge
+# 3. Check for review comments that need addressing
+~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
+
+# 4. If there are unresolved comments, address them first (see Pattern 2)
+# If no comments or all addressed, then merge
 gh pr merge <pr-number> -m -d --admin
 ```
 
 **How to check manually:**
 ```bash
-# Check Copilot review workflow status
+# 1. Check Copilot review workflow status
 gh run list --workflow="Copilot code review" --limit 5
-
-# If status is "completed": OK TO MERGE
 # If status is "in_progress" or "queued": WAIT
+# If status is "completed": Continue to step 2
+
+# 2. Check for review comments
+~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
+# If comments exist: Address them first
+# If no comments: OK TO MERGE
 ```
 
 **How to check manually:**
@@ -1316,7 +1342,11 @@ while true; do
     sleep 30
 done
 
-# After BOTH complete, merge
+# Check for review comments
+~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
+
+# If comments exist, address them first
+# If no comments or all addressed, merge
 gh pr merge <pr-number> -m -d --admin
 
 # Deploy any branch to staging
