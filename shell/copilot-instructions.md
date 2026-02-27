@@ -265,19 +265,19 @@ git checkout -b clickup/task-id/description
 **Mistake:** Merging PR after CI passes without testing on staging  
 **Fix:** Always deploy to staging first: `git push origin <branch>:staging --force`, then test
 
-### 6. Using Wrong ShellCheck Severity
+### 7. Using Wrong ShellCheck Severity
 **Mistake:** Running `shellcheck script.sh` (defaults to warning level)  
 **Fix:** Use `shellcheck --severity=style script.sh` to match CI
 
-### 7. Creating Multi-File Instructions
+### 8. Creating Multi-File Instructions
 **Mistake:** Splitting instructions into multiple linked files  
 **Fix:** Keep everything in ONE file - Copilot CLI doesn't follow relative links
 
-### 8. Forgetting Branch Naming Convention
+### 9. Forgetting Branch Naming Convention
 **Mistake:** Using generic names like `feature/fix` without ticket reference  
 **Fix:** Include ticket source: `clickup/<task-id>/description` or `freshdesk/<ticket-id>/description`
 
-### 9. Merging Before Copilot Review Completes
+### 10. Merging Before Copilot Review Completes
 **Mistake:** Running `gh pr checks --watch && gh pr merge` immediately after CI passes, before Copilot review workflow finishes  
 **Fix:** Wait for both CI checks AND Copilot review workflow to complete
 
@@ -442,6 +442,97 @@ done
 gh pr merge <pr-number> -m -d --admin
 ```
 
+### How to Handle Copilot Review Comments
+
+**When Copilot review posts comments, evaluate each one carefully:**
+
+#### 1. Prioritize Comments by Severity
+- **Security vulnerabilities** (SQL injection, XSS, etc.) - Fix immediately
+- **Bugs/Logic errors** - Fix immediately  
+- **Performance issues** - Fix if significant impact
+- **Code quality** (complexity, duplication) - Fix if reasonable
+- **Style/formatting** - Fix if violates project standards
+- **Nitpicks** - Use judgment, may skip if trivial
+
+#### 2. Validate Comment Accuracy
+Not all Copilot comments are correct. Validate before changing:
+
+```bash
+# Get the comment
+~/Code/misc/itineris-bin/gh-pr-get-comments <pr> --resolved=false
+
+# Research the issue
+# - Check if vulnerability exists in your context
+# - Review if logic error is actually wrong
+# - Test the suggested fix
+```
+
+**When comment is a false positive:**
+```bash
+# Reply explaining why it doesn't apply
+~/Code/misc/itineris-bin/gh-pr-reply-to-thread <pr> \
+  --thread-id='PRRT_xxx' \
+  --message="This is a false positive because [explanation]. The code is correct as-is." \
+  --resolve
+```
+
+#### 3. When to Address Automatically vs Ask User
+
+**Address automatically:**
+- Security vulnerabilities with clear fixes
+- Obvious bugs (typos, wrong variable names)
+- Missing input validation/escaping
+- Clear performance improvements
+- Lint/formatting issues
+
+**Ask user first:**
+- Architectural changes
+- Business logic modifications
+- Breaking changes to APIs
+- Comments suggesting different approach
+- When fix has trade-offs
+
+#### 4. Addressing Multiple Comments
+
+**Workflow for multiple comments:**
+```bash
+# 1. Categorize comments by severity
+~/Code/misc/itineris-bin/gh-pr-get-comments <pr> --resolved=false > review.txt
+
+# 2. Fix all security issues first (separate commit)
+git commit -m "security: fix SQL injection vulnerability"
+
+# 3. Fix bugs (separate commit)  
+git commit -m "fix: correct calculation in total_price"
+
+# 4. Fix quality issues (can combine)
+git commit -m "refactor: reduce complexity and improve readability"
+
+# 5. Push all fixes
+git push
+
+# 6. Reply to each thread individually
+~/Code/misc/itineris-bin/gh-pr-reply-to-thread <pr> --thread-id='...' --message='...' --resolve
+```
+
+#### 5. When Comments Conflict with Requirements
+
+If Copilot suggests changes that conflict with user requirements:
+1. **Prioritize user requirements** - They know the business context
+2. **Reply to comment** - Explain why requirement takes precedence
+3. **Suggest compromise** - If there's a way to address both
+
+**Example:**
+```bash
+~/Code/misc/itineris-bin/gh-pr-reply-to-thread <pr> \
+  --thread-id='PRRT_xxx' \
+  --message="User specifically requested this approach due to [business reason]. 
+  I've added validation to mitigate the concern you raised." \
+  --resolve
+```
+
+---
+
 ### Pattern 3: Implement New Feature from ClickUp
 
 **Scenario:** ClickUp task 86bzphaee asks for landing page amendments - new hero section with CTA.
@@ -557,6 +648,149 @@ gh pr merge <pr-number> -m -d --admin
 # 9. Monitor production
 # Watch logs, verify issue is resolved
 ```
+
+### Incident Communication for Hotfixes
+
+**When deploying emergency hotfixes:**
+
+#### 1. Before Starting
+**Assess severity:**
+- Is site completely down? (P0 - Critical)
+- Is key functionality broken? (P1 - High)
+- Is minor feature broken? (P2 - Medium)
+
+**For P0/P1 incidents, notify stakeholders:**
+```
+User: "Site is down - critical issue"
+
+Agent: I'm deploying an emergency hotfix for [issue]. 
+       I'll notify you when:
+       1. Fix is deployed to staging
+       2. Fix is deployed to production
+       3. Verification is complete
+```
+
+#### 2. During Incident
+**Keep user informed of progress:**
+- "Identified root cause: [brief explanation]"
+- "Hotfix deployed to staging, testing now"
+- "Staging verified, deploying to production"
+
+**Don't wait for permission on P0 incidents:**
+- Fix first, discuss later
+- Document decisions in PR
+- Notify as you work, don't block on approval
+
+#### 3. After Resolution
+**Provide incident summary:**
+```
+Incident resolved ✓
+
+Root cause: [What caused the issue]
+Fix applied: [What was changed]
+Deployed: [Timestamp]
+Verification: [What was tested]
+
+Monitoring for 10 minutes to ensure stability.
+```
+
+#### 4. Post-Mortem (for major incidents)
+**Document for learning:**
+- What happened?
+- What was the impact?
+- What was the root cause?
+- What was the fix?
+- How can we prevent this?
+
+**Ask user:**
+"Should I create a post-mortem document for this incident?"
+
+#### 5. Who to Notify
+**Ask user at start of incident:**
+- "Should I notify anyone else about this incident?"
+- "Are there any communication channels I should post to?"
+
+**Typical stakeholders:**
+- Project manager
+- Client (for client sites)
+- Team lead
+- On-call engineer
+
+**Remember:**
+- For P0 (site down): Communicate every 5-10 minutes
+- For P1 (major feature down): Communicate at key milestones
+- For P2 (minor issue): Standard workflow is fine
+
+### Post-Merge Production Verification
+
+**After merging to default branch, deployment happens automatically. Verify it succeeded:**
+
+#### 1. Wait for Deployment to Complete
+```bash
+# Check recent workflow runs
+gh run list --limit 5
+
+# If deploy workflow exists, wait for it
+gh run watch
+```
+
+#### 2. Verify Deployment Artifacts
+```bash
+# Check latest commit is deployed
+git log origin/main -1 --oneline
+# Note the commit SHA
+
+# If deployment creates tags/releases
+gh release list --limit 5
+```
+
+#### 3. Basic Smoke Tests
+```bash
+# Test production site is responding
+curl -I https://production-site.com
+
+# Check for PHP errors (if wp-cli available)
+wp @production cli version
+
+# Check error logs for new errors
+# (Project-specific - check documentation for log location)
+```
+
+#### 4. Monitor for Errors
+**For first 5-10 minutes after deployment:**
+- Check Sentry for new errors (if configured)
+- Monitor server logs
+- Check site performance/responsiveness
+- Test the specific feature you deployed
+
+#### 5. If Issues Detected
+```bash
+# Option 1: Quick fix
+git checkout -b hotfix/production-issue
+# Make minimal fix
+git commit -am "hotfix: fix production issue"
+git push -u origin HEAD
+gh pr create --fill
+# Fast-track review and merge
+
+# Option 2: Rollback (see Rollback Procedures section)
+git revert HEAD
+git push origin main
+```
+
+**When to verify:**
+- Always for hotfixes
+- Always for breaking changes
+- Always for database migrations
+- For major features (user-facing changes)
+- When deployment changes infrastructure
+
+**When verification can be lighter:**
+- Minor copy changes
+- Internal tooling updates
+- Documentation changes
+
+---
 
 ---
 
@@ -749,6 +983,60 @@ When implementing a feature with an implementation plan:
 - Include context about what problem is being solved
 - Commit frequently - after each logical phase or component completion
 - Push commits regularly so work can be reviewed incrementally
+
+### Squashing and Cleaning Commit History
+
+**During development:** Commit frequently for incremental review
+
+**Before merging:** Consider cleaning up commit history
+
+#### When to Squash:
+- Multiple "fix typo" or "address review comments" commits
+- WIP commits that don't add value to history
+- Commits that should logically be one change
+- When PR has >10 commits for a small feature
+
+#### How to Squash:
+
+**Option 1: Use squash merge (simplest)**
+```bash
+# When merging PR, use squash flag
+gh pr merge <pr-number> --squash -d
+```
+
+**Option 2: Manual squash before merge**
+```bash
+# Squash last N commits
+git rebase -i HEAD~N
+
+# In editor, change "pick" to "squash" for commits to combine
+# Edit commit message to summarize all changes
+
+# Force push (safe because it's your feature branch)
+git push --force-with-lease
+```
+
+**Option 3: Reset and re-commit**
+```bash
+# Soft reset to default branch
+git reset --soft $(git merge-base HEAD origin/main)
+
+# All changes now staged, create single commit
+git commit -m "feat: implement feature XYZ
+
+Detailed description of all changes"
+
+# Force push
+git push --force-with-lease
+```
+
+**When NOT to squash:**
+- Each commit represents a distinct, logical change
+- Commits are already clean and well-organized
+- Large PRs where history helps understand progression
+- When commit separation aids in future debugging
+
+**Default approach:** Use squash merge (`gh pr merge --squash`) unless there's a reason to preserve individual commits.
 
 ### Pull Requests
 
@@ -1077,6 +1365,279 @@ git diff main --name-only --diff-filter=ACMR | \
 ### General
 
 1. Verify all tests pass (if applicable)
+2. Check for performance impact (see Performance Checks below)
+3. Check accessibility if UI changes (see Accessibility below)
+4. Check SEO impact if content/meta changes (see SEO below)
+
+### Dependency Updates
+
+**When updating composer or npm dependencies:**
+
+#### 1. Check for Breaking Changes
+```bash
+# For composer
+composer update <package> --dry-run
+composer show <package>  # Check version changes
+
+# For npm
+npm outdated
+npm view <package> versions
+```
+
+#### 2. Review Changelogs
+- Always review CHANGELOG or release notes
+- Look for breaking changes, deprecated features
+- Check minimum PHP/Node version requirements
+
+#### 3. Update Dependencies Safely
+```bash
+# For composer (update one package at a time)
+composer update <package-name> --with-all-dependencies
+composer update  # Or all packages
+
+# For npm
+npm update <package-name>
+npm update  # Or all packages
+
+# Commit the lock file
+git add composer.lock package-lock.json
+git commit -m "chore: update dependencies"
+```
+
+#### 4. Test Thoroughly After Updates
+- Run all tests: `./vendor/bin/phpunit`, `npm test`
+- Test locally: Visit all major pages/features
+- Deploy to staging: Test full user workflows
+- Check for deprecation warnings in logs
+
+#### 5. Document Major Updates
+```bash
+# For major version bumps, document in commit message
+git commit -m "chore: update package X from v1 to v2
+
+BREAKING CHANGES:
+- Method Y renamed to Z
+- Config format changed
+
+Tested:
+- All unit tests pass
+- Manual testing on staging
+- No errors in logs"
+```
+
+**When to update:**
+- Security vulnerabilities (immediately)
+- Bug fixes affecting you (soon)
+- New features you need (when ready)
+- Major versions (carefully, with testing)
+
+**When NOT to update:**
+- Right before a deadline
+- Without testing on staging first
+- Multiple major versions at once
+
+### Performance Checks
+
+**Check performance impact for:**
+- Database queries (especially in loops)
+- Image/asset loading
+- JavaScript bundle size
+- CSS file size
+
+#### Quick Performance Checks:
+
+**1. Database Queries:**
+```bash
+# Enable Query Monitor plugin on staging
+wp @staging plugin activate query-monitor
+
+# Or check queries in code
+# Add to wp-config.php temporarily:
+# define('SAVEQUERIES', true);
+
+# Look for:
+# - N+1 queries
+# - Slow queries (>0.05s)
+# - Duplicate queries
+```
+
+**2. Asset Sizes:**
+```bash
+# Check bundle sizes
+npm run build
+ls -lh dist/  # Or build output directory
+
+# Warn if:
+# - JS bundle >500KB
+# - CSS bundle >100KB
+# - Individual images >500KB (unless hero images)
+```
+
+**3. PageSpeed/Lighthouse:**
+```bash
+# For major UI changes, test with Lighthouse
+# Run in Chrome DevTools or:
+npx lighthouse https://staging-site.com --view
+
+# Target scores:
+# - Performance: >80
+# - Accessibility: >90
+```
+
+**4. Database Query Optimization:**
+```php
+// Use proper indexes
+// Cache expensive queries
+// Avoid queries in loops
+
+// WRONG:
+foreach ($posts as $post) {
+    $meta = get_post_meta($post->ID, 'key', true);  // Query in loop!
+}
+
+// RIGHT:
+$post_ids = wp_list_pluck($posts, 'ID');
+$all_meta = get_post_meta($post_ids, 'key');  // Single query
+```
+
+### Accessibility Checks
+
+**For UI changes, check basic accessibility:**
+
+#### 1. Keyboard Navigation
+- Can you tab through all interactive elements?
+- Is focus visible?
+- Can you activate buttons/links with Enter/Space?
+
+#### 2. Screen Reader Testing
+```bash
+# Test with VoiceOver (macOS):
+# Cmd+F5 to toggle, Ctrl+Option+arrows to navigate
+
+# Or test with NVDA (Windows - free)
+```
+
+#### 3. Semantic HTML
+```php
+// Use proper HTML5 elements
+<nav>, <main>, <article>, <aside>, <header>, <footer>
+
+// Use proper heading hierarchy (h1 -> h2 -> h3)
+// Use <button> for buttons, <a> for links
+```
+
+#### 4. Alt Text for Images
+```php
+// ALWAYS provide alt text
+<img src="photo.jpg" alt="Description of what's in the photo">
+
+// For decorative images
+<img src="decoration.png" alt="" role="presentation">
+```
+
+#### 5. Color Contrast
+- Text must have sufficient contrast
+- Minimum ratio: 4.5:1 for normal text, 3:1 for large text
+- Use browser DevTools or WebAIM contrast checker
+
+#### 6. Form Labels
+```php
+// ALWAYS associate labels with inputs
+<label for="email">Email Address</label>
+<input type="email" id="email" name="email" required>
+```
+
+**When to do thorough a11y testing:**
+- New forms or interactive components
+- Major UI redesigns
+- Components used site-wide
+
+**Quick check:** Run Lighthouse accessibility audit in Chrome DevTools
+
+### SEO Considerations
+
+**Check SEO impact when:**
+- Changing page titles or meta descriptions
+- Modifying URL structures
+- Adding/removing content
+- Changing heading hierarchy
+
+#### 1. Meta Tags
+```php
+// Ensure proper meta tags exist
+<title>Page Title | Site Name</title>
+<meta name="description" content="Page description 150-160 chars">
+
+// Use Yoast SEO or Rank Math if available
+```
+
+#### 2. Heading Hierarchy
+```php
+// One H1 per page (usually page title)
+<h1>Main Page Heading</h1>
+
+// H2 for major sections
+<h2>Section Heading</h2>
+
+// H3 for subsections
+<h3>Subsection</h3>
+
+// Don't skip levels (h1 -> h3 is wrong)
+```
+
+#### 3. URL Structure
+```bash
+# Good URLs:
+/blog/post-title
+/products/category/product-name
+
+# Avoid:
+/p?id=123
+/page.php?category=5&post=789
+```
+
+#### 4. Structured Data
+```php
+// Add schema.org markup for rich results
+// Use JSON-LD format
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Article Title",
+  "datePublished": "2026-02-27"
+}
+</script>
+```
+
+#### 5. Image Optimization
+```php
+// Use descriptive filenames
+// good: red-nike-running-shoes.jpg
+// bad: IMG_1234.jpg
+
+// Compress images
+// Use WebP format when possible
+// Add width/height attributes
+```
+
+#### 6. Internal Linking
+- Link to related content
+- Use descriptive anchor text
+- Ensure no broken links
+
+**Quick SEO checks:**
+```bash
+# Check for broken links
+# Use plugin like Broken Link Checker
+
+# Check robots.txt
+curl https://site.com/robots.txt
+
+# Check sitemap
+curl https://site.com/sitemap.xml
+```
 
 ## Bash Scripting Standards
 
@@ -1374,6 +1935,54 @@ add_action('wp_enqueue_scripts', function() {
 - Load CSS appropriately (not everything needs to be async)
 - Use manifest files for cache-busting built assets
 
+### Multisite / Network Sites
+
+**When working with WordPress Multisite:**
+
+#### 1. Determine Scope
+```bash
+# Check if this is a multisite install
+wp @staging config get MULTISITE
+
+# List all sites in network
+wp @staging site list
+```
+
+#### 2. Network-Wide vs Site-Specific Changes
+
+**Network-wide changes:**
+- Changes to `wp-content/mu-plugins/`
+- Network-activated plugins
+- Network settings
+- Changes affecting all sites
+
+**Site-specific changes:**
+- Theme customizations for specific site
+- Site-activated plugins
+- Site-specific settings
+- Content (posts, pages, media)
+
+#### 3. Testing on Multisite
+```bash
+# Test on specific site
+wp @staging --url=https://site2.example.com option get home
+
+# Switch between sites
+# In wp-cli.yml, define per-site aliases:
+# @site1, @site2, etc.
+```
+
+#### 4. Deployment Considerations
+- Network-wide changes affect ALL sites immediately
+- Always test on staging multisite first
+- Consider impact on all sites in network
+- Document which sites are affected
+
+**When to ask user:**
+- Should this be network-wide or site-specific?
+- Which sites in the network need this change?
+- Has this been tested on all affected sites?
+
 ## Quick Reference Commands
 
 ### Git Commands
@@ -1556,6 +2165,68 @@ op.exe item get "Item Name" --vault "Vault Name" --fields username,password
 **Common issues and their solutions:**
 
 ### CI/CD Failures
+
+**When CI fails after you pushed:**
+
+1. **Check what failed:**
+```bash
+gh pr checks <pr-number>
+# Or view in browser
+gh pr view <pr-number> --web
+```
+
+2. **For linting failures (ShellCheck, PHPCS, ESLint):**
+```bash
+# Pull the latest changes if any
+git pull
+
+# Run the failing linter locally
+shellcheck --severity=style script.sh
+./vendor/bin/phpcs --standard=phpcs.xml file.php
+npm run lint
+
+# Fix issues
+./vendor/bin/phpcbf --standard=phpcs.xml file.php  # Auto-fix PHP
+npm run lint:fix  # Auto-fix JS
+
+# Commit and push fix
+git commit -am "fix: resolve linting errors"
+git push
+```
+
+3. **For test failures:**
+```bash
+# Run tests locally to reproduce
+npm test
+./vendor/bin/phpunit
+
+# If tests pass locally but fail in CI:
+# - Check CI environment differences (PHP version, Node version)
+# - Review test logs in GitHub Actions
+# - May be timing/race condition
+
+# Fix the test or code, then push
+git commit -am "fix: resolve test failure"
+git push
+```
+
+4. **For build failures:**
+```bash
+# Run build locally
+npm run build
+composer install
+
+# Check for:
+# - Missing dependencies
+# - Version conflicts
+# - Syntax errors
+
+# Fix and push
+git commit -am "fix: resolve build errors"
+git push
+```
+
+**⚠️ If you're stuck:** Ask user before making significant changes to fix CI. They may know the root cause.
 
 **"ShellCheck failed":**
 ```bash
