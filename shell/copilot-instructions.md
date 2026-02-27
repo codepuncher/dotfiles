@@ -1367,7 +1367,6 @@ git diff main --name-only --diff-filter=ACMR | \
 1. Verify all tests pass (if applicable)
 2. Check for performance impact (see Performance Checks below)
 3. Check accessibility if UI changes (see Accessibility below)
-4. Check SEO impact if content/meta changes (see SEO below)
 
 ### Dependency Updates
 
@@ -1553,91 +1552,6 @@ $all_meta = get_post_meta($post_ids, 'key');  // Single query
 - Components used site-wide
 
 **Quick check:** Run Lighthouse accessibility audit in Chrome DevTools
-
-### SEO Considerations
-
-**Check SEO impact when:**
-- Changing page titles or meta descriptions
-- Modifying URL structures
-- Adding/removing content
-- Changing heading hierarchy
-
-#### 1. Meta Tags
-```php
-// Ensure proper meta tags exist
-<title>Page Title | Site Name</title>
-<meta name="description" content="Page description 150-160 chars">
-
-// Use Yoast SEO or Rank Math if available
-```
-
-#### 2. Heading Hierarchy
-```php
-// One H1 per page (usually page title)
-<h1>Main Page Heading</h1>
-
-// H2 for major sections
-<h2>Section Heading</h2>
-
-// H3 for subsections
-<h3>Subsection</h3>
-
-// Don't skip levels (h1 -> h3 is wrong)
-```
-
-#### 3. URL Structure
-```bash
-# Good URLs:
-/blog/post-title
-/products/category/product-name
-
-# Avoid:
-/p?id=123
-/page.php?category=5&post=789
-```
-
-#### 4. Structured Data
-```php
-// Add schema.org markup for rich results
-// Use JSON-LD format
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "Article Title",
-  "datePublished": "2026-02-27"
-}
-</script>
-```
-
-#### 5. Image Optimization
-```php
-// Use descriptive filenames
-// good: red-nike-running-shoes.jpg
-// bad: IMG_1234.jpg
-
-// Compress images
-// Use WebP format when possible
-// Add width/height attributes
-```
-
-#### 6. Internal Linking
-- Link to related content
-- Use descriptive anchor text
-- Ensure no broken links
-
-**Quick SEO checks:**
-```bash
-# Check for broken links
-# Use plugin like Broken Link Checker
-
-# Check robots.txt
-curl https://site.com/robots.txt
-
-# Check sitemap
-curl https://site.com/sitemap.xml
-```
 
 ## Bash Scripting Standards
 
