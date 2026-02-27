@@ -150,11 +150,13 @@ For PHP, JavaScript, CSS: see "Before Committing" section (line 269 below) for s
 - ❌ **NEVER merge without staging verification** - Deploy to staging and test before merging
 - ❌ **NEVER push without running lints locally** - Zero tolerance for CI failures
 - ❌ **NEVER force push to default branch** - Can break production
+- ❌ **NEVER merge PR before Copilot review completes** - Wait for `@copilot` review, not just CI checks
 
 ### Code Review & PRs
 - ❌ **NEVER use `gh api` directly for PR comments** - Always use `~/Code/misc/itineris-bin/gh-pr-get-comments` and `gh-pr-reply-to-thread`
 - ❌ **NEVER use combined short flags** - Use `-m -d` not `-md` (gh doesn't support combined short flags)
 - ❌ **NEVER skip staging deployment** - Always verify changes on staging before merging
+- ❌ **NEVER merge immediately after CI passes** - Wait for human/Copilot reviews to complete
 
 ### Code Standards
 - ❌ **NEVER use `global $post`** in PHP - Use `get_post()` instead
@@ -212,6 +214,35 @@ git checkout -b clickup/task-id/description
 **Mistake:** Using generic names like `feature/fix` without ticket reference  
 **Fix:** Include ticket source: `clickup/<task-id>/description` or `freshdesk/<ticket-id>/description`
 
+### 9. Merging Before Copilot Review Completes
+**Mistake:** Running `gh pr checks --watch && gh pr merge` immediately after CI passes, before Copilot review workflow finishes  
+**Fix:** Wait for both CI checks AND Copilot review workflow to complete
+
+```bash
+# 1. Wait for CI checks
+gh pr checks <pr-number> --watch
+
+# 2. Wait for Copilot review workflow to complete
+PR_NUM=$(gh pr view <pr-number> --json number -q .number)
+while true; do
+    STATUS=$(gh run list --workflow="Copilot code review" --json headBranch,status \
+      --jq ".[] | select(.headBranch == \"refs/pull/${PR_NUM}/head\") | .status")
+    if [ "$STATUS" = "completed" ]; then
+        echo "✓ Copilot review workflow complete"
+        break
+    fi
+    echo "⏳ Copilot review workflow status: $STATUS (checking again in 30s)"
+    sleep 30
+done
+
+# 3. Now safe to merge
+gh pr merge <pr-number> -m -d --admin
+```
+
+**Why this matters:** Copilot review runs as a GitHub Actions workflow that takes 1-3 minutes after CI passes. Merging immediately misses critical review comments and bugs.
+
+**Real example:** PR #147 merged at 43s, review workflow completed at 2m24s - too late. PR #149 merged at 1m51s, review completed at 3m2s.
+
 ---
 
 ## Common Task Patterns
@@ -265,8 +296,22 @@ wp @staging cache flush
 # 9. Mark PR as ready for review
 gh pr ready
 
-# 10. Wait for CI and merge
-gh pr checks <pr-number> --watch && gh pr merge <pr-number> -m -d --admin
+# 10. Wait for CI to pass
+gh pr checks <pr-number> --watch
+
+# 11. Wait for Copilot review workflow to complete (DON'T SKIP THIS)
+PR_NUM=$(gh pr view <pr-number> --json number -q .number)
+while true; do
+    STATUS=$(gh run list --workflow="Copilot code review" --json headBranch,status \
+      --jq ".[] | select(.headBranch == \"refs/pull/${PR_NUM}/head\") | .status")
+    if [ "$STATUS" = "completed" ]; then
+        break
+    fi
+    sleep 30
+done
+
+# 12. After BOTH CI and Copilot workflow complete, merge
+gh pr merge <pr-number> -m -d --admin
 ```
 
 ### Pattern 2: Address PR Code Review Comments
@@ -298,17 +343,28 @@ Addresses review comment thread PRRT_xxx."
 
 # 6. Repeat steps 2-5 for each comment
 
-# 7. After all comments addressed, push all commits
-git push
-
-# 8. Request new review
+# 8. After all comments addressed, request new review
 gh pr edit <pr-number> --add-reviewer @copilot
 
 # 9. Deploy to staging to verify all fixes
 git push origin HEAD:staging --force
 
-# 10. After re-approval, merge
-gh pr checks <pr-number> --watch && gh pr merge <pr-number> -m -d --admin
+# 10. Wait for CI checks to pass
+gh pr checks <pr-number> --watch
+
+# 11. Wait for Copilot review workflow to complete
+PR_NUM=$(gh pr view <pr-number> --json number -q .number)
+while true; do
+    STATUS=$(gh run list --workflow="Copilot code review" --json headBranch,status \
+      --jq ".[] | select(.headBranch == \"refs/pull/${PR_NUM}/head\") | .status")
+    if [ "$STATUS" = "completed" ]; then
+        break
+    fi
+    sleep 30
+done
+
+# 12. After both CI and Copilot workflow complete, merge
+gh pr merge <pr-number> -m -d --admin
 ```
 
 ### Pattern 3: Implement New Feature from ClickUp
@@ -361,8 +417,22 @@ git push origin HEAD:staging --force
 # 7. Mark ready and get review
 gh pr ready
 
-# 8. After approval, merge
-gh pr checks <pr-number> --watch && gh pr merge <pr-number> -m -d --admin
+# 8. Wait for CI to pass
+gh pr checks <pr-number> --watch
+
+# 9. Wait for Copilot review workflow to complete (REQUIRED)
+PR_NUM=$(gh pr view <pr-number> --json number -q .number)
+while true; do
+    STATUS=$(gh run list --workflow="Copilot code review" --json headBranch,status \
+      --jq ".[] | select(.headBranch == \"refs/pull/${PR_NUM}/head\") | .status")
+    if [ "$STATUS" = "completed" ]; then
+        break
+    fi
+    sleep 30
+done
+
+# 10. After both CI and Copilot workflow complete, merge
+gh pr merge <pr-number> -m -d --admin
 
 # 9. Verify production deployment
 # (happens automatically when default branch is pushed)
@@ -560,8 +630,10 @@ When implementing a feature or fix:
 7. **Address code review feedback** - Validate accuracy, reply in threads, resolve when fixed
 8. **Deploy to staging for testing** - `git push origin <branch>:staging --force`
 9. **Verify changes on staging** - Test that the fix/feature works correctly
-10. **Merge to default branch** - `gh pr checks <pr> --watch && gh pr merge <pr> -m -d --admin`
-11. **Production deployment** - Happens automatically when default branch is pushed
+10. **Wait for CI checks to pass** - `gh pr checks <pr> --watch`
+11. **Wait for Copilot review workflow to complete** - Check `gh run list --workflow="Copilot code review"` until status is "completed"
+12. **Merge to default branch** - `gh pr merge <pr> -m -d --admin` (only after both CI and Copilot review complete)
+13. **Production deployment** - Happens automatically when default branch is pushed
 
 **Key points:**
 - Always verify on staging BEFORE merging to default branch
@@ -679,12 +751,91 @@ Use `gh-pr-get-comments` script to retrieve all comments on a PR:
 
 ### Merging to Default Branch
 
-- Before merging, ensure the most recent commit was deployed to staging and verified
-- Use `gh pr checks <pr-number> --watch --interval 2 && gh pr merge <pr-number> -m -d --admin` to verify CI and merge PRs to the default branch
-  - Or use the alias: `gh_check_merge <pr-number> --admin` (the alias handles check-and-merge pattern; add `--admin` flag to bypass branch protection)
-  - The `--admin` flag bypasses branch protection rules
-  - The `-m -d` flags merge and delete the branch after merging
-- **Note**: This is only for merging to the default branch, NOT for deploying to staging
+**🚨 CRITICAL: NEVER merge until BOTH CI passes AND Copilot review workflow completes**
+
+**The Problem:** Copilot review runs as a GitHub Actions workflow that takes 1-3 minutes. If you merge before it completes, you'll miss critical bugs.
+
+**How Copilot Review Works:**
+- Triggered automatically when PR is created/updated
+- Runs as "Copilot code review" GitHub Actions workflow
+- Takes 1-3 minutes to analyze code and post review
+- Must wait for workflow to complete, not just CI checks
+
+**Required Workflow:**
+
+```bash
+# 1. Wait for CI checks (Lint, etc.)
+gh pr checks <pr-number> --watch
+
+# 2. Wait for Copilot review workflow to complete (REQUIRED - don't skip!)
+PR_NUM=$(gh pr view <pr-number> --json number -q .number)
+
+while true; do
+    STATUS=$(gh run list --workflow="Copilot code review" --json headBranch,status \
+      --jq ".[] | select(.headBranch == \"refs/pull/${PR_NUM}/head\") | .status")
+    
+    if [ "$STATUS" = "completed" ]; then
+        echo "✓ Copilot review workflow complete"
+        break
+    fi
+    echo "⏳ Copilot review workflow status: $STATUS (checking again in 30s)"
+    sleep 30
+done
+
+# 3. Now safe to merge
+gh pr merge <pr-number> -m -d --admin
+```
+
+**How to check manually:**
+```bash
+# Check Copilot review workflow status
+gh run list --workflow="Copilot code review" --limit 5
+
+# If status is "completed": OK TO MERGE
+# If status is "in_progress" or "queued": WAIT
+```
+
+**How to check manually:**
+```bash
+# Check if Copilot review exists (posted by workflow)
+gh pr view <pr-number> --json reviews -q '.reviews[] | select(.author.login == "copilot-pull-request-reviewer")'
+
+# If empty: workflow hasn't completed yet - WAIT
+# If shows data: workflow complete - OK TO MERGE
+
+# Or check workflow run status
+gh run list --workflow="Copilot code review" --limit 5
+```
+
+**WRONG (what causes the problem):**
+```bash
+# ❌ BAD: Merges after CI only, doesn't wait for Copilot review workflow
+gh pr checks <pr-number> --watch && gh pr merge <pr-number> -m -d --admin
+```
+
+**Before merging, verify ALL of these:**
+1. ✅ Most recent commit was deployed to staging and verified
+2. ✅ CI checks (Lint, etc.) have passed
+3. ✅ Copilot review workflow has completed (review posted by copilot-pull-request-reviewer)
+4. ✅ Any review comments have been addressed
+
+**Real examples of the problem:**
+- PR #147: Merged 43s after creation, review workflow completed at 2m24s
+- PR #149: Merged at 00:01:51, review workflow completed at 00:03:02 (1m11s after merge)
+- PR #150: Merged at 00:06:56, review workflow completed at 00:07:05 (9s after merge - close!)
+
+**Timing data:**
+- Copilot review workflow starts ~5 seconds after PR created
+- Workflow takes 1-3 minutes to complete
+- CI checks usually complete in <1 minute
+- **Problem:** CI finishes before review workflow
+
+**⚠️ Do NOT use:**
+- `gh_check_merge` alias (only waits for CI, not Copilot workflow)
+- `gh pr checks --watch && gh pr merge` (skips Copilot workflow check)
+- Any command that merges immediately after CI passes
+
+**This is only for merging to default branch**, NOT for deploying to staging.
 
 ### After Pushing
 
@@ -1151,11 +1302,22 @@ git push -u origin HEAD
 # Open draft PR
 gh pr create --draft --fill
 
-# Check CI status and merge
-gh pr checks <pr-number> --watch && gh pr merge <pr-number> -m -d --admin
+# Wait for CI and Copilot review workflow, then merge
+gh pr checks <pr-number> --watch
 
-# Or use alias
-gh_check_merge <pr-number> --admin
+# Wait for Copilot review workflow to complete
+PR_NUM=$(gh pr view <pr-number> --json number -q .number)
+while true; do
+    STATUS=$(gh run list --workflow="Copilot code review" --json headBranch,status \
+      --jq ".[] | select(.headBranch == \"refs/pull/${PR_NUM}/head\") | .status")
+    if [ "$STATUS" = "completed" ]; then
+        break
+    fi
+    sleep 30
+done
+
+# After BOTH complete, merge
+gh pr merge <pr-number> -m -d --admin
 
 # Deploy any branch to staging
 git push origin <branch-name>:staging --force
