@@ -52,6 +52,57 @@
 
 ---
 
+## Working with Tickets and Tasks
+
+**When given a ticket/task URL or ID, use the appropriate script:**
+
+### FreshDesk Tickets
+**URLs:** `https://itineris.freshdesk.com/a/tickets/<ticket-id>` or `https://itineris.freshdesk.com/helpdesk/tickets/<ticket-id>`
+
+```bash
+# Use the freshdesk-get-ticket script (NOT web_fetch)
+~/Code/misc/itineris-bin/freshdesk-get-ticket <ticket-id>
+
+# Example
+~/Code/misc/itineris-bin/freshdesk-get-ticket 21062
+```
+
+**Why use the script:**
+- Authenticated access with API credentials
+- Returns structured data (title, description, requester, status)
+- Works with private tickets that web_fetch cannot access
+- Faster and more reliable than web scraping
+
+### ClickUp Tasks
+**URLs:** `https://app.clickup.com/t/<task-id>`
+
+```bash
+# Use the clickup-get-task script
+~/Code/misc/itineris-bin/clickup-get-task <task-id>
+
+# Example
+~/Code/misc/itineris-bin/clickup-get-task 86bzphaee
+```
+
+### When User Provides URL
+1. **Extract the ticket/task ID from the URL**
+2. **Use the appropriate script** (don't use web_fetch for FreshDesk/ClickUp)
+3. **Create feature branch** with correct naming: `freshdesk/<id>/<desc>` or `clickup/<id>/<desc>`
+
+**Example:**
+```
+User: "Do this task: https://itineris.freshdesk.com/a/tickets/21062"
+
+# Extract ID: 21062
+# Use script:
+~/Code/misc/itineris-bin/freshdesk-get-ticket 21062
+
+# Create branch:
+git checkout -b freshdesk/21062/description-from-ticket
+```
+
+---
+
 ## Communication Guidelines
 
 **When to ask the user vs. proceed autonomously:**
@@ -198,7 +249,19 @@ git checkout -b clickup/task-id/description
 **Mistake:** Using `gh api graphql -f query='...'` for PR comments  
 **Fix:** Use `~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number>`
 
-### 5. Merging Without Staging Verification
+### 5. Using web_fetch for FreshDesk/ClickUp
+**Mistake:** Using `web_fetch` to access FreshDesk or ClickUp URLs  
+**Fix:** Use dedicated scripts with authentication:
+```bash
+# FreshDesk tickets
+~/Code/misc/itineris-bin/freshdesk-get-ticket <ticket-id>
+
+# ClickUp tasks
+~/Code/misc/itineris-bin/clickup-get-task <task-id>
+```
+**Why:** These scripts have proper API authentication, return structured data, and work with private tickets that web_fetch cannot access.
+
+### 6. Merging Without Staging Verification
 **Mistake:** Merging PR after CI passes without testing on staging  
 **Fix:** Always deploy to staging first: `git push origin <branch>:staging --force`, then test
 
