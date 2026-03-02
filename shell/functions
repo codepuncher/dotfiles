@@ -203,6 +203,9 @@ install_wsl_packages() {
   install_git_delta
   # ensure fd is available
   ln -sf "$(which fdfind)" ~/.local/bin/fd
+
+  # Generate the `rg` zsh completion file for zinit.
+  rg --generate=complete-zsh >~/.zinit/completions/_rg
 }
 
 setup_arch_services() {
