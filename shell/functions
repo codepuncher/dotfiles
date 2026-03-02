@@ -330,6 +330,7 @@ install_node_packages() {
 
 install_go_packages() {
   PACKAGES=(
+    github.com/evilmartians/lefthook/v2@latest
     github.com/rhysd/actionlint/cmd/actionlint@latest
     golang.org/x/tools/gopls@latest
     mvdan.cc/sh/v3/cmd/shfmt@latest
