@@ -224,557 +224,213 @@ For PHP, JavaScript, CSS: see "Before Committing" section (line 269 below) for s
 
 ## 🚨 Common Mistakes to Avoid
 
-**These are mistakes Copilot has made in the past - don't repeat them:**
-
-### 1. Committing Directly to Default Branch
-**Mistake:** Making changes and committing without checking current branch  
-**Fix:** Always check `git branch` and create feature branch if on default branch
-```bash
-# Check current branch first
-git branch --show-current
-
-# If on default branch (main/master/develop), create feature branch
-git checkout -b clickup/task-id/description
-```
-
-### 2. Using Wrong gh Command Flags
-**Mistake:** Using `gh pr merge <pr> -md` (combined short flags)  
-**Fix:** Use separate flags: `gh pr merge <pr> -m -d`
-
-### 3. Forgetting to Run Lints Locally
-**Mistake:** Pushing code and letting CI catch linting errors  
-**Fix:** ALWAYS run lints before pushing (see "Before Committing" section)
-
-### 4. Using `gh api` Instead of Custom Scripts
-**Mistake:** Using `gh api graphql -f query='...'` for PR comments  
-**Fix:** Use `~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number>`
-
-### 5. Using web_fetch for FreshDesk/ClickUp
-**Mistake:** Using `web_fetch` to access FreshDesk or ClickUp URLs  
-**Fix:** Use dedicated scripts with authentication:
-```bash
-# FreshDesk tickets
-~/Code/misc/itineris-bin/freshdesk-get-ticket <ticket-id>
-
-# ClickUp tasks
-~/Code/misc/itineris-bin/clickup-get-task <task-id>
-```
-**Why:** These scripts have proper API authentication, return structured data, and work with private tickets that web_fetch cannot access.
-
-### 6. Merging Without Staging Verification
-**Mistake:** Merging PR after CI passes without testing on staging  
-**Fix:** Always deploy to staging first: `git push origin <branch>:staging --force`, then test
-
-### 7. Using Wrong ShellCheck Severity
-**Mistake:** Running `shellcheck script.sh` (defaults to warning level)  
-**Fix:** Use `shellcheck --severity=style script.sh` to match CI
-
-### 8. Creating Multi-File Instructions
-**Mistake:** Splitting instructions into multiple linked files  
-**Fix:** Keep everything in ONE file - Copilot CLI doesn't follow relative links
-
-### 9. Forgetting Branch Naming Convention
-**Mistake:** Using generic names like `feature/fix` without ticket reference  
-**Fix:** Include ticket source: `clickup/<task-id>/description` or `freshdesk/<ticket-id>/description`
-
-### 10. Merging Before Copilot Review Completes
-**Mistake:** Running `gh pr checks --watch && gh pr merge` immediately after CI passes, before Copilot review workflow finishes  
-**Fix:** Wait for both CI checks AND Copilot review workflow to complete
-
-```bash
-# 1. Wait for CI checks
-gh pr checks <pr-number> --watch
-
-# 2. Wait for Copilot review workflow to complete
-PR_NUM=$(gh pr view <pr-number> --json number -q .number)
-while true; do
-    STATUS=$(gh run list --workflow="Copilot code review" --json headBranch,status \
-      --jq ".[] | select(.headBranch == \"refs/pull/${PR_NUM}/head\") | .status")
-    if [ "$STATUS" = "completed" ]; then
-        echo "✓ Copilot review workflow complete"
-        break
-    fi
-    echo "⏳ Copilot review workflow status: $STATUS (checking again in 30s)"
-    sleep 30
-done
-
-# 3. Check for review comments that need addressing
-~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
-
-# 4. If there are unresolved comments, address them first (see Pattern 2)
-# If no comments or all addressed, then merge
-gh pr merge <pr-number> -m -d --admin
-```
-
-**Why this matters:** Copilot review runs as a GitHub Actions workflow that takes 1-3 minutes after CI passes. Merging immediately misses critical review comments and bugs.
-
-**Real example:** PR #147 merged at 43s, review workflow completed at 2m24s - too late. PR #149 merged at 1m51s, review completed at 3m2s.
+1. **Committing to default branch** - Check `git branch --show-current` first, create feature branch
+2. **Wrong gh flags** - Use `-m -d` not `-md` (gh doesn't support combined short flags)
+3. **Skipping local lints** - ALWAYS run lints before pushing (see "Before Committing")
+4. **Using `gh api` for PR comments** - Use `gh-pr-get-comments` and `gh-pr-reply-to-thread` scripts
+5. **Using web_fetch for FreshDesk/ClickUp** - Use `freshdesk-get-ticket` or `clickup-get-task` scripts
+6. **Merging without staging** - Deploy to staging first: `git push origin <branch>:staging --force`
+7. **Wrong ShellCheck severity** - Use `--severity=style` to match CI
+8. **Multi-file instructions** - Keep in ONE file (Copilot CLI doesn't follow links)
+9. **Generic branch names** - Use `clickup/<id>/desc` or `freshdesk/<id>/desc` format
+10. **Merging before Copilot review** - Use [WAIT_FOR_CHECKS] snippet (takes 1-3 min after CI)
 
 ---
 
 ## Common Task Patterns
 
-**Full workflow examples for common scenarios:**
+**Full workflow examples for common scenarios.**
 
-### Pattern 1: Fix a Bug from FreshDesk Ticket
+### Reusable Workflow Snippets
 
-**Scenario:** You receive a FreshDesk ticket #21170 reporting broken image positioning on the intro section.
-
-**Complete workflow:**
+**[WAIT_FOR_CHECKS]** - Use after marking PR ready:
 ```bash
-# 1. Check current branch and create feature branch
-git branch --show-current
-git checkout -b freshdesk/21170/intro-section-image-position
-
-# 2. Push branch immediately for visibility
-git push -u origin HEAD
-
-# 3. Open draft PR early
-gh pr create --draft --fill
-# In description: Add ticket link, describe issue, outline fix approach
-
-# 4. Make the fix, test locally
-# ... edit files ...
-
-# 5. Run lints before committing
-./vendor/bin/phpcs --standard=phpcs.xml path/to/changed-file.php
-./vendor/bin/phpcbf --standard=phpcs.xml path/to/changed-file.php  # auto-fix if needed
-npm run lint:css  # if CSS was changed
-
-# 6. Commit with clear message
-git add -A
-git commit -m "fix: correct intro section image positioning
-
-Image was overlapping text on mobile due to incorrect z-index
-and positioning. Updated CSS to use relative positioning with
-proper stacking context.
-
-Fixes FreshDesk ticket #21170"
-
-# 7. Push commit
-git push
-
-# 8. Deploy to staging and test
-git push origin HEAD:staging --force
-# Test on staging environment
-wp @staging cache flush
-# Visit staging site and verify fix
-
-# 9. Mark PR as ready for review
-gh pr ready
-
-# 10. Wait for CI to pass
 gh pr checks <pr-number> --watch
-
-# 11. Wait for Copilot review workflow to complete (DON'T SKIP THIS)
 PR_NUM=$(gh pr view <pr-number> --json number -q .number)
 while true; do
     STATUS=$(gh run list --workflow="Copilot code review" --json headBranch,status \
       --jq ".[] | select(.headBranch == \"refs/pull/${PR_NUM}/head\") | .status")
-    if [ "$STATUS" = "completed" ]; then
-        break
-    fi
+    [ "$STATUS" = "completed" ] && break
     sleep 30
 done
-
-# 12. Check for review comments
 ~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
+# If unresolved comments exist, address them (see Pattern 2)
+# If no comments or all addressed: gh pr merge <pr-number> -m -d --admin
+```
 
-# 13. If unresolved comments exist, address them (see Pattern 2)
-# If no comments or all addressed, merge
-gh pr merge <pr-number> -m -d --admin
+**[CREATE_BRANCH]** - Create and push feature branch:
+```bash
+git checkout -b <type>/<id>/<description>  # type: freshdesk/clickup/issue/feature
+git push -u origin HEAD
+gh pr create --draft --fill
+```
+
+**[LINT_PHP]** - Lint PHP files:
+```bash
+./vendor/bin/phpcs --standard=phpcs.xml file.php
+./vendor/bin/phpcbf --standard=phpcs.xml file.php  # auto-fix
+```
+
+**[DEPLOY_STAGING]** - Deploy and test on staging:
+```bash
+git push origin HEAD:staging --force
+wp @staging cache flush
+# Visit staging and verify changes
+```
+
+### Pattern 1: Fix a Bug from FreshDesk Ticket
+
+**Scenario:** FreshDesk ticket #21170 reports broken image positioning.
+
+```bash
+# 1. [CREATE_BRANCH]
+git checkout -b freshdesk/21170/intro-section-image-position
+git push -u origin HEAD
+gh pr create --draft --fill
+
+# 2. Make fix and test locally
+# ... edit files ...
+
+# 3. [LINT_PHP] (or appropriate linter)
+./vendor/bin/phpcs --standard=phpcs.xml path/to/changed-file.php
+npm run lint:css  # if CSS changed
+
+# 4. Commit
+git add -A
+git commit -m "fix: correct intro section image positioning
+
+Image was overlapping text on mobile due to incorrect z-index.
+Updated CSS to use relative positioning.
+
+Fixes FreshDesk ticket #21170"
+git push
+
+# 5. [DEPLOY_STAGING]
+git push origin HEAD:staging --force
+wp @staging cache flush
+
+# 6. Mark ready and [WAIT_FOR_CHECKS]
+gh pr ready
+gh pr checks <pr-number> --watch
+# ... wait for Copilot review workflow (see [WAIT_FOR_CHECKS] above)
+# ... check for comments and merge
 ```
 
 ### Pattern 2: Address PR Code Review Comments
 
-**Scenario:** You have a PR with 10 unresolved review comments from GitHub Advanced Security bot and human reviewers.
+**Scenario:** PR has 10 unresolved review comments.
 
-**Complete workflow:**
 ```bash
-# 1. Get all unresolved comments (note the thread IDs)
+# 1. Get unresolved comments
 ~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
 
-# 2. For each comment, fix the issue
-# ... make code changes ...
-
-# 3. Run lints after each fix
+# 2. For each comment: fix, lint, commit, reply
 ./vendor/bin/phpcs --standard=phpcs.xml file.php
+git commit -am "fix: address security vulnerability
 
-# 4. Commit the fix
-git commit -am "fix: address security vulnerability in user input handling
+Added sanitization. Addresses thread PRRT_xxx."
 
-Added proper sanitization and validation for user-submitted data.
-Addresses review comment thread PRRT_xxx."
-
-# 5. Reply to the specific thread and resolve it
 ~/Code/misc/itineris-bin/gh-pr-reply-to-thread <pr-number> \
-  --thread-id='PRRT_xxx' \
-  --message='Fixed in commit abc1234' \
-  --resolve
+  --thread-id='PRRT_xxx' --message='Fixed in commit abc1234' --resolve
 
-# 6. Repeat steps 2-5 for each comment
-
-# 8. After all comments addressed, request new review
+# 3. After all fixed, re-review and [DEPLOY_STAGING]
 gh pr edit <pr-number> --add-reviewer @copilot
-
-# 9. Deploy to staging to verify all fixes
 git push origin HEAD:staging --force
 
-# 10. Wait for CI checks to pass
-gh pr checks <pr-number> --watch
-
-# 11. Wait for Copilot review workflow to complete
-PR_NUM=$(gh pr view <pr-number> --json number -q .number)
-while true; do
-    STATUS=$(gh run list --workflow="Copilot code review" --json headBranch,status \
-      --jq ".[] | select(.headBranch == \"refs/pull/${PR_NUM}/head\") | .status")
-    if [ "$STATUS" = "completed" ]; then
-        break
-    fi
-    sleep 30
-done
-
-# 12. Check for review comments
-~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
-
-# 13. If unresolved comments exist, address them first
-# If no comments or all addressed, merge
-gh pr merge <pr-number> -m -d --admin
+# 4. [WAIT_FOR_CHECKS] and merge
+# (see [WAIT_FOR_CHECKS] snippet above)
 ```
 
 ### How to Handle Copilot Review Comments
 
-**When Copilot review posts comments, evaluate each one carefully:**
+**Prioritize by severity:** Security > Bugs > Performance > Code quality > Style > Nitpicks
 
-#### 1. Prioritize Comments by Severity
-- **Security vulnerabilities** (SQL injection, XSS, etc.) - Fix immediately
-- **Bugs/Logic errors** - Fix immediately  
-- **Performance issues** - Fix if significant impact
-- **Code quality** (complexity, duplication) - Fix if reasonable
-- **Style/formatting** - Fix if violates project standards
-- **Nitpicks** - Use judgment, may skip if trivial
+**Validate accuracy:** Not all comments are correct. Research issue, test suggestion before applying.
 
-#### 2. Validate Comment Accuracy
-Not all Copilot comments are correct. Validate before changing:
+**False positive:** Reply explaining why, resolve thread
 
-```bash
-# Get the comment
-~/Code/misc/itineris-bin/gh-pr-get-comments <pr> --resolved=false
+**Address automatically:** Security with clear fixes, obvious bugs, missing validation, lint issues  
+**Ask user first:** Architectural changes, business logic, breaking changes, approach suggestions
 
-# Research the issue
-# - Check if vulnerability exists in your context
-# - Review if logic error is actually wrong
-# - Test the suggested fix
-```
+**Multiple comments:** Categorize by severity, fix security first (separate commit), then bugs, then quality
 
-**When comment is a false positive:**
-```bash
-# Reply explaining why it doesn't apply
-~/Code/misc/itineris-bin/gh-pr-reply-to-thread <pr> \
-  --thread-id='PRRT_xxx' \
-  --message="This is a false positive because [explanation]. The code is correct as-is." \
-  --resolve
-```
-
-#### 3. When to Address Automatically vs Ask User
-
-**Address automatically:**
-- Security vulnerabilities with clear fixes
-- Obvious bugs (typos, wrong variable names)
-- Missing input validation/escaping
-- Clear performance improvements
-- Lint/formatting issues
-
-**Ask user first:**
-- Architectural changes
-- Business logic modifications
-- Breaking changes to APIs
-- Comments suggesting different approach
-- When fix has trade-offs
-
-#### 4. Addressing Multiple Comments
-
-**Workflow for multiple comments:**
-```bash
-# 1. Categorize comments by severity
-~/Code/misc/itineris-bin/gh-pr-get-comments <pr> --resolved=false > review.txt
-
-# 2. Fix all security issues first (separate commit)
-git commit -m "security: fix SQL injection vulnerability"
-
-# 3. Fix bugs (separate commit)  
-git commit -m "fix: correct calculation in total_price"
-
-# 4. Fix quality issues (can combine)
-git commit -m "refactor: reduce complexity and improve readability"
-
-# 5. Push all fixes
-git push
-
-# 6. Reply to each thread individually
-~/Code/misc/itineris-bin/gh-pr-reply-to-thread <pr> --thread-id='...' --message='...' --resolve
-```
-
-#### 5. When Comments Conflict with Requirements
-
-If Copilot suggests changes that conflict with user requirements:
-1. **Prioritize user requirements** - They know the business context
-2. **Reply to comment** - Explain why requirement takes precedence
-3. **Suggest compromise** - If there's a way to address both
-
-**Example:**
-```bash
-~/Code/misc/itineris-bin/gh-pr-reply-to-thread <pr> \
-  --thread-id='PRRT_xxx' \
-  --message="User specifically requested this approach due to [business reason]. 
-  I've added validation to mitigate the concern you raised." \
-  --resolve
-```
-
----
+**Conflicts with requirements:** Prioritize user requirements, reply explaining business context
 
 ### Pattern 3: Implement New Feature from ClickUp
 
-**Scenario:** ClickUp task 86bzphaee asks for landing page amendments - new hero section with CTA.
+**Scenario:** ClickUp task 86bzphaee - landing page hero section with CTA.
 
-**Complete workflow:**
 ```bash
-# 1. Create feature branch
+# 1. [CREATE_BRANCH] with implementation plan in PR description
 git checkout -b clickup/86bzphaee/landing-page-amendments
-
-# 2. Push and create draft PR with implementation plan
 git push -u origin HEAD
 gh pr create --draft --fill
-# Add in PR description:
-# - Link to ClickUp task
-# - Implementation plan with phases
-# - Expected timeline
-# - Screenshots/mockups if available
 
-# 3. Implement in phases, committing after each
-# Phase 1: Create hero block
-# ... create ACF fields, templates ...
-git commit -am "feat: add hero section ACF block"
-git push
+# 2. Implement in phases, commit/push after each
+git commit -am "feat: add hero section ACF block" && git push
+git commit -am "style: add hero section styles" && git push
+git commit -am "feat: add CTA tracking" && git push
 
-# Phase 2: Style the hero
-# ... add CSS ...
-git commit -am "style: add hero section styles with mobile responsive layout"
-git push
-
-# Phase 3: Add CTA functionality
-# ... add JS if needed ...
-git commit -am "feat: add CTA tracking and form handling"
-git push
-
-# 4. Run all lints before marking ready
+# 3. Lint all changes
 ./vendor/bin/phpcs --standard=phpcs.xml web/app/themes/*/
-npm run lint:js
-npm run lint:css
+npm run lint:js && npm run lint:css
 
-# 5. Deploy to staging for client review
+# 4. [DEPLOY_STAGING] and update PR with screenshots/testing notes
 git push origin HEAD:staging --force
 
-# 6. Update PR description with:
-# - Before/After screenshots
-# - Testing notes
-# - Staging URL for review
-
-# 7. Mark ready and get review
+# 5. Mark ready and [WAIT_FOR_CHECKS]
 gh pr ready
-
-# 8. Wait for CI to pass
-gh pr checks <pr-number> --watch
-
-# 9. Wait for Copilot review workflow to complete (REQUIRED)
-PR_NUM=$(gh pr view <pr-number> --json number -q .number)
-while true; do
-    STATUS=$(gh run list --workflow="Copilot code review" --json headBranch,status \
-      --jq ".[] | select(.headBranch == \"refs/pull/${PR_NUM}/head\") | .status")
-    if [ "$STATUS" = "completed" ]; then
-        break
-    fi
-    sleep 30
-done
-
-# 10. Check for review comments
-~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
-
-# 11. If unresolved comments exist, address them first
-# If no comments or all addressed, merge
-gh pr merge <pr-number> -m -d --admin
-
-# 9. Verify production deployment
-# (happens automatically when default branch is pushed)
+# (see [WAIT_FOR_CHECKS] snippet above)
 ```
 
 ### Pattern 4: Emergency Hotfix
 
-**Scenario:** Production site is down, need immediate fix.
+**Scenario:** Production site down, need immediate fix.
 
-**Fast workflow:**
 ```bash
-# 1. Create hotfix branch from default
-git checkout main  # or master/develop
-git pull
+# 1. Create hotfix branch, make minimal fix, test locally
+git checkout main && git pull
 git checkout -b hotfix/critical-issue-description
+# ... make fix ...
 
-# 2. Make minimal fix only
-# ... edit only what's necessary ...
-
-# 3. Test locally FIRST
-# ... verify fix works ...
-
-# 4. Quick lint check
+# 2. Quick lint and commit
 ./vendor/bin/phpcs --standard=phpcs.xml changed-file.php
-
-# 5. Commit and push
 git commit -am "hotfix: resolve critical production issue
 
 [Describe issue and fix]"
 git push -u origin HEAD
 
-# 6. Create PR and deploy to staging IMMEDIATELY
+# 3. Create PR, test on staging, merge if verified
 gh pr create --fill
 git push origin HEAD:staging --force
-
-# 7. Test on staging quickly
 wp @staging cache flush
-# Verify fix works
+gh pr merge <pr-number> -m -d --admin  # Skip review for P0 incidents
 
-# 8. If verified, merge immediately
-gh pr merge <pr-number> -m -d --admin
-
-# 9. Monitor production
-# Watch logs, verify issue is resolved
+# 4. Monitor production
 ```
 
 ### Incident Communication for Hotfixes
 
-**When deploying emergency hotfixes:**
+**Assess severity:** P0 (site down), P1 (key function broken), P2 (minor issue)
 
-#### 1. Before Starting
-**Assess severity:**
-- Is site completely down? (P0 - Critical)
-- Is key functionality broken? (P1 - High)
-- Is minor feature broken? (P2 - Medium)
+**For P0/P1:** Notify stakeholders, communicate every 5-10 min, fix first/discuss later
 
-**For P0/P1 incidents, notify stakeholders:**
-```
-User: "Site is down - critical issue"
-
-Agent: I'm deploying an emergency hotfix for [issue]. 
-       I'll notify you when:
-       1. Fix is deployed to staging
-       2. Fix is deployed to production
-       3. Verification is complete
-```
-
-#### 2. During Incident
-**Keep user informed of progress:**
-- "Identified root cause: [brief explanation]"
-- "Hotfix deployed to staging, testing now"
-- "Staging verified, deploying to production"
-
-**Don't wait for permission on P0 incidents:**
-- Fix first, discuss later
-- Document decisions in PR
-- Notify as you work, don't block on approval
-
-#### 3. After Resolution
-**Provide incident summary:**
-```
-Incident resolved ✓
-
-Root cause: [What caused the issue]
-Fix applied: [What was changed]
-Deployed: [Timestamp]
-Verification: [What was tested]
-
-Monitoring for 10 minutes to ensure stability.
-```
-
-#### 4. Post-Mortem (for major incidents)
-**Document for learning:**
-- What happened?
-- What was the impact?
-- What was the root cause?
-- What was the fix?
-- How can we prevent this?
-
-**Ask user:**
-"Should I create a post-mortem document for this incident?"
-
-#### 5. Who to Notify
-**Ask user at start of incident:**
-- "Should I notify anyone else about this incident?"
-- "Are there any communication channels I should post to?"
-
-**Typical stakeholders:**
-- Project manager
-- Client (for client sites)
-- Team lead
-- On-call engineer
-
-**Remember:**
-- For P0 (site down): Communicate every 5-10 minutes
-- For P1 (major feature down): Communicate at key milestones
-- For P2 (minor issue): Standard workflow is fine
+**After resolution:** Provide summary (root cause, fix, verification), create post-mortem if major
 
 ### Post-Merge Production Verification
 
-**After merging to default branch, deployment happens automatically. Verify it succeeded:**
+**When to verify:** Hotfixes, breaking changes, DB migrations, major features
 
-#### 1. Wait for Deployment to Complete
+**Steps:**
 ```bash
-# Check recent workflow runs
-gh run list --limit 5
-
-# If deploy workflow exists, wait for it
-gh run watch
+gh run list --limit 5  # Check deploy workflow status
+curl -I https://production-site.com  # Test site responding
+wp @production cli version  # Check for PHP errors
 ```
 
-#### 2. Verify Deployment Artifacts
-```bash
-# Check latest commit is deployed
-git log origin/main -1 --oneline
-# Note the commit SHA
+**Monitor first 5-10 minutes:** Check Sentry, server logs, site performance, test deployed feature
 
-# If deployment creates tags/releases
-gh release list --limit 5
-```
-
-#### 3. Basic Smoke Tests
-```bash
-# Test production site is responding
-curl -I https://production-site.com
-
-# Check for PHP errors (if wp-cli available)
-wp @production cli version
-
-# Check error logs for new errors
-# (Project-specific - check documentation for log location)
-```
-
-#### 4. Monitor for Errors
-**For first 5-10 minutes after deployment:**
-- Check Sentry for new errors (if configured)
-- Monitor server logs
-- Check site performance/responsiveness
-- Test the specific feature you deployed
-
-#### 5. If Issues Detected
-```bash
-# Option 1: Quick fix
-git checkout -b hotfix/production-issue
-# Make minimal fix
-git commit -am "hotfix: fix production issue"
-git push -u origin HEAD
-gh pr create --fill
-# Fast-track review and merge
-
-# Option 2: Rollback (see Rollback Procedures section)
-git revert HEAD
+**If issues:** Quick fix or rollback (see Rollback Procedures)
 git push origin main
 ```
 
@@ -1603,236 +1259,54 @@ add_action('wp_enqueue_scripts', function() {
 
 ## Database Operations
 
-**CRITICAL: Database operations can be destructive. Always follow safety procedures.**
+**CRITICAL: Always backup first, test on staging, have rollback plan**
 
-### Before Any Database Changes:
+**Backup:** `wp @staging db export backup-$(date +%Y%m%d-%H%M%S).sql`
 
-1. **Backup first** - ALWAYS
-   ```bash
-   # Export database
-   wp @staging db export backup-$(date +%Y%m%d-%H%M%S).sql
-   
-   # Or use WP CLI on production (with caution)
-   wp @production db export backup-$(date +%Y%m%d-%H%M%S).sql
-   ```
+**Safe migrations:**
+- Add columns: `ALTER TABLE wp_table ADD COLUMN field VARCHAR(255) DEFAULT '';`
+- Remove columns: Backup first, check not used, then `DROP COLUMN`
+- Change data: Test on staging first, verify, then apply to production
 
-2. **Test on staging first** - NEVER run migrations directly on production
-3. **Have rollback plan** - Know how to undo the change
-4. **Verify backup** - Check file size, test restore on local
-
-### Safe Migration Patterns:
-
-**Adding columns (safe):**
-```sql
--- Add column with default value
-ALTER TABLE wp_tablename ADD COLUMN new_field VARCHAR(255) DEFAULT '' NOT NULL;
-```
-
-**Removing columns (DANGEROUS - backup first):**
-```sql
--- Check column isn't used first
--- Backup database
--- Remove column
-ALTER TABLE wp_tablename DROP COLUMN old_field;
-```
-
-**Changing data (test thoroughly):**
+**Common commands:**
 ```bash
-# Always test on staging first
-wp @staging db query "UPDATE wp_options SET option_value = 'new' WHERE option_name = 'specific_option'"
-
-# Verify change worked
-wp @staging option get specific_option
-
-# Then apply to production only after verification
-wp @production db query "UPDATE wp_options SET option_value = 'new' WHERE option_name = 'specific_option'"
+wp @staging search-replace 'old.com' 'new.com' --dry-run  # Domain changes
+wp @staging db query "SELECT * FROM wp_options..."         # Query
+wp @staging db optimize                                     # Optimize
 ```
 
-### WP CLI Database Commands:
+**Migration workflow:** Write → Test local → Commit → Deploy staging → Run on staging → Verify → Merge → Auto-deploy production → Monitor
 
-```bash
-# Search and replace (e.g., domain changes)
-wp @staging search-replace 'old-domain.com' 'new-domain.com' --dry-run
-wp @staging search-replace 'old-domain.com' 'new-domain.com' --skip-columns=guid
+**Rollback:** Restore from backup: `wp @production db import backup-FILE.sql`
 
-# Query database
-wp @staging db query "SELECT * FROM wp_options WHERE option_name LIKE '%cache%'"
-
-# Optimize tables
-wp @staging db optimize
-
-# Check database
-wp @staging db check
-
-# Reset database (DANGEROUS - staging only)
-wp @staging db reset --yes
-```
-
-### Migration Workflow:
-
-1. Write migration in feature branch
-2. Test locally with fresh database
-3. Commit migration file
-4. Deploy to staging
-5. Run migration on staging: `wp @staging migrate`
-6. Verify staging works correctly
-7. Merge to default branch
-8. Migration runs automatically on production deploy
-9. Monitor production for errors
-
-### Rollback Database:
-
-If migration breaks production:
-```bash
-# 1. Restore from backup (if available)
-wp @production db import backup-YYYYMMDD-HHMMSS.sql
-
-# 2. Or rollback deployment and revert migration
-# See Rollback Procedures section
-```
+---
 
 ## Rollback Procedures
 
-**When deployment breaks production, act fast:**
+**When production breaks, act fast:**
 
-### Emergency Rollback Steps:
-
-**1. Revert the deployment immediately:**
+**1. Revert deployment:**
 ```bash
-# Get the last good commit SHA
-git log origin/main --oneline -10
-
-# Create hotfix branch from last good commit
-git checkout <last-good-commit-sha>
-git checkout -b hotfix/rollback-bad-deployment
-
-# Force push to default branch (EXTREME EMERGENCY ONLY)
-git push origin HEAD:main --force
-
-# Or better: Revert the bad commit
-git checkout main
-git revert <bad-commit-sha>
-git push origin main
+git log origin/main --oneline -10              # Find last good commit
+git revert <bad-commit-sha> && git push        # Revert (preferred)
+# OR force push last good commit (extreme emergency only)
 ```
 
-**2. Verify production is working:**
-```bash
-# Check site loads
-curl -I https://production-site.com
+**2. Verify:** `curl -I https://site.com`, `wp @production cli version`, `wp @production cache flush`
 
-# Check for PHP errors
-wp @production cli version  # If WP CLI responds, PHP is working
+**3. Communicate:** Notify team, document incident
 
-# Clear caches
-wp @production cache flush
-```
+**Database rollback:** `wp @production db import backup-FILE.sql` or write reverse migration
 
-**3. Communicate:**
-- Notify team immediately in Slack/appropriate channel
-- Document what broke and what you did
-- Create incident report after resolution
+**Code rollback:** `git revert <commit-sha>` or `git revert <oldest>..<newest>`
 
-### Rollback Database Migration:
+**Dependencies rollback:** `git checkout HEAD~1 package.json && npm install`
 
-**If migration broke database:**
+**Prevention:** Test on staging, keep backups, small changes, monitor first 15 min, have comms plan
 
-```bash
-# Option 1: Restore from backup (fastest)
-wp @production db import backup-YYYYMMDD-HHMMSS.sql
-wp @production cache flush
+**Incident comms:** Notify immediately, update every 10-15 min, write incident report after
 
-# Option 2: Write reverse migration
-# Create migration that undoes the changes
-# Test on staging first, then apply to production
-
-# Option 3: Manual SQL rollback
-wp @production db query "ALTER TABLE wp_tablename DROP COLUMN added_field"
-```
-
-### Rollback Code Changes:
-
-**If specific feature broke:**
-
-```bash
-# Revert the specific commit
-git revert <commit-sha>
-git push origin main
-
-# Or revert multiple commits
-git revert <oldest-bad-commit>..<newest-bad-commit>
-git push origin main
-```
-
-### Rollback Node/PHP Dependencies:
-
-**If dependency update broke build:**
-
-```bash
-# Restore old package files
-git checkout HEAD~1 package.json package-lock.json
-npm install
-npm run build
-
-# Or for PHP
-git checkout HEAD~1 composer.json composer.lock
-composer install
-```
-
-### Prevention:
-
-- ✅ Always test on staging before merging
-- ✅ Keep backups current (automated daily backups)
-- ✅ Use small, incremental changes (easier to rollback)
-- ✅ Monitor after deployment (first 15 minutes critical)
-- ✅ Have communication plan (know who to notify)
-
-### Incident Communication:
-
-**During incident:**
-1. Immediate notification: "Production issue - investigating"
-2. Status updates every 10-15 minutes
-3. Resolution notification: "Fixed - deployed rollback"
-
-**After incident:**
-1. Write incident report
-2. Document root cause
-3. Create prevention tasks
-4. Update runbooks if needed
-
-## Performance Best Practices
-
-### Resource Loading
-
-- Use `preload` for critical CSS/JS with `fetchpriority="high"`
-- Add `dns-prefetch` and `preconnect` hints for external resources
-- Make resource hints conditional - only add when actually needed
-- Avoid render-blocking resources where possible
-
-**Example:**
-```php
-// Only preload hero image on pages that use the hero block
-add_action('wp_head', function() {
-    if (has_block('acf/hero-banner')) {
-        echo '<link rel="preload" as="image" href="' . esc_url(get_template_directory_uri() . '/assets/hero.webp') . '" fetchpriority="high">';
-    }
-});
-```
-
-### Conditional Loading
-
-- Check if blocks/features exist before loading their assets
-- Use WordPress's `has_block()` function to detect block usage in content
-- Check if scripts are enqueued before adding related resources
-
-**Example:**
-```php
-// Only load animations script when hero block is present
-add_action('wp_enqueue_scripts', function() {
-    if (has_block('acf/hero-banner')) {
-        wp_enqueue_script('hero-animations', get_template_directory_uri() . '/dist/hero.js', [], '1.0', true);
-    }
-});
-```
+---
 
 ## WordPress Specific
 
@@ -2076,257 +1550,44 @@ op.exe item get "Item Name" --vault "Vault Name" --fields username,password
 
 ## Troubleshooting
 
-**Common issues and their solutions:**
-
 ### CI/CD Failures
+**Check what failed:** `gh pr checks <pr>` or `gh pr view <pr> --web`
 
-**When CI fails after you pushed:**
+**Linting:** Run locally: `shellcheck --severity=style`, `./vendor/bin/phpcs`, `npm run lint`. Auto-fix: `phpcbf`, `npm run lint:fix`
 
-1. **Check what failed:**
-```bash
-gh pr checks <pr-number>
-# Or view in browser
-gh pr view <pr-number> --web
-```
+**Tests:** Run locally: `npm test`, `./vendor/bin/phpunit`. If pass locally but fail CI: check versions, review logs
 
-2. **For linting failures (ShellCheck, PHPCS, ESLint):**
-```bash
-# Pull the latest changes if any
-git pull
+**Build:** Run locally: `npm run build`, `composer install`. Check dependencies, version conflicts, syntax errors
 
-# Run the failing linter locally
-shellcheck --severity=style script.sh
-./vendor/bin/phpcs --standard=phpcs.xml file.php
-npm run lint
-
-# Fix issues
-./vendor/bin/phpcbf --standard=phpcs.xml file.php  # Auto-fix PHP
-npm run lint:fix  # Auto-fix JS
-
-# Commit and push fix
-git commit -am "fix: resolve linting errors"
-git push
-```
-
-3. **For test failures:**
-```bash
-# Run tests locally to reproduce
-npm test
-./vendor/bin/phpunit
-
-# If tests pass locally but fail in CI:
-# - Check CI environment differences (PHP version, Node version)
-# - Review test logs in GitHub Actions
-# - May be timing/race condition
-
-# Fix the test or code, then push
-git commit -am "fix: resolve test failure"
-git push
-```
-
-4. **For build failures:**
-```bash
-# Run build locally
-npm run build
-composer install
-
-# Check for:
-# - Missing dependencies
-# - Version conflicts
-# - Syntax errors
-
-# Fix and push
-git commit -am "fix: resolve build errors"
-git push
-```
-
-**⚠️ If you're stuck:** Ask user before making significant changes to fix CI. They may know the root cause.
-
-**"ShellCheck failed":**
-```bash
-# Problem: Script has shellcheck violations
-# Solution: Run shellcheck locally with correct severity
-shellcheck --severity=style script.sh
-
-# Fix issues, then verify
-git diff --check  # No trailing whitespace
-shfmt -d script.sh  # Properly formatted
-shellcheck --severity=style script.sh  # Passes
-```
-
-**"PHPCS errors":**
-```bash
-# Problem: PHP code doesn't meet coding standards
-# Solution: Auto-fix with phpcbf, then manual fixes
-./vendor/bin/phpcbf --standard=phpcs.xml file.php
-./vendor/bin/phpcs --standard=phpcs.xml file.php
-
-# If auto-fix doesn't work, read the errors and fix manually
-```
-
-**"Tests timeout":**
-```bash
-# Problem: Tests taking too long or hanging
-# Causes: Database connection issues, infinite loops, external API calls
-# Solution: Check test logs, add timeouts, mock external services
-```
-
-**"Build failed - npm/composer errors":**
-```bash
-# Problem: Dependencies can't install or build fails
-# Solution: Clear caches and reinstall
-
-# Node
-rm -rf node_modules package-lock.json
-npm install
-npm run build
-
-# PHP
-rm -rf vendor composer.lock
-composer install
-```
+**Stuck?** Ask user before significant CI fixes
 
 ### Git Issues
+**Permission denied:** Check SSH key: `ssh-add ~/.ssh/id_rsa`, `ssh -T git@github.com`
 
-**"Permission denied (publickey)":**
-```bash
-# Problem: SSH key not configured or not added to agent
-# Solution: Check SSH key exists and is added
-ls -la ~/.ssh/id_*
-ssh-add ~/.ssh/id_rsa  # or id_ed25519
-ssh -T git@github.com  # Test connection
-```
+**Detached HEAD:** Create branch: `git checkout -b new-branch` or return: `git checkout main`
 
-**"Detached HEAD state":**
-```bash
-# Problem: Not on a branch
-# Solution: Create branch from current position or checkout existing branch
-git checkout -b new-branch-name  # Create new branch
-# Or
-git checkout main  # Go back to main branch
-```
+**Merge conflicts:** See Conflict Resolution section
 
-**"Merge conflict" (see Conflict Resolution section above)**
+### WP CLI Issues
+**Connection errors:** Test SSH first: `ssh user@server`, check `wp-cli.yml`, verify `ssh-add -l`
 
-**"fatal: refusing to merge unrelated histories":**
-```bash
-# Problem: Trying to merge branches with different roots
-# Solution: Use --allow-unrelated-histories (rare, ask user first)
-git merge --allow-unrelated-histories <branch>
-```
-
-### WP CLI Connection Issues
-
-**"Error establishing database connection":**
-```bash
-# Problem: Can't connect to remote database
-# Causes: SSH tunnel issues, credentials wrong, firewall
-# Solution: Test SSH connection first
-ssh user@staging-server.com
-
-# Check wp-cli.yml configuration
-cat wp-cli.yml
-
-# Verify SSH key is added
-ssh-add -l
-```
-
-**"Connection timeout":**
-```bash
-# Problem: WP CLI command hangs
-# Solution: Increase timeout or check network
-wp @staging option get home --ssh=ssh-user@host:/path --timeout=60
-```
-
-**"Command not found: wp":**
-```bash
-# Problem: WP CLI not installed or not in PATH on remote
-# Solution: Check WP CLI is installed on remote server
-ssh user@server 'which wp'
-```
+**Command not found:** Check WP CLI installed on remote: `ssh user@server 'which wp'`
 
 ### Deployment Issues
+**Staging not updating:** Check workflow ran: `gh run list --branch staging`, clear cache: `wp @staging cache flush`
 
-**"Staging not updating after push":**
-```bash
-# Problem: Push succeeded but changes not visible
-# Causes: Cache, CD workflow didn't run, wrong branch
-# Solution: Check GitHub Actions, clear cache
+**Production broken:** See Rollback Procedures
 
-# Check if deployment ran
-gh run list --branch staging --limit 5
+### Linting/Build Issues
+**Lint passes locally, fails CI:** Check versions match: `shellcheck --version`, `phpcs --version`, `node --version`
 
-# Force clear cache
-wp @staging cache flush
+**Tools not found:** Install: `brew install shellcheck`, `composer install`, `npm install`
 
-# Check correct commit is deployed
-ssh user@staging-server 'cd /path/to/site && git log -1'
-```
+**Module not found:** Run `npm install` or `composer install`
 
-**"Production is broken after merge":**
-```bash
-# Problem: Bug reached production
-# Solution: See Rollback Procedures section above
-# Immediate: Revert commit and push
-git revert <bad-commit>
-git push origin main
-```
+**Out of memory:** `export NODE_OPTIONS="--max-old-space-size=4096"` then rebuild
 
-### Linting Issues
-
-**"Lint passes locally but fails in CI":**
-```bash
-# Problem: Different tool versions or configurations
-# Solution: Check CI versions match local
-
-# Check versions
-shellcheck --version
-./vendor/bin/phpcs --version
-node --version
-
-# Pull latest from repo (may have config changes)
-git pull origin main
-```
-
-**"Can't find command: shellcheck/phpcs/eslint":**
-```bash
-# Problem: Tools not installed
-# Solution: Install tools
-
-# ShellCheck (varies by OS)
-brew install shellcheck  # macOS
-apt install shellcheck   # Linux
-
-# PHPCS
-composer install
-
-# ESLint
-npm install
-```
-
-### Build Issues
-
-**"Module not found" errors:**
-```bash
-# Problem: Missing dependencies
-# Solution: Install dependencies
-npm install
-composer install
-```
-
-**"Out of memory" during build:**
-```bash
-# Problem: Node/PHP running out of memory
-# Solution: Increase memory limit
-export NODE_OPTIONS="--max-old-space-size=4096"
-npm run build
-```
-
-### Performance Issues
-
-**"Site is slow after deployment":**
-```bash
-# Problem: Cache not working or query issues
+---
 # Solution: Check object cache, database queries
 
 # Flush all caches
