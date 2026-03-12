@@ -7,7 +7,7 @@ plugin.setup({
   mode = 'document_diagnostics',
   modes = {
     diagnostics = {
-      auto_open = true,
+      auto_open = false,
       auto_close = true,
       auto_preview = true,
       auto_refresh = true,
