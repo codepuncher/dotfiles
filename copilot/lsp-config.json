@@ -1,0 +1,91 @@
+{
+  "lspServers": {
+    "typescript": {
+      "command": "typescript-language-server",
+      "args": ["--stdio"],
+      "fileExtensions": {
+        ".ts": "typescript",
+        ".tsx": "typescriptreact",
+        ".js": "javascript",
+        ".jsx": "javascriptreact"
+      }
+    },
+    "bash": {
+      "command": "bash-language-server",
+      "args": ["start"],
+      "fileExtensions": {
+        ".sh": "sh",
+        ".bash": "sh"
+      }
+    },
+    "go": {
+      "command": "gopls",
+      "args": ["serve"],
+      "fileExtensions": {
+        ".go": "go"
+      }
+    },
+    "rust": {
+      "command": "rust-analyzer",
+      "args": [],
+      "fileExtensions": {
+        ".rs": "rust"
+      }
+    },
+    "yaml": {
+      "command": "yaml-language-server",
+      "args": ["--stdio"],
+      "fileExtensions": {
+        ".yml": "yaml",
+        ".yaml": "yaml"
+      }
+    },
+    "ansible": {
+      "command": "ansible-language-server",
+      "args": ["--stdio"],
+      "fileExtensions": {
+        ".yml": "yaml.ansible"
+      }
+    },
+    "vue": {
+      "command": "vue-language-server",
+      "args": ["--stdio"],
+      "fileExtensions": {
+        ".vue": "vue"
+      }
+    },
+    "tailwindcss": {
+      "command": "tailwindcss-language-server",
+      "args": ["--stdio"],
+      "fileExtensions": {
+        ".css": "css",
+        ".html": "html"
+      }
+    },
+    "stylelint": {
+      "command": "stylelint-lsp",
+      "args": ["--stdio"],
+      "fileExtensions": {
+        ".css": "css",
+        ".scss": "scss",
+        ".less": "less"
+      }
+    },
+    "php": {
+      "command": "devsense-php-ls",
+      "args": ["--stdio"],
+      "fileExtensions": {
+        ".php": "php",
+        ".blade.php": "php"
+      }
+    },
+    "json": {
+      "command": "vscode-json-language-server",
+      "args": ["--stdio"],
+      "fileExtensions": {
+        ".json": "json",
+        ".jsonc": "jsonc"
+      }
+    }
+  }
+}
