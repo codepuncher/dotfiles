@@ -58,6 +58,13 @@
 - Utilities and scripts: `~/Code/misc/itineris-bin/`
 - Default branch: Usually `main`, `master` (check with `git symbolic-ref refs/remotes/origin/HEAD`)
 
+**Platform:**
+
+- ✅ **Ubuntu WSL only** - All code targets Ubuntu running in Windows Subsystem for Linux
+- ❌ Do NOT add macOS, BSD, or cross-platform compatibility
+- ❌ Do NOT use portable commands when GNU-specific versions exist
+- Use GNU-specific commands directly: `sed -i`, `base64 -w0`, `base64 -d`, etc.
+
 ---
 
 ## Working with Tickets and Tasks
@@ -490,6 +497,69 @@ git push origin main
   - "licence" (noun) / "license" (verb)
   - "analyse" not "analyze"
 - This applies to variable names, function names, comments, strings, and all written content
+
+
+## Platform-Specific Code (Ubuntu WSL Only)
+
+**All code targets Ubuntu running in Windows Subsystem for Linux:**
+
+- ✅ **Use GNU-specific commands directly:**
+  - `sed -i 's/pattern/replacement/'` (in-place editing)
+  - `base64 -w0` (encode without line wrapping)
+  - `base64 -d` (decode)
+  - `grep -P` (Perl regex)
+  - GNU-specific flags and behaviors
+
+- ❌ **DO NOT add macOS/BSD compatibility:**
+  - No `sed -i '' '...'` (BSD variant)
+  - No `base64 -D` (BSD decode flag)
+  - No `base64 | tr -d '\n'` (portable wrapping workaround)
+  - No conditional fallbacks: `if base64 -d; else base64 -D`
+  - No cross-platform detection or feature checks
+
+- ❌ **DO NOT check for command variants or add portability layers**
+  - Assume GNU coreutils are available
+  - Assume Ubuntu package ecosystem
+  - Tests, scripts, and documentation target Ubuntu WSL only
+
+**Rationale:** Supporting multiple platforms adds complexity without business value. Ubuntu WSL is the standard development environment.
+
+
+**Ubuntu WSL Only:**
+
+- Use GNU-specific commands directly: `sed -i 's/.../'`, `base64 -w0`, `base64 -d`
+- Do NOT add macOS/BSD fallbacks: `sed -i '' '...'`, `base64 -D`, `tr -d '\n'` for portability
+- Do NOT check for command variants: `if base64 -d ...; else base64 -D`
+- Do NOT add cross-platform compatibility layers or conditional logic
+- Tests, scripts, and documentation assume Ubuntu WSL environment
+- When reviewing code, reject any macOS/BSD compatibility additions
+
+**Examples:**
+
+✅ **Correct (Ubuntu WSL):**
+```bash
+# Remove trailing whitespace
+sed -i 's/[[:space:]]*$//' file.txt
+
+# Base64 encode without line wrapping
+echo "data" | base64 -w0
+
+# Base64 decode
+echo "ZGF0YQ==" | base64 -d
+```
+
+❌ **Incorrect (cross-platform):**
+```bash
+# Don't do this - we only support Ubuntu
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' 's/.../' file.txt
+else
+    sed -i 's/.../' file.txt
+fi
+
+# Don't do this - we only support GNU base64
+echo "data" | base64 | tr -d '\n'  # Portable but unnecessary
+```
 
 ## PHP & WordPress Best Practices
 
