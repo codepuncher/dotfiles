@@ -281,13 +281,7 @@ For PHP, JavaScript, CSS: see "Before Committing" section (line 269 below) for s
 
 ```bash
 gh pr checks <pr-number> --watch
-PR_NUM=$(gh pr view <pr-number> --json number -q .number)
-while true; do
-    STATUS=$(gh run list --workflow="Copilot code review" --json headBranch,status \
-      --jq ".[] | select(.headBranch == \"refs/pull/${PR_NUM}/head\") | .status")
-    [ "$STATUS" = "completed" ] && break
-    sleep 30
-done
+sleep 60 && ~/Code/misc/itineris-bin/gh-pr-wait-for-copilot-review <pr-number>
 ~/Code/misc/itineris-bin/gh-pr-get-comments <pr-number> --resolved=false
 # If unresolved comments exist, address them (see Pattern 2)
 ```
@@ -697,27 +691,22 @@ echo "data" | base64 | tr -d '\n'  # Portable but unnecessary
 When implementing a feature or fix:
 
 1. **Create feature branch** - If on default branch, create and switch to feature branch first
-2. **Push branch immediately** - `git push -u origin <branch>` for visibility
-3. **Open draft PR early** - Include implementation plan, links to tickets
-4. **Make changes & commit after each phase** - Use conventional commit format
-5. **Push after each commit** - Enable real-time review on GitHub
-6. **Mark PR as "Ready for Review"** - When all phases complete and tests pass
-7. **Address code review feedback** - Validate accuracy, reply in threads, resolve when fixed
-8. **Deploy to staging for testing** - `git push origin <branch>:staging`
-9. **Verify changes on staging** - Test that the fix/feature works correctly
-10. **Wait for CI checks to pass** - `gh pr checks <pr> --watch`
-11. **Wait for Copilot review workflow to complete** - Check `gh-pr-wait-for-copilot-review <pr>` until status is "completed"
-12. **Check for review comments** - Use `gh-pr-get-comments <pr> --resolved=false` to see unresolved comments
-13. **Address any review comments** - Fix issues, reply to threads, resolve when fixed
-14. **Ask user to request Copilot review** - Ask user to request another Copilot review
-15. **Repeat from #7 to #14 until 0 review comments** - Wait until Copilot review says `0 suggestions`
-16. **Prompt merge to main/master/default-branch** - Prompt the user to merge the PR
+2. **Make changes & commit after each phase** - Use conventional commit format
+3. **Push branch immediately** - `git push -u origin <branch>` for visibility
+4. **Open PR** - Include implementation plan, links to tickets
+5. **Request Copilot review** - `gh pr edit --add-reviewer @copilot`
+6. **Push after each commit** - Enable real-time review on GitHub
+7. **Wait for CI checks to pass** - `gh pr checks <pr> --watch`
+8. **Wait for Copilot review workflow to complete** - `sleep 60 && gh-pr-wait-for-copilot-review <pr>`
+9. **Check for review comments** - Use `gh-pr-get-comments <pr> --resolved=false` to see unresolved comments
+10. **Address any review comments** - Fix issues, reply to threads, resolve when fixed
+11. **Repeat from #2 to #10 until 0 review comments** - Wait until Copilot review says `0 suggestions`
+12. **Prompt to deploy to staging** (WordPress projects only) - `git push origin <branch>:staging --force`
 
 **Key points:**
 
-- Always verify on staging BEFORE merging to default branch
-- Never merge to default branch without staging verification
 - Merging to default branch triggers automatic production deployment
+- Deploy to staging separately if needed for testing: `git push origin <branch>:staging`
 
 ### Feature Branch Workflow
 
