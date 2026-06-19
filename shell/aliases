@@ -381,9 +381,15 @@ if [[ -n "${ZSH_VERSION:-}" ]]; then
 			compadd -- "${candidates[@]}"
 			return
 		fi
+
+		# Explicitly return when no completion candidate applicable (CURRENT > 3)
+		return
 	}
-	compdef _project_open_complete_zsh project_open
-	compdef _project_open_complete_zsh po'
+	# Register only if compdef is available to keep sourcing before compinit silent
+	if command -v compdef >/dev/null 2>&1 || whence -w compdef >/dev/null 2>&1; then
+		compdef _project_open_complete_zsh project_open
+		compdef _project_open_complete_zsh po
+	fi'
 fi
 
 project_edit() {
