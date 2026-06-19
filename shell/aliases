@@ -309,6 +309,59 @@ project_open() {
 	cd "${THEME_PATH}" || return
 }
 alias po='project_open'
+
+_project_open_projects() {
+	local wp_path="${HOME}/Code/wordpress"
+	local project_dir
+
+	[[ -d "${wp_path}" ]] || return 0
+
+	for project_dir in "${wp_path}"/*; do
+		[[ -d "${project_dir}" ]] || continue
+		[[ -d "${project_dir}/bedrock" || -d "${project_dir}/site" ]] || continue
+		printf '%s\n' "${project_dir##*/}"
+	done
+}
+
+_project_open_targets() {
+	local wp_path="${HOME}/Code/wordpress"
+	local project="${1}"
+	local project_path="${wp_path}/${project}"
+	local target_dir
+
+	[[ -n "${project}" ]] || return 0
+	[[ -d "${project_path}" ]] || return 0
+
+	for target_dir in "${project_path}"/*; do
+		[[ -d "${target_dir}" ]] || continue
+		printf '%s\n' "${target_dir##*/}"
+	done
+}
+
+_project_open_complete_bash() {
+	local current previous
+
+	current="${COMP_WORDS[COMP_CWORD]}"
+	previous="${COMP_WORDS[COMP_CWORD-1]}"
+
+	if (( COMP_CWORD == 1 )); then
+		mapfile -t COMPREPLY < <(compgen -W "$(_project_open_projects)" -- "${current}")
+		return
+	fi
+
+	if (( COMP_CWORD == 2 )); then
+		mapfile -t COMPREPLY < <(compgen -W "$(_project_open_targets "${previous}")" -- "${current}")
+		return
+	fi
+
+	COMPREPLY=()
+}
+
+if [[ -n "${BASH_VERSION:-}" ]]; then
+	complete -F _project_open_complete_bash project_open
+	complete -F _project_open_complete_bash po
+fi
+
 project_edit() {
 	WP_PATH="${HOME}/Code/wordpress"
 
