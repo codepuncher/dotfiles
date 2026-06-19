@@ -363,6 +363,9 @@ if [[ -n "${BASH_VERSION:-}" ]]; then
 fi
 
 if [[ -n "${ZSH_VERSION:-}" ]]; then
+	# eval is required here because the Zsh-specific ${(@f)...} syntax inside the
+	# function body is a Bash parse error unless the code is deferred and evaluated
+	# only when Zsh is active.
 	eval '_project_open_complete_zsh() {
 		local current previous
 		local -a candidates
