@@ -268,15 +268,96 @@ delete_terms() {
 set_posts_statuses() {
 	wp post update "$(wp post list --post_type="${1}" --post_status="${2}" --format=ids)" --post_status="${3}"
 }
+_project_open_root() {
+	printf '%s\n' "${PROJECT_OPEN_ROOT:-${HOME}/Code}"
+}
+
+_project_open_scan() {
+	local root="${1:-$(_project_open_root)}"
+	local dir
+	find "${root}" -mindepth 1 -maxdepth 1 -type d -not -name '.*' 2>/dev/null | while IFS= read -r dir; do
+		if [[ -e "${dir}/.git" || -d "${dir}/bedrock" || -d "${dir}/site" ]]; then
+			printf '%s\n' "${dir}"
+		else
+			_project_open_scan "${dir}"
+		fi
+	done
+}
+
+_project_open_cache_file() {
+	# Key the cache by root so changing PROJECT_OPEN_ROOT never reads stale paths.
+	local root key
+	root="$(_project_open_root)"
+	key="${root//\//_}"
+	printf '%s\n' "${XDG_CACHE_HOME:-${HOME}/.cache}/project_open/projects${key}"
+}
+
+_project_open_build_cache() {
+	local cache dir tmp root
+	root="$(_project_open_root)"
+	[[ -d "${root}" ]] || return 1
+	cache="$(_project_open_cache_file)"
+	[[ -f "${cache}" ]] && return 0
+
+	dir="${cache%/*}"
+	mkdir -p "${dir}" 2>/dev/null || return 1
+	tmp="$(mktemp "${dir}/projects.XXXXXX")" || return 1
+	if _project_open_scan >"${tmp}" && mv -f "${tmp}" "${cache}"; then
+		return 0
+	fi
+	rm -f "${tmp}"
+	return 1
+}
+
+_project_open_read_cache() {
+	local cache line
+	cache="$(_project_open_cache_file)"
+	[[ -f "${cache}" ]] || return 0
+	while IFS= read -r line || [[ -n "${line}" ]]; do
+		printf '%s\n' "${line}"
+	done < "${cache}"
+}
+
+po_refresh() {
+	local cache
+	cache="$(_project_open_cache_file)"
+	rm -f "${cache}"
+	_project_open_build_cache
+}
+
+_project_open_resolve() {
+	local name="${1}" cache_only="${2}" cache line tmp
+	[[ -n "${name}" ]] || return 1
+	cache="$(_project_open_cache_file)"
+	if [[ -f "${cache}" ]]; then
+		while IFS= read -r line || [[ -n "${line}" ]]; do
+			[[ "${line##*/}" == "${name}" ]] && { printf '%s\n' "${line}"; return 0; }
+		done < "${cache}"
+	fi
+	[[ -n "${cache_only}" ]] && return 1
+	tmp="$(mktemp "${TMPDIR:-/tmp}/project_open_scan.XXXXXX")" || return 1
+	_project_open_scan >"${tmp}"
+	# shellcheck disable=SC2094
+	while IFS= read -r line || [[ -n "${line}" ]]; do
+		[[ "${line##*/}" == "${name}" ]] && { printf '%s\n' "${line}"; rm -f "${tmp}"; return 0; }
+	done < "${tmp}"
+	rm -f "${tmp}"
+	return 1
+}
+
 project_open() {
-	WP_PATH="${HOME}/Code/wordpress"
+	CODE_PATH="$(_project_open_root)"
 
 	if [ -z "${1}" ]; then
-		NEW_PATH="${WP_PATH}"
+		NEW_PATH="${CODE_PATH}"
 
 		tmux setw automatic-rename
 	else
-		NEW_PATH="${WP_PATH}/${1}"
+		NEW_PATH="$(_project_open_resolve "${1}")"
+		if [ -z "${NEW_PATH}" ]; then
+			printf 'No project named %s under %s\n' "${1}" "${CODE_PATH}" >&2
+			return 1
+		fi
 		tmux rename-window "${1}"
 	fi
 
@@ -298,9 +379,8 @@ project_open() {
 		return
 	fi
 
-	# Find only themes using Composer.
-	THEMES=("${NEW_PATH}/web/app/themes/"*/composer.json)
-	THEME_PATH="${THEMES[1]//composer.json/}"
+	THEME_PATH="$(find "${NEW_PATH}/web/app/themes" -mindepth 2 -maxdepth 2 -type f -name composer.json 2>/dev/null | LC_ALL=C sort | head -n1)"
+	THEME_PATH="${THEME_PATH%composer.json}"
 	if [ -z "${THEME_PATH}" ]; then
 		echo "No theme available" >&2
 		return 1
@@ -309,6 +389,64 @@ project_open() {
 	cd "${THEME_PATH}" || return
 }
 alias po='project_open'
+
+_project_open_projects() {
+	local proj
+	_project_open_read_cache | while IFS= read -r proj; do
+		printf '%s\n' "${proj##*/}"
+	done
+}
+
+_project_open_targets() {
+	local name="${1}" project_path target_dir
+	[[ -n "${name}" ]] || return 0
+	project_path="$(_project_open_resolve "${name}" cache_only)" || return 0
+	[[ -n "${project_path}" ]] || return 0
+	find "${project_path}" -mindepth 1 -maxdepth 1 -type d -not -name '.*' 2>/dev/null | while IFS= read -r target_dir; do
+		printf '%s\n' "${target_dir##*/}"
+	done
+}
+
+_project_open_complete_bash() {
+	local current previous candidate
+	current="${COMP_WORDS[COMP_CWORD]}"
+	COMPREPLY=()
+
+	if (( COMP_CWORD == 1 )); then
+		while IFS= read -r candidate; do
+			[[ "${candidate}" == "${current}"* ]] && COMPREPLY+=("${candidate}")
+		done < <(_project_open_projects)
+		return 0
+	fi
+
+	if (( COMP_CWORD == 2 )); then
+		previous="${COMP_WORDS[COMP_CWORD-1]}"
+		while IFS= read -r candidate; do
+			[[ "${candidate}" == "${current}"* ]] && COMPREPLY+=("${candidate}")
+		done < <(_project_open_targets "${previous}")
+		return 0
+	fi
+
+	return 0
+}
+
+if [[ -n "${BASH_VERSION:-}" ]]; then
+	complete -F _project_open_complete_bash project_open
+	complete -F _project_open_complete_bash po
+	if [[ $- == *i* ]]; then
+		( _project_open_build_cache & ) >/dev/null 2>&1
+	fi
+fi
+
+if [[ -n "${ZSH_VERSION:-}" ]]; then
+	# Completion is registered the canonical way via an autoloaded #compdef
+	# function on $fpath (shell/completions/_project_open). Here we only kick
+	# off the async cache build; eval defers the zsh-only `&!` past bash parsing.
+	if [[ -o interactive ]]; then
+		eval '_project_open_build_cache >/dev/null 2>&1 &!'
+	fi
+fi
+
 project_edit() {
 	WP_PATH="${HOME}/Code/wordpress"
 

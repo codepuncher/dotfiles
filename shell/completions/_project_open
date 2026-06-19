@@ -1,0 +1,23 @@
+#compdef project_open po
+
+# Autoloaded via $fpath so compinit (re)registers it on every run, surviving
+# the repeated/deferred compinit calls in zshrc. Discovery helpers live in
+# shell/aliases and are available in the interactive shell.
+
+(( $+functions[_project_open_projects] )) || return 1
+
+local -a candidates
+
+if (( CURRENT == 2 )); then
+	candidates=("${(@f)$(_project_open_projects)}")
+	compadd -- "${candidates[@]}"
+	return
+fi
+
+if (( CURRENT == 3 )); then
+	candidates=("${(@f)$(_project_open_targets "${words[CURRENT-1]}")}")
+	compadd -- "${candidates[@]}"
+	return
+fi
+
+return
