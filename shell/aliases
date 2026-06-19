@@ -362,6 +362,30 @@ if [[ -n "${BASH_VERSION:-}" ]]; then
 	complete -F _project_open_complete_bash po
 fi
 
+if [[ -n "${ZSH_VERSION:-}" ]]; then
+	eval '_project_open_complete_zsh() {
+		local current previous
+		local -a candidates
+
+		current="${words[CURRENT]}"
+		previous="${words[CURRENT-1]}"
+
+		if (( CURRENT == 2 )); then
+			candidates=("${(@f)$(_project_open_projects)}")
+			compadd -- "${candidates[@]}"
+			return
+		fi
+
+		if (( CURRENT == 3 )); then
+			candidates=("${(@f)$(_project_open_targets "${previous}")}")
+			compadd -- "${candidates[@]}"
+			return
+		fi
+	}
+	compdef _project_open_complete_zsh project_open
+	compdef _project_open_complete_zsh po'
+fi
+
 project_edit() {
 	WP_PATH="${HOME}/Code/wordpress"
 
