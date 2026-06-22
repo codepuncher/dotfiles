@@ -4,8 +4,6 @@ set -uo pipefail
 readonly VOID_SINK_PATTERN='VOID_ELITE'
 readonly POLL_INTERVAL=2
 
-# Map headsetcontrol JSON (stdin) to on|off|unknown. Unknown covers empty or
-# unparseable input so a transient query failure never flips the default sink.
 parse_headset_state() {
   local json status
   json="$(cat)"
@@ -18,14 +16,12 @@ parse_headset_state() {
   esac
 }
 
-# Current headset power state, or "unknown" if headsetcontrol fails.
 headset_state() {
   local json
   json="$(headsetcontrol -o json 2>/dev/null)" || { echo unknown; return; }
   parse_headset_state <<<"${json}"
 }
 
-# PipeWire sink name for the VOID dongle, empty if not present.
 void_sink() {
   pactl list short sinks | awk -v p="${VOID_SINK_PATTERN}" '$0 ~ p { print $2; exit }'
 }
@@ -70,7 +66,7 @@ main() {
         fi
         prev=off
         ;;
-      *) : ;; # unknown: hold state, do nothing
+      *) : ;;
     esac
     sleep "${POLL_INTERVAL}"
   done
