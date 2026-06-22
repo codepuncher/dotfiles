@@ -67,7 +67,7 @@ install_packages() {
     return
   fi
 
-  if grep --quiet 'ID=manjaro' /etc/os-release; then
+  if is_arch; then
     # shellcheck disable=2119
     install_arch_packages
     post_install_packages

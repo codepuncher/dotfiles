@@ -62,7 +62,7 @@ reinstall_dotfiles() {
 
 install_arch_packages() {
   echo 'Enabling the AUR...'
-  sudo sed -Ei '/EnableAUR/s/^#//' /etc/pamac.conf
+  enable_aur
 
   PACKAGES=(
     # General
@@ -148,11 +148,7 @@ install_arch_packages() {
     bat
   )
 
-  # shellcheck disable=2046
-  sudo pamac install --no-confirm --no-upgrade $(
-    IFS=' '
-    echo "${PACKAGES[*]}"
-  ) "$@"
+  arch_install "${PACKAGES[@]}" "$@"
 }
 
 install_wsl_packages() {
@@ -440,7 +436,7 @@ post_install_packages() {
   echo 'Installing `spotify-tui'
   mkdir "${HOME}/.rustup"
   rustup default stable
-  pamac install --no-confirm --no-upgrade spotify-tui
+  arch_install spotify-tui
 }
 
 post_setup_arch_services() {
@@ -450,7 +446,7 @@ post_setup_arch_services() {
 }
 
 setup_arch_system_emoji_support() {
-  sudo pamac install noto-fonts-emoji
+  arch_install noto-fonts-emoji
   sudo cp ~/.dotfiles/templates/fonts-local.conf /etc/fonts/local.conf
 }
 
