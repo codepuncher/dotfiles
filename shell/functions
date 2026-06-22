@@ -8,6 +8,53 @@ section_start() {
   echo "${1}"
 }
 
+# Detect the AUR helper once; prefer paru, then pamac, then yay.
+detect_aur_helper() {
+  local h
+  for h in paru pamac yay; do
+    if command -v "${h}" &>/dev/null; then
+      AUR_HELPER="${h}"
+      return 0
+    fi
+  done
+  echo 'No supported AUR helper (paru/pamac/yay) found' >&2
+  return 1
+}
+
+# Install packages via the detected helper. paru/yay must not run under sudo.
+# Set DRY=1 to print the resolved command instead of running it.
+arch_install() {
+  [[ -n "${AUR_HELPER:-}" ]] || detect_aur_helper || return 1
+  local cmd
+  case "${AUR_HELPER}" in
+    paru | yay) cmd=("${AUR_HELPER}" -S --noconfirm --needed "$@") ;;
+    pamac) cmd=(sudo pamac install --no-confirm --no-upgrade "$@") ;;
+    *) echo "Unknown AUR helper: ${AUR_HELPER}" >&2; return 1 ;;
+  esac
+  if [[ -n "${DRY:-}" ]]; then
+    echo "${cmd[*]}"
+    return 0
+  fi
+  "${cmd[@]}"
+}
+
+# Enable AUR support where the helper needs it (pamac only).
+enable_aur() {
+  [[ -n "${AUR_HELPER:-}" ]] || detect_aur_helper || return 1
+  [[ "${AUR_HELPER}" == pamac ]] || return 0
+  [[ -n "${DRY:-}" ]] && return 0
+  sudo sed -Ei '/EnableAUR/s/^#//' /etc/pamac.conf
+}
+
+# True on Arch and derivatives. Sourced in a subshell so os-release vars don't leak.
+# shellcheck disable=SC1091
+is_arch() {
+  local id id_like
+  id="$(. /etc/os-release 2>/dev/null && echo "${ID:-}")"
+  id_like="$(. /etc/os-release 2>/dev/null && echo "${ID_LIKE:-}")"
+  [[ "${id}" == arch ]] || [[ " ${id_like} " == *' arch '* ]]
+}
+
 reinstall_dotfiles() {
   rm -rf ~/.{local/bin,npm,nvm,zinit,go/bin,config/composer/vendor,nvim,config/nvim}
   cd ~/.dotfiles && ./setup.sh
