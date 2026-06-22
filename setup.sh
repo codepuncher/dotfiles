@@ -47,6 +47,7 @@ init_links() {
     move_link .config/spotifyd/spotifyd.conf media/spotifyd.conf
     move_link .config/fontconfig fontconfig
     move_link .config/ngrok/ngrok.yml web/ngrok.yml
+    move_link .config/systemd/user/corsair-headset.service systemd/corsair-headset.service
 
     echo "Symlinking complete. Backups stored in ${SCRIPT_PATH}/backups."
     return
@@ -67,7 +68,7 @@ install_packages() {
     return
   fi
 
-  if grep --quiet 'ID=manjaro' /etc/os-release; then
+  if is_arch; then
     # shellcheck disable=2119
     install_arch_packages
     post_install_packages

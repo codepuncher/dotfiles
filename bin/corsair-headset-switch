@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+readonly VOID_SINK_PATTERN='VOID_ELITE'
+readonly POLL_INTERVAL=2
+
+parse_headset_state() {
+  local json status
+  json="$(cat)"
+  [[ -n "${json}" ]] || { echo unknown; return; }
+  status="$(jq -r '.devices[0].battery.status // empty' <<<"${json}" 2>/dev/null)"
+  case "${status}" in
+    BATTERY_AVAILABLE | BATTERY_CHARGING) echo on ;;
+    BATTERY_UNAVAILABLE | BATTERY_TIMEOUT) echo off ;;
+    *) echo unknown ;;
+  esac
+}
+
+headset_state() {
+  local json
+  json="$(headsetcontrol -o json 2>/dev/null)" || { echo unknown; return; }
+  parse_headset_state <<<"${json}"
+}
+
+void_sink() {
+  pactl list short sinks | awk -v p="${VOID_SINK_PATTERN}" '$0 ~ p { print $2; exit }'
+}
+
+log() { printf '%s %s\n' "$(date '+%H:%M:%S')" "$*"; }
+
+main() {
+  command -v headsetcontrol >/dev/null || { echo 'headsetcontrol not found' >&2; exit 1; }
+  command -v jq >/dev/null || { echo 'jq not found' >&2; exit 1; }
+  command -v pactl >/dev/null || { echo 'pactl not found' >&2; exit 1; }
+
+  local prev current sink saved_default=''
+  prev="$(headset_state)"
+  [[ "${prev}" == unknown ]] && prev=off
+  log "baseline headset state: ${prev}"
+
+  while true; do
+    current="$(headset_state)"
+    case "${current}" in
+      on)
+        if [[ "${prev}" == off ]]; then
+          sink="$(void_sink)"
+          if [[ -n "${sink}" ]]; then
+            saved_default="$(pactl get-default-sink)"
+            pactl set-default-sink "${sink}"
+            log "headset on -> default sink = ${sink} (was ${saved_default})"
+          else
+            log 'headset on but VOID sink not found; skipping'
+          fi
+        fi
+        prev=on
+        ;;
+      off)
+        if [[ "${prev}" == on ]]; then
+          if [[ -n "${saved_default}" ]] \
+            && pactl list short sinks | awk '{print $2}' | grep -qxF "${saved_default}"; then
+            pactl set-default-sink "${saved_default}"
+            log "headset off -> restored default sink = ${saved_default}"
+          else
+            log 'headset off but no valid previous sink to restore'
+          fi
+        fi
+        prev=off
+        ;;
+      *) : ;;
+    esac
+    sleep "${POLL_INTERVAL}"
+  done
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main
+fi

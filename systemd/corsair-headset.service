@@ -1,0 +1,12 @@
+[Unit]
+Description=Corsair VOID Elite auto-switch
+After=pipewire.service
+
+[Service]
+Type=simple
+ExecStart=%h/.dotfiles/bin/corsair-headset-switch
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
