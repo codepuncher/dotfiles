@@ -207,6 +207,20 @@ reinstall_dotfiles
 - ✅ **WSL** (Windows Subsystem for Linux)
 - ✅ **macOS** (shell and tool configs, package installation not automated)
 
+## Corsair headset auto-switch
+
+`bin/corsair-headset-switch` is a systemd user service that switches the default
+PipeWire sink to the Corsair VOID Elite when the headset powers on and restores
+the previous sink when it powers off. It depends on `headsetcontrol` (installed
+by `setup.sh`). After symlinking, enable it once:
+
+```bash
+systemctl --user daemon-reload
+systemctl --user enable --now corsair-headset.service
+```
+
+Logs: `journalctl --user -u corsair-headset -f`.
+
 ## 📝 License
 
 Personal dotfiles - use at your own discretion.
