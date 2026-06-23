@@ -1,7 +1,7 @@
 [user]
 	name = codepuncher
 	email = lee.hanbury@gmail.com
-	signingkey = ~/.ssh/id_ed25519.pub
+	signingkey = ~/.ssh/id_rsa.pub
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f
@@ -35,6 +35,7 @@
 
 [core]
 	pager = delta
+	excludesFile = ~/.gitignore
 
 [interactive]
 	diffFilter = delta --color-only
