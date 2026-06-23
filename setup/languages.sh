@@ -7,7 +7,8 @@ install_nvm() {
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 
   # Load NVM after installing it.
-  [ -s "${NVM_DIR}/nvm.sh" ] && \."${NVM_DIR}/nvm.sh" # This loads nvm
+  # shellcheck disable=SC1091
+  [ -s "${NVM_DIR}/nvm.sh" ] && \. "${NVM_DIR}/nvm.sh" # This loads nvm
 
   nvm install --lts
   nvm use --lts
@@ -57,11 +58,7 @@ install_node_packages() {
     yaml-language-server
   )
 
-  # shellcheck disable=2046
-  npm install --global $(
-    IFS=' '
-    echo "${PACKAGES[*]}"
-  ) "$@"
+  npm install --global "${PACKAGES[@]}" "$@"
 }
 
 install_go_packages() {
@@ -87,7 +84,7 @@ install_composer() {
   if [ "${EXPECTED_CHECKSUM}" != "${ACTUAL_CHECKSUM}" ]; then
     echo >&2 'ERROR: Invalid installer checksum'
     rm composer-setup.php
-    return
+    return 1
   fi
 
   php composer-setup.php --quiet
@@ -105,11 +102,7 @@ install_composer_packages() {
     itinerisltd/itineris-wp-coding-standards
   )
 
-  # shellcheck disable=2046
-  composer global require $(
-    IFS=' '
-    echo "${PACKAGES[*]}"
-  ) "$@"
+  composer global require "${PACKAGES[@]}" "$@"
 }
 
 install_pip_packages() {
@@ -128,9 +121,5 @@ install_cargo_packages() {
     stylua
   )
 
-  # shellcheck disable=2046
-  cargo install $(
-    IFS=' '
-    echo "${PACKAGES[*]}"
-  ) "$@"
+  cargo install "${PACKAGES[@]}" "$@"
 }

@@ -7,16 +7,8 @@ setup_arch_services() {
     php-fpm
   )
 
-  # shellcheck disable=2046
-  sudo systemctl start $(
-    IFS=' '
-    echo "${SERVICES[*]}"
-  )
-  # shellcheck disable=2046
-  sudo systemctl enable $(
-    IFS=' '
-    echo "${SERVICES[*]}"
-  )
+  sudo systemctl start "${SERVICES[@]}"
+  sudo systemctl enable "${SERVICES[@]}"
 }
 
 setup_mysql() {
