@@ -2,11 +2,7 @@
 
 install_nvm() {
   section_start 'Installing NVM'
-  # shellcheck disable=SC2155
-  export NVM_DIR="$(
-    [ -z "${XDG_CONFIG_HOME-}" ]
-    printf %s "${HOME}/.config/nvm" || printf %s "${XDG_CONFIG_HOME}/nvm"
-  )"
+  export NVM_DIR="${XDG_CONFIG_HOME:-${HOME}/.config}/nvm"
   mkdir -p "${NVM_DIR}"
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 
@@ -27,8 +23,12 @@ install_rustup() {
 }
 
 install_node_packages() {
-  if [[ ! -d "${NVM_DIR:-}" ]] || [[ ! -d "${HOME}/.nvm" ]]; then
+  export NVM_DIR="${XDG_CONFIG_HOME:-${HOME}/.config}/nvm"
+  if [[ ! -s "${NVM_DIR}/nvm.sh" ]]; then
     install_nvm
+  else
+    # shellcheck disable=SC1091
+    \. "${NVM_DIR}/nvm.sh"
   fi
 
   section_start 'Installing NPM packages'

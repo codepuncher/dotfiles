@@ -15,8 +15,9 @@ move_link() {
     echo "${1} backed up"
   fi
 
-  from="${SCRIPT_PATH}/${2}"
-  to="${HOME}/${1}"
+  local from="${SCRIPT_PATH}/${2}"
+  local to="${HOME}/${1}"
+  local new_path
   new_path="$(dirname "${to}")"
   mkdir -p "${new_path}"
   ln -sf "${from}" "${to}"
@@ -31,7 +32,7 @@ init_links() {
   move_link .config/tmux tmux
   move_link .config/nvim nvim
   move_link .gitconfig git/gitconfig
-  move_link .config/spacezhip.zsh shell/spacezhip.zsh
+  move_link .config/spaceship.zsh shell/spaceship.zsh
   move_link .config/alacritty/alacritty.toml terminals/alacritty.toml
   move_link .config/ghostty/config terminals/ghostty
   move_link .config/spotifyd/spotifyd.conf media/spotifyd.conf

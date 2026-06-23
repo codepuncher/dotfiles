@@ -105,7 +105,7 @@ post_install_packages() {
 
   # shellcheck disable=2016
   echo 'Installing `spotify-tui`'
-  mkdir "${HOME}/.rustup"
+  mkdir -p "${HOME}/.rustup"
   rustup default stable
   arch_install spotify-tui
 }
