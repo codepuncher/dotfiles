@@ -31,7 +31,7 @@ install_node_packages() {
     install_nvm
   fi
 
-  section_start 'Instaling NPM packages'
+  section_start 'Installing NPM packages'
   PACKAGES=(
     @ansible/ansible-language-server
     @fsouza/prettierd

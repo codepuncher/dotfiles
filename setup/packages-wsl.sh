@@ -150,5 +150,6 @@ install_wsl_packages() {
   ln -sf "$(which fdfind)" ~/.local/bin/fd
 
   # Generate the `rg` zsh completion file for zinit.
+  mkdir -p ~/.zinit/completions
   rg --generate=complete-zsh >~/.zinit/completions/_rg
 }

@@ -103,7 +103,8 @@ post_install_packages() {
   sudo sed -Ei '/^;extension=mysqli/s/^;//' /etc/php7/php.ini
   sudo sed -Ei '/^;extension=gd/s/^;//' /etc/php7/php.ini
 
-  echo 'Installing `spotify-tui'
+  # shellcheck disable=2016
+  echo 'Installing `spotify-tui`'
   mkdir "${HOME}/.rustup"
   rustup default stable
   arch_install spotify-tui
