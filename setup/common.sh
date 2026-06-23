@@ -51,10 +51,6 @@ is_arch() {
   [[ "${id}" == arch ]] || [[ " ${id_like} " == *' arch '* ]]
 }
 
-is_wsl() {
-  grep --quiet --ignore-case microsoft /proc/sys/kernel/osrelease 2>/dev/null
-}
-
 gh_get_latest_tag() {
   if [[ -z "${1}" ]]; then
     echo 'No repo provided' >&2

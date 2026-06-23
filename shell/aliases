@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-function is_wsl() {
-	[ -f /proc/sys/kernel/osrelease ] && [[ $(</proc/sys/kernel/osrelease) =~ 'WSL' ]]
-}
+# shellcheck source=/dev/null
+source "${HOME}/.dotfiles/shell/os.sh"
 
 # SSH
 if is_wsl; then
