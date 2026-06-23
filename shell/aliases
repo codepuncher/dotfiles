@@ -339,22 +339,28 @@ _project_open_targets() {
 }
 
 _project_open_complete_bash() {
-	local current previous
-
+	local current previous candidate
 	current="${COMP_WORDS[COMP_CWORD]}"
-	previous="${COMP_WORDS[COMP_CWORD-1]}"
+	COMPREPLY=()
 
+	# while-read + manual prefix match keeps this working on Bash 3.2 (macOS),
+	# avoids COMP_WORDS[-1] when COMP_CWORD is 0, and preserves names with spaces.
 	if (( COMP_CWORD == 1 )); then
-		mapfile -t COMPREPLY < <(compgen -W "$(_project_open_projects)" -- "${current}")
-		return
+		while IFS= read -r candidate; do
+			[[ "${candidate}" == "${current}"* ]] && COMPREPLY+=("${candidate}")
+		done < <(_project_open_projects)
+		return 0
 	fi
 
 	if (( COMP_CWORD == 2 )); then
-		mapfile -t COMPREPLY < <(compgen -W "$(_project_open_targets "${previous}")" -- "${current}")
-		return
+		previous="${COMP_WORDS[COMP_CWORD-1]}"
+		while IFS= read -r candidate; do
+			[[ "${candidate}" == "${current}"* ]] && COMPREPLY+=("${candidate}")
+		done < <(_project_open_targets "${previous}")
+		return 0
 	fi
 
-	COMPREPLY=()
+	return 0
 }
 
 if [[ -n "${BASH_VERSION:-}" ]]; then
@@ -388,10 +394,19 @@ if [[ -n "${ZSH_VERSION:-}" ]]; then
 		# Explicitly return when no completion candidate applicable (CURRENT > 3)
 		return
 	}
-	# Register only if compdef is available to keep sourcing before compinit silent
-	if command -v compdef >/dev/null 2>&1 || whence -w compdef >/dev/null 2>&1; then
+	# Defer registration until compdef exists, so completion still works when this
+	# file is sourced before compinit. The hook removes itself once registered.
+	_project_open_register_zsh() {
+		(( $+functions[compdef] )) || return 0
 		compdef _project_open_complete_zsh project_open
 		compdef _project_open_complete_zsh po
+		add-zsh-hook -d precmd _project_open_register_zsh
+	}
+	autoload -Uz add-zsh-hook
+	if (( $+functions[compdef] )); then
+		_project_open_register_zsh
+	else
+		add-zsh-hook precmd _project_open_register_zsh
 	fi'
 fi
 
