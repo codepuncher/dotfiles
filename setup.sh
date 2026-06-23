@@ -3,11 +3,14 @@
 SCRIPT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # shellcheck source=/dev/null
-source "${SCRIPT_PATH}/shell/os.sh"
+source "${SCRIPT_PATH}/shell/os.sh" || exit 1
 
 for f in common symlinks packages-arch packages-wsl languages tools services; do
   # shellcheck source=/dev/null
-  source "${SCRIPT_PATH}/setup/${f}.sh"
+  source "${SCRIPT_PATH}/setup/${f}.sh" || {
+    echo "Failed to source setup/${f}.sh" >&2
+    exit 1
+  }
 done
 
 usage() {

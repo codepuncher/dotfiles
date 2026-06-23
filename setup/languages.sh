@@ -25,6 +25,10 @@ install_rustup() {
 
 install_node_packages() {
   export NVM_DIR="${XDG_CONFIG_HOME:-${HOME}/.config}/nvm"
+  # Fall back to a legacy ~/.nvm install if the XDG path has none.
+  if [[ ! -s "${NVM_DIR}/nvm.sh" ]] && [[ -s "${HOME}/.nvm/nvm.sh" ]]; then
+    export NVM_DIR="${HOME}/.nvm"
+  fi
   if [[ ! -s "${NVM_DIR}/nvm.sh" ]]; then
     install_nvm
   else

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 section_start() {
-  printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+  printf '%*s\n' "${COLUMNS:-$(tput cols 2>/dev/null || echo 80)}" '' | tr ' ' -
   echo "${1}"
 }
 
