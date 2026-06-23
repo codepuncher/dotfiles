@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2154  # SCRIPT_PATH is set by setup.sh, which sources this file
 
 install_arch_packages() {
   echo 'Enabling the AUR...'
@@ -112,5 +113,5 @@ post_install_packages() {
 
 setup_arch_system_emoji_support() {
   arch_install noto-fonts-emoji
-  sudo cp ~/.dotfiles/templates/fonts-local.conf /etc/fonts/local.conf
+  sudo cp "${SCRIPT_PATH}/templates/fonts-local.conf" /etc/fonts/local.conf
 }

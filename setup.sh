@@ -107,7 +107,7 @@ main() {
   run_links
 
   if [[ "${SHELL}" != */zsh ]]; then
-    chsh -s "$(which zsh)"
+    chsh -s "$(command -v zsh)"
     command zsh
   else
     echo 'Restart your terminal'

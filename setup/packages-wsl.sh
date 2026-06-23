@@ -16,11 +16,9 @@ add_php_ppa() {
 }
 
 add_gh_cli_ppa() {
-  # shellcheck disable=SC2086,SC2002
   (type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) &&
     sudo mkdir -p -m 755 /etc/apt/keyrings &&
-    out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg &&
-    cat $out | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null &&
+    wget -nvO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null &&
     sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg &&
     sudo mkdir -p -m 755 /etc/apt/sources.list.d &&
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
@@ -54,6 +52,7 @@ install_git_delta() {
 }
 
 install_wsl_packages() {
+  type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)
   add_wslu_ppa
   add_eza_ppa
   add_php_ppa
@@ -147,7 +146,7 @@ install_wsl_packages() {
   install_neovim
   install_git_delta
   # ensure fd is available
-  ln -sf "$(which fdfind)" ~/.local/bin/fd
+  ln -sf "$(command -v fdfind)" ~/.local/bin/fd
 
   # Generate the `rg` zsh completion file for zinit.
   mkdir -p ~/.zinit/completions
