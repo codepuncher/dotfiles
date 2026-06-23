@@ -195,7 +195,7 @@ To reinstall/update dotfiles:
 cd ~/.dotfiles && git pull && ./setup.sh
 ```
 
-Or use the built-in reinstall:
+Or use the `--reinstall` option, which wipes installed tool/runtime dirs before re-running setup:
 ```bash
 ./setup.sh --reinstall
 ```
