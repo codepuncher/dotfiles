@@ -279,9 +279,7 @@ _project_open_root() {
 _project_open_scan() {
 	local root="${1:-$(_project_open_root)}"
 	local dir
-	# Pipe (not <()) so the loop body never runs inside a process
-	# substitution: under zsh, a <() that calls a function nested in $()
-	# can lose $PATH, which breaks find/cat. Pipes keep PATH intact.
+	# Pipe, not <(): a <() calling a function inside $() can empty $PATH under zsh.
 	find "${root}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | while IFS= read -r dir; do
 		if [[ -e "${dir}/.git" || -d "${dir}/bedrock" || -d "${dir}/site" ]]; then
 			printf '%s\n' "${dir}"
@@ -295,9 +293,8 @@ _project_open_cache_file() {
 	printf '%s\n' "${XDG_CACHE_HOME:-${HOME}/.cache}/project_open/projects"
 }
 
-# Rebuild the cache atomically. Skips when the cache was rebuilt within the
-# last few seconds so a burst of shells (e.g. tmux session restore) does one
-# build, not many. Safe to run backgrounded.
+# Rebuild the cache via a temp file then atomic mv. Skips when the timestamp
+# sidecar is younger than PROJECT_OPEN_CACHE_TTL. Safe to run backgrounded.
 _project_open_build_cache() {
 	local cache stamp dir tmp now last ttl
 	cache="$(_project_open_cache_file)"
@@ -310,9 +307,7 @@ _project_open_build_cache() {
 	dir="${cache%/*}"
 	mkdir -p "${dir}" 2>/dev/null || return 1
 	tmp="$(mktemp "${dir}/projects.XXXXXX")" || return 1
-	# Only stamp once the cache is actually in place; otherwise the TTL guard
-	# would suppress rebuilds while the cache stays missing/stale. Clean up
-	# the temp file if the scan or the atomic swap fails.
+	# Stamp only after the swap succeeds; drop the temp file on failure.
 	if _project_open_scan >"${tmp}" && mv -f "${tmp}" "${cache}"; then
 		printf '%s\n' "${now}" >"${stamp}"
 		return 0
@@ -325,8 +320,7 @@ _project_open_read_cache() {
 	local cache line
 	cache="$(_project_open_cache_file)"
 	if [[ -f "${cache}" ]]; then
-		# Builtin read, not cat: this runs inside completion's nested
-		# command substitution where zsh may have emptied $PATH.
+		# Builtin read, not cat: $PATH may be empty in nested zsh completion.
 		while IFS= read -r line || [[ -n "${line}" ]]; do
 			printf '%s\n' "${line}"
 		done < "${cache}"
@@ -348,9 +342,8 @@ po_refresh() {
 _project_open_resolve() {
 	local name="${1}" cache line scanned
 	[[ -n "${name}" ]] || return 1
-	# Builtin file read (cache) then here-string (live scan): no <() so
-	# $PATH survives under zsh's nested completion subshells, and the
-	# match's `return 0` fires in the function, not a pipe subshell.
+	# Builtin read + here-string, no <(): keeps $PATH under zsh and lets the
+	# match return from the function rather than a pipe subshell.
 	cache="$(_project_open_cache_file)"
 	if [[ -f "${cache}" ]]; then
 		while IFS= read -r line || [[ -n "${line}" ]]; do
