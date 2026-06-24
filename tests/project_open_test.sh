@@ -77,6 +77,12 @@ test_cache() {
 	assert_eq "resolve cache_only empty when cache missing" "" \
 		"$(_project_open_resolve HoldFast cache_only)"
 
+	po_refresh
+	rm -f "${cache}"
+	PROJECT_OPEN_CACHE_TTL=3600 _project_open_build_cache
+	assert_eq "rebuilds when cache gone but stamp fresh" "yes" \
+		"$([[ -f "${cache}" ]] && echo yes || echo no)"
+
 	rm -f "${cache}" "${cache}.ts"
 	PROJECT_OPEN_ROOT="${ROOT}/missing" _project_open_build_cache
 	assert_eq "no cache built when root missing" "no" \

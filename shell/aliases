@@ -299,7 +299,7 @@ _project_open_build_cache() {
 	now="$(date +%s)"
 	last="$(cat "${stamp}" 2>/dev/null || echo 0)"
 	case "${last}" in '' | *[!0-9]*) last=0 ;; esac
-	(( now - last < ttl )) && return 0
+	[[ -f "${cache}" ]] && (( now - last < ttl )) && return 0
 
 	dir="${cache%/*}"
 	mkdir -p "${dir}" 2>/dev/null || return 1
