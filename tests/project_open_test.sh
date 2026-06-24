@@ -29,7 +29,8 @@ setup_fixture() {
 		"${ROOT}/misc/khuey/.git" \
 		"${ROOT}/wordpress/acme/site" \
 		"${ROOT}/wordpress/beta/bedrock" \
-		"${ROOT}/deep/a/b/proj/.git"
+		"${ROOT}/deep/a/b/proj/.git" \
+		"${ROOT}/.hidden/proj/.git"
 }
 
 TEST_HOME=""
@@ -45,8 +46,9 @@ tmux() { return 0; }
 
 test_scan() {
 	local out
+	# Excludes nested submodules (lib/vcpkg) and hidden dirs (.hidden/proj).
 	out="$(_project_open_scan | sed "s#^${ROOT}/##" | LC_ALL=C sort | tr '\n' ',')"
-	assert_eq "scan finds outermost projects, excludes submodules" \
+	assert_eq "scan finds outermost projects, excludes submodules and hidden dirs" \
 		"deep/a/b/proj,misc/khuey,mods/HoldFast,wordpress/acme,wordpress/beta," \
 		"${out}"
 }

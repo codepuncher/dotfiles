@@ -274,14 +274,17 @@ _project_open_root() {
 
 _project_open_scan() {
 	local root="${1:-$(_project_open_root)}"
-	local dir
-	find "${root}" -mindepth 1 -maxdepth 1 -type d -not -name '.*' 2>/dev/null | while IFS= read -r dir; do
-		if [[ -e "${dir}/.git" || -d "${dir}/bedrock" || -d "${dir}/site" ]]; then
-			printf '%s\n' "${dir}"
-		else
-			_project_open_scan "${dir}"
-		fi
-	done
+	# One find lists every project marker (.git/bedrock/site) under root. Markers
+	# and hidden dirs are pruned, so we never descend into a .git or app dir; awk
+	# then maps each marker to its parent (the project) and keeps the outermost
+	# per subtree, dropping vendored submodules nested inside a project.
+	find "${root}" -mindepth 1 \
+		\( -type d -name '.*' ! -name '.git' -prune \) -o \
+		\( \( -name '.git' -o -name 'bedrock' -o -name 'site' \) -print -prune \) \
+		2>/dev/null |
+		sed 's#/[^/]*$##' |
+		LC_ALL=C sort -u |
+		awk 'last == "" || substr($0, 1, length(last) + 1) != last "/" { print; last = $0 }'
 }
 
 _project_open_cache_file() {
@@ -305,7 +308,7 @@ _project_open_build_cache() {
 	dir="${cache%/*}"
 	mkdir -p "${dir}" 2>/dev/null || return 1
 	tmp="$(mktemp "${dir}/projects.XXXXXX")" || return 1
-	if _project_open_scan | LC_ALL=C sort >"${tmp}" && mv -f "${tmp}" "${cache}"; then
+	if _project_open_scan >"${tmp}" && mv -f "${tmp}" "${cache}"; then
 		return 0
 	fi
 	rm -f "${tmp}"
