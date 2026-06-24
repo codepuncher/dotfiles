@@ -273,7 +273,8 @@ _project_open_root() {
 }
 
 _project_open_scan() {
-	local root="${1:-$(_project_open_root)}"
+	local root
+	root="$(_project_open_root)"
 	# Projects live at <root>/<category>/<project> and always hold a .git, so one
 	# find at that fixed depth lists them; submodules sit deeper and fall out.
 	find "${root}" -mindepth 3 -maxdepth 3 -name '.git' 2>/dev/null |
