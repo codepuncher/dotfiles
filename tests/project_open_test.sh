@@ -34,7 +34,8 @@ setup_fixture() {
 
 TEST_HOME=""
 cleanup() {
-	[[ -n "${ROOT}" ]] && rm -rf "${ROOT}" "${XDG_CACHE_HOME}"
+	[[ -n "${ROOT}" ]] && rm -rf "${ROOT}"
+	[[ -n "${XDG_CACHE_HOME}" ]] && rm -rf "${XDG_CACHE_HOME}"
 	[[ -n "${TEST_HOME}" ]] && rm -rf "${TEST_HOME}"
 }
 trap cleanup EXIT
