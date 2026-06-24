@@ -391,9 +391,11 @@ _project_open_targets() {
 	[[ -n "${name}" ]] || return 0
 	project_path="$(_project_open_resolve "${name}" cache_only)"
 	[[ -n "${project_path}" ]] || return 0
-	find "${project_path}" -mindepth 1 -maxdepth 1 -type d -not -name '.*' 2>/dev/null | while IFS= read -r target_dir; do
-		printf '%s\n' "${target_dir##*/}"
-	done
+	find "${project_path}" -mindepth 1 -maxdepth 1 -type d -not -name '.*' 2>/dev/null |
+		while IFS= read -r target_dir; do
+			printf '%s\n' "${target_dir##*/}"
+		done |
+		LC_ALL=C sort
 }
 
 _project_open_complete_bash() {

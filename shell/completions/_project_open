@@ -4,7 +4,9 @@
 # the repeated/deferred compinit calls in zshrc. Discovery helpers live in
 # shell/aliases and are available in the interactive shell.
 
-(( $+functions[_project_open_projects] )) || return 1
+# Succeed with no candidates if the discovery helpers (from shell/aliases) aren't
+# loaded yet, so zsh doesn't treat this as a failed completer.
+(( $+functions[_project_open_projects] )) || return 0
 
 local -a candidates
 
