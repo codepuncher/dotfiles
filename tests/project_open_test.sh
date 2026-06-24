@@ -44,7 +44,7 @@ tmux() { return 0; }
 
 test_scan() {
 	local out
-	out="$(_project_open_scan | sed "s#^${ROOT}/##" | sort | tr '\n' ',')"
+	out="$(_project_open_scan | sed "s#^${ROOT}/##" | LC_ALL=C sort | tr '\n' ',')"
 	assert_eq "scan finds outermost projects, excludes submodules" \
 		"deep/a/b/proj,misc/khuey,mods/HoldFast,wordpress/acme,wordpress/beta," \
 		"${out}"
