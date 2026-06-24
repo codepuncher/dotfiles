@@ -285,11 +285,14 @@ _project_open_scan() {
 }
 
 _project_open_cache_file() {
-	# Key the cache by root so changing PROJECT_OPEN_ROOT never reads stale paths.
+	# Key the cache by a hash of the root so a different PROJECT_OPEN_ROOT never
+	# reads a stale cache. Hashing (not char substitution) avoids path collisions;
+	# trailing slashes are stripped so "/x" and "/x/" share one cache.
 	local root key
 	root="$(_project_open_root)"
-	key="${root//\//_}"
-	printf '%s\n' "${XDG_CACHE_HOME:-${HOME}/.cache}/project_open/projects${key}"
+	root="${root%/}"
+	key="$(printf '%s' "${root}" | cksum | cut -d' ' -f1)"
+	printf '%s\n' "${XDG_CACHE_HOME:-${HOME}/.cache}/project_open/projects-${key}"
 }
 
 _project_open_build_cache() {
@@ -302,7 +305,7 @@ _project_open_build_cache() {
 	dir="${cache%/*}"
 	mkdir -p "${dir}" 2>/dev/null || return 1
 	tmp="$(mktemp "${dir}/projects.XXXXXX")" || return 1
-	if _project_open_scan >"${tmp}" && mv -f "${tmp}" "${cache}"; then
+	if _project_open_scan | LC_ALL=C sort >"${tmp}" && mv -f "${tmp}" "${cache}"; then
 		return 0
 	fi
 	rm -f "${tmp}"

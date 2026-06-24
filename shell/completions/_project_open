@@ -11,13 +11,13 @@ local -a candidates
 if (( CURRENT == 2 )); then
 	candidates=("${(@f)$(_project_open_projects)}")
 	compadd -- "${candidates[@]}"
-	return
+	return 0
 fi
 
 if (( CURRENT == 3 )); then
 	candidates=("${(@f)$(_project_open_targets "${words[CURRENT-1]}")}")
 	compadd -- "${candidates[@]}"
-	return
+	return 0
 fi
 
-return
+return 0
