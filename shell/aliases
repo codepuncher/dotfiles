@@ -274,17 +274,11 @@ _project_open_root() {
 
 _project_open_scan() {
 	local root="${1:-$(_project_open_root)}"
-	# One find lists every project marker (.git/bedrock/site) under root. Markers
-	# and hidden dirs are pruned, so we never descend into a .git or app dir; awk
-	# then maps each marker to its parent (the project) and keeps the outermost
-	# per subtree, dropping vendored submodules nested inside a project.
-	find "${root}" -mindepth 1 \
-		\( -type d -name '.*' ! -name '.git' -prune \) -o \
-		\( \( -name '.git' -o -name 'bedrock' -o -name 'site' \) -print -prune \) \
-		2>/dev/null |
-		sed 's#/[^/]*$##' |
-		LC_ALL=C sort -u |
-		awk 'last == "" || substr($0, 1, length(last) + 1) != last "/" { print; last = $0 }'
+	# Projects live at <root>/<category>/<project> and always hold a .git, so one
+	# find at that fixed depth lists them; submodules sit deeper and fall out.
+	find "${root}" -mindepth 3 -maxdepth 3 -name '.git' 2>/dev/null |
+		sed 's#/\.git$##' |
+		LC_ALL=C sort
 }
 
 _project_open_cache_file() {

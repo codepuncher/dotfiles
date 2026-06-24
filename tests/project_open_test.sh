@@ -23,14 +23,17 @@ setup_fixture() {
 	export PROJECT_OPEN_ROOT="${ROOT}"
 	XDG_CACHE_HOME="$(mktemp -d "${TMPDIR:-/tmp}/project_open_cache.XXXXXX")"
 	export XDG_CACHE_HOME
+	# Projects sit at <root>/<category>/<project> and always hold a .git.
+	# wordpress projects carry a .git alongside their bedrock/site app dir;
+	# vcpkg is a nested submodule (deeper) that must be excluded.
 	mkdir -p \
 		"${ROOT}/mods/HoldFast/.git" \
 		"${ROOT}/mods/HoldFast/lib/vcpkg/.git" \
 		"${ROOT}/misc/khuey/.git" \
+		"${ROOT}/wordpress/acme/.git" \
 		"${ROOT}/wordpress/acme/site" \
-		"${ROOT}/wordpress/beta/bedrock" \
-		"${ROOT}/deep/a/b/proj/.git" \
-		"${ROOT}/.hidden/proj/.git"
+		"${ROOT}/wordpress/beta/.git" \
+		"${ROOT}/wordpress/beta/bedrock"
 }
 
 TEST_HOME=""
@@ -46,10 +49,10 @@ tmux() { return 0; }
 
 test_scan() {
 	local out
-	# Excludes nested submodules (lib/vcpkg) and hidden dirs (.hidden/proj).
+	# Excludes nested submodules (lib/vcpkg sits deeper than the fixed scan depth).
 	out="$(_project_open_scan | sed "s#^${ROOT}/##" | LC_ALL=C sort | tr '\n' ',')"
-	assert_eq "scan finds outermost projects, excludes submodules and hidden dirs" \
-		"deep/a/b/proj,misc/khuey,mods/HoldFast,wordpress/acme,wordpress/beta," \
+	assert_eq "scan finds category/project dirs, excludes submodules" \
+		"misc/khuey,mods/HoldFast,wordpress/acme,wordpress/beta," \
 		"${out}"
 }
 
@@ -90,14 +93,14 @@ test_cache() {
 test_resolve_and_completion() {
 	assert_eq "resolve HoldFast to path" "${ROOT}/mods/HoldFast" \
 		"$(_project_open_resolve HoldFast)"
-	assert_eq "resolve deep project" "${ROOT}/deep/a/b/proj" \
-		"$(_project_open_resolve proj)"
+	assert_eq "resolve wordpress project" "${ROOT}/wordpress/acme" \
+		"$(_project_open_resolve acme)"
 	assert_eq "resolve unknown is empty" "" "$(_project_open_resolve nope)"
 
 	# test_cache (run earlier in main) added mods/NewMod to the fixture, so it
 	# appears here too. sort makes order irrelevant.
 	po_refresh
-	assert_eq "projects lists basenames" "HoldFast,NewMod,acme,beta,khuey,proj," \
+	assert_eq "projects lists basenames" "HoldFast,NewMod,acme,beta,khuey," \
 		"$(_project_open_projects | LC_ALL=C sort | tr '\n' ',')"
 
 	assert_eq "targets lists subdirs" "lib" "$(_project_open_targets HoldFast)"
