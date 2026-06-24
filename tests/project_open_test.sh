@@ -32,8 +32,10 @@ setup_fixture() {
 		"${ROOT}/deep/a/b/proj/.git"
 }
 
+TEST_HOME=""
 cleanup() {
 	[[ -n "${ROOT}" ]] && rm -rf "${ROOT}" "${XDG_CACHE_HOME}"
+	[[ -n "${TEST_HOME}" ]] && rm -rf "${TEST_HOME}"
 }
 trap cleanup EXIT
 
@@ -114,8 +116,14 @@ main() {
 	setup_fixture
 	local dotfiles
 	dotfiles="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+	# shell/aliases sources "${HOME}/.dotfiles/shell/os.sh", so point HOME at a
+	# temp dir whose .dotfiles symlinks to this repo. That lets the test run
+	# from any checkout path, not only ~/.dotfiles.
+	TEST_HOME="$(mktemp -d "${TMPDIR:-/tmp}/project_open_home.XXXXXX")"
+	ln -s "${dotfiles}" "${TEST_HOME}/.dotfiles"
+	export HOME="${TEST_HOME}"
 	# shellcheck source=/dev/null
-	source "${dotfiles}/shell/aliases"
+	source "${HOME}/.dotfiles/shell/aliases"
 
 	test_scan
 	test_cache
