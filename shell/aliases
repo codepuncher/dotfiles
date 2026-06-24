@@ -310,9 +310,15 @@ _project_open_build_cache() {
 	dir="${cache%/*}"
 	mkdir -p "${dir}" 2>/dev/null || return 1
 	tmp="$(mktemp "${dir}/projects.XXXXXX")" || return 1
-	_project_open_scan >"${tmp}"
-	mv -f "${tmp}" "${cache}"
-	printf '%s\n' "${now}" >"${stamp}"
+	# Only stamp once the cache is actually in place; otherwise the TTL guard
+	# would suppress rebuilds while the cache stays missing/stale. Clean up
+	# the temp file if the scan or the atomic swap fails.
+	if _project_open_scan >"${tmp}" && mv -f "${tmp}" "${cache}"; then
+		printf '%s\n' "${now}" >"${stamp}"
+		return 0
+	fi
+	rm -f "${tmp}"
+	return 1
 }
 
 _project_open_read_cache() {
@@ -392,9 +398,11 @@ project_open() {
 		return
 	fi
 
-	# Find only themes using Composer.
-	THEMES=("${NEW_PATH}/web/app/themes/"*/composer.json)
-	THEME_PATH="${THEMES[1]//composer.json/}"
+	# Locate the first Composer theme. find (not a glob) so a project with no
+	# web/app/themes tree returns cleanly instead of tripping zsh NOMATCH now
+	# that non-WordPress projects can be resolved.
+	THEME_PATH="$(find "${NEW_PATH}/web/app/themes" -mindepth 2 -maxdepth 2 -name composer.json 2>/dev/null | LC_ALL=C sort | head -n1)"
+	THEME_PATH="${THEME_PATH%composer.json}"
 	if [ -z "${THEME_PATH}" ]; then
 		echo "No theme available" >&2
 		return 1
