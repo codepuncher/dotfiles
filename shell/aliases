@@ -364,7 +364,7 @@ project_open() {
 		tmux rename-window "${1}"
 	fi
 
-	if [ -n "${2}" ] && [[ "${2}" != "theme" ]]; then
+	if [ -n "${2}" ]; then
 		# shellcheck disable=SC2164
 		cd "${NEW_PATH}/${2}"
 		return
@@ -376,20 +376,8 @@ project_open() {
 		NEW_PATH="${NEW_PATH}/site"
 	fi
 
-	if [ -z "${2}" ]; then
-		# shellcheck disable=SC2164
-		cd "${NEW_PATH}"
-		return
-	fi
-
-	THEME_PATH="$(find "${NEW_PATH}/web/app/themes" -mindepth 2 -maxdepth 2 -type f -name composer.json 2>/dev/null | LC_ALL=C sort | head -n1)"
-	THEME_PATH="${THEME_PATH%composer.json}"
-	if [ -z "${THEME_PATH}" ]; then
-		echo "No theme available" >&2
-		return 1
-	fi
-
-	cd "${THEME_PATH}" || return
+	# shellcheck disable=SC2164
+	cd "${NEW_PATH}"
 }
 alias po='project_open'
 
@@ -403,7 +391,7 @@ _project_open_projects() {
 _project_open_targets() {
 	local name="${1}" project_path target_dir
 	[[ -n "${name}" ]] || return 0
-	project_path="$(_project_open_resolve "${name}" cache_only)" || return 0
+	project_path="$(_project_open_resolve "${name}" cache_only)"
 	[[ -n "${project_path}" ]] || return 0
 	find "${project_path}" -mindepth 1 -maxdepth 1 -type d -not -name '.*' 2>/dev/null | while IFS= read -r target_dir; do
 		printf '%s\n' "${target_dir##*/}"
