@@ -460,8 +460,11 @@ _project_open_complete_bash() {
 if [[ -n "${BASH_VERSION:-}" ]]; then
 	complete -F _project_open_complete_bash project_open
 	complete -F _project_open_complete_bash po
-	# Rebuild the project cache in the background, detached so no job message prints.
-	( _project_open_build_cache & ) >/dev/null 2>&1
+	# Rebuild the project cache in the background, detached so no job message
+	# prints. Interactive only, so sourcing in scripts/tests spawns nothing.
+	if [[ $- == *i* ]]; then
+		( _project_open_build_cache & ) >/dev/null 2>&1
+	fi
 fi
 
 if [[ -n "${ZSH_VERSION:-}" ]]; then
@@ -504,7 +507,10 @@ if [[ -n "${ZSH_VERSION:-}" ]]; then
 	else
 		add-zsh-hook precmd _project_open_register_zsh
 	fi
-	_project_open_build_cache &!'
+	# Interactive only, so a non-interactive `zsh -c "source ..."` spawns no job.
+	if [[ -o interactive ]]; then
+		_project_open_build_cache &!
+	fi'
 fi
 
 project_edit() {
