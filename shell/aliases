@@ -508,8 +508,9 @@ if [[ -n "${ZSH_VERSION:-}" ]]; then
 		add-zsh-hook precmd _project_open_register_zsh
 	fi
 	# Interactive only, so a non-interactive `zsh -c "source ..."` spawns no job.
+	# Silenced like the bash path so a failed build prints nothing at startup.
 	if [[ -o interactive ]]; then
-		_project_open_build_cache &!
+		_project_open_build_cache >/dev/null 2>&1 &!
 	fi'
 fi
 
