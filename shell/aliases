@@ -268,15 +268,109 @@ delete_terms() {
 set_posts_statuses() {
 	wp post update "$(wp post list --post_type="${1}" --post_status="${2}" --format=ids)" --post_status="${3}"
 }
+_project_open_root() {
+	printf '%s\n' "${PROJECT_OPEN_ROOT:-${HOME}/Code}"
+}
+
+# Recursively list outermost project dirs under a root. A directory is a
+# project if it contains .git, bedrock, or site; once matched we do not
+# descend into it, so vendored submodules inside a repo are excluded.
+# find (not globs) is used so empty dirs don't trip zsh NOMATCH.
+_project_open_scan() {
+	local root="${1:-$(_project_open_root)}"
+	local dir
+	# Pipe (not <()) so the loop body never runs inside a process
+	# substitution: under zsh, a <() that calls a function nested in $()
+	# can lose $PATH, which breaks find/cat. Pipes keep PATH intact.
+	find "${root}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | while IFS= read -r dir; do
+		if [[ -e "${dir}/.git" || -d "${dir}/bedrock" || -d "${dir}/site" ]]; then
+			printf '%s\n' "${dir}"
+		else
+			_project_open_scan "${dir}"
+		fi
+	done
+}
+
+_project_open_cache_file() {
+	printf '%s\n' "${XDG_CACHE_HOME:-${HOME}/.cache}/project_open/projects"
+}
+
+# Rebuild the cache atomically. Skips when the cache was rebuilt within the
+# last few seconds so a burst of shells (e.g. tmux session restore) does one
+# build, not many. Safe to run backgrounded.
+_project_open_build_cache() {
+	local cache stamp dir tmp now last ttl
+	cache="$(_project_open_cache_file)"
+	stamp="${cache}.ts"
+	ttl="${PROJECT_OPEN_CACHE_TTL:-3}"
+	now="$(date +%s)"
+	last="$(cat "${stamp}" 2>/dev/null || echo 0)"
+	(( now - last < ttl )) && return 0
+
+	dir="${cache%/*}"
+	mkdir -p "${dir}" 2>/dev/null || return 1
+	tmp="$(mktemp "${dir}/projects.XXXXXX")" || return 1
+	_project_open_scan >"${tmp}"
+	mv -f "${tmp}" "${cache}"
+	printf '%s\n' "${now}" >"${stamp}"
+}
+
+_project_open_read_cache() {
+	local cache line
+	cache="$(_project_open_cache_file)"
+	if [[ -f "${cache}" ]]; then
+		# Builtin read, not cat: this runs inside completion's nested
+		# command substitution where zsh may have emptied $PATH.
+		while IFS= read -r line || [[ -n "${line}" ]]; do
+			printf '%s\n' "${line}"
+		done < "${cache}"
+		return 0
+	fi
+	_project_open_scan
+}
+
+po_refresh() {
+	local cache
+	cache="$(_project_open_cache_file)"
+	rm -f "${cache}" "${cache}.ts"
+	_project_open_build_cache
+}
+
+# Map a bare project name to its absolute path. Names are unique across
+# ~/Code, so the first match wins. Falls back to a live scan when the cache
+# is stale (e.g. a just-added project).
+_project_open_resolve() {
+	local name="${1}" cache line scanned
+	[[ -n "${name}" ]] || return 1
+	# Builtin file read (cache) then here-string (live scan): no <() so
+	# $PATH survives under zsh's nested completion subshells, and the
+	# match's `return 0` fires in the function, not a pipe subshell.
+	cache="$(_project_open_cache_file)"
+	if [[ -f "${cache}" ]]; then
+		while IFS= read -r line || [[ -n "${line}" ]]; do
+			[[ "${line##*/}" == "${name}" ]] && { printf '%s\n' "${line}"; return 0; }
+		done < "${cache}"
+	fi
+	scanned="$(_project_open_scan)"
+	while IFS= read -r line || [[ -n "${line}" ]]; do
+		[[ "${line##*/}" == "${name}" ]] && { printf '%s\n' "${line}"; return 0; }
+	done <<< "${scanned}"
+	return 1
+}
+
 project_open() {
-	WP_PATH="${HOME}/Code/wordpress"
+	CODE_PATH="$(_project_open_root)"
 
 	if [ -z "${1}" ]; then
-		NEW_PATH="${WP_PATH}"
+		NEW_PATH="${CODE_PATH}"
 
 		tmux setw automatic-rename
 	else
-		NEW_PATH="${WP_PATH}/${1}"
+		NEW_PATH="$(_project_open_resolve "${1}")"
+		if [ -z "${NEW_PATH}" ]; then
+			echo "No project named ${1} under ${CODE_PATH}" >&2
+			return 1
+		fi
 		tmux rename-window "${1}"
 	fi
 
@@ -311,29 +405,21 @@ project_open() {
 alias po='project_open'
 
 _project_open_projects() {
-	local wp_path="${HOME}/Code/wordpress"
-	local project_dir
-
-	[[ -d "${wp_path}" ]] || return 0
-
-	for project_dir in "${wp_path}"/*; do
-		[[ -d "${project_dir}" ]] || continue
-		[[ -d "${project_dir}/bedrock" || -d "${project_dir}/site" ]] || continue
-		printf '%s\n' "${project_dir##*/}"
+	# Not `path`: under zsh the last pipe stage runs in the current shell,
+	# and `path` is the special array tied to $PATH; reading into it would
+	# clobber $PATH. A local non-special name is safe in both shells.
+	local proj
+	_project_open_read_cache | while IFS= read -r proj; do
+		printf '%s\n' "${proj##*/}"
 	done
 }
 
 _project_open_targets() {
-	local wp_path="${HOME}/Code/wordpress"
-	local project="${1}"
-	local project_path="${wp_path}/${project}"
-	local target_dir
-
-	[[ -n "${project}" ]] || return 0
-	[[ -d "${project_path}" ]] || return 0
-
-	for target_dir in "${project_path}"/*; do
-		[[ -d "${target_dir}" ]] || continue
+	local name="${1}" project_path target_dir
+	[[ -n "${name}" ]] || return 0
+	project_path="$(_project_open_resolve "${name}")" || return 0
+	[[ -n "${project_path}" ]] || return 0
+	find "${project_path}" -mindepth 1 -maxdepth 1 -type d -not -name '.*' 2>/dev/null | while IFS= read -r target_dir; do
 		printf '%s\n' "${target_dir##*/}"
 	done
 }
@@ -343,8 +429,8 @@ _project_open_complete_bash() {
 	current="${COMP_WORDS[COMP_CWORD]}"
 	COMPREPLY=()
 
-	# while-read + manual prefix match keeps this working on Bash 3.2 (macOS),
-	# avoids COMP_WORDS[-1] when COMP_CWORD is 0, and preserves names with spaces.
+	# while-read + manual prefix match avoids COMP_WORDS[-1] when COMP_CWORD is 0
+	# and preserves names with spaces.
 	if (( COMP_CWORD == 1 )); then
 		while IFS= read -r candidate; do
 			[[ "${candidate}" == "${current}"* ]] && COMPREPLY+=("${candidate}")
@@ -366,6 +452,8 @@ _project_open_complete_bash() {
 if [[ -n "${BASH_VERSION:-}" ]]; then
 	complete -F _project_open_complete_bash project_open
 	complete -F _project_open_complete_bash po
+	# Rebuild the project cache in the background, detached so no job message prints.
+	( _project_open_build_cache & ) >/dev/null 2>&1
 fi
 
 if [[ -n "${ZSH_VERSION:-}" ]]; then
@@ -407,7 +495,8 @@ if [[ -n "${ZSH_VERSION:-}" ]]; then
 		_project_open_register_zsh
 	else
 		add-zsh-hook precmd _project_open_register_zsh
-	fi'
+	fi
+	_project_open_build_cache &!'
 fi
 
 project_edit() {
