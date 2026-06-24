@@ -69,10 +69,13 @@ test_cache() {
 	assert_eq "po_refresh rebuilds" "yes" \
 		"$(grep -q '/NewMod$' "${cache}" && echo yes || echo no)"
 
-	# read_cache falls back to a live scan when the file is absent.
 	rm -f "${cache}" "${cache}.ts"
-	assert_eq "read_cache scans when missing" "1" \
+	assert_eq "read_cache empty when cache missing" "0" \
 		"$(_project_open_read_cache | grep -c '/mods/HoldFast$')"
+	assert_eq "resolve scans when cache missing" "${ROOT}/mods/HoldFast" \
+		"$(_project_open_resolve HoldFast)"
+	assert_eq "resolve cache_only empty when cache missing" "" \
+		"$(_project_open_resolve HoldFast cache_only)"
 }
 
 test_resolve_and_completion() {
