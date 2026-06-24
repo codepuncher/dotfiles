@@ -401,7 +401,7 @@ project_open() {
 	# Locate the first Composer theme. find (not a glob) so a project with no
 	# web/app/themes tree returns cleanly instead of tripping zsh NOMATCH now
 	# that non-WordPress projects can be resolved.
-	THEME_PATH="$(find "${NEW_PATH}/web/app/themes" -mindepth 2 -maxdepth 2 -name composer.json 2>/dev/null | LC_ALL=C sort | head -n1)"
+	THEME_PATH="$(find "${NEW_PATH}/web/app/themes" -mindepth 2 -maxdepth 2 -type f -name composer.json 2>/dev/null | LC_ALL=C sort | head -n1)"
 	THEME_PATH="${THEME_PATH%composer.json}"
 	if [ -z "${THEME_PATH}" ]; then
 		echo "No theme available" >&2
