@@ -76,6 +76,11 @@ test_cache() {
 		"$(_project_open_resolve HoldFast)"
 	assert_eq "resolve cache_only empty when cache missing" "" \
 		"$(_project_open_resolve HoldFast cache_only)"
+
+	rm -f "${cache}" "${cache}.ts"
+	PROJECT_OPEN_ROOT="${ROOT}/missing" _project_open_build_cache
+	assert_eq "no cache built when root missing" "no" \
+		"$([[ -f "${cache}" ]] && echo yes || echo no)"
 }
 
 test_resolve_and_completion() {

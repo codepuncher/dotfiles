@@ -289,7 +289,9 @@ _project_open_cache_file() {
 }
 
 _project_open_build_cache() {
-	local cache stamp dir tmp now last ttl
+	local cache stamp dir tmp now last ttl root
+	root="$(_project_open_root)"
+	[[ -d "${root}" ]] || return 1
 	cache="$(_project_open_cache_file)"
 	stamp="${cache}.ts"
 	ttl="${PROJECT_OPEN_CACHE_TTL:-3}"
