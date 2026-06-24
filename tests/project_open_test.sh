@@ -18,9 +18,10 @@ assert_eq() {
 
 ROOT=""
 setup_fixture() {
-	ROOT="$(mktemp -d)"
+	# Templates keep mktemp portable: BSD/macOS mktemp needs one, GNU accepts it.
+	ROOT="$(mktemp -d "${TMPDIR:-/tmp}/project_open_root.XXXXXX")"
 	export PROJECT_OPEN_ROOT="${ROOT}"
-	XDG_CACHE_HOME="$(mktemp -d)"
+	XDG_CACHE_HOME="$(mktemp -d "${TMPDIR:-/tmp}/project_open_cache.XXXXXX")"
 	export XDG_CACHE_HOME
 	mkdir -p \
 		"${ROOT}/mods/HoldFast/.git" \
