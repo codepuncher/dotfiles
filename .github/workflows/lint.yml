@@ -14,8 +14,18 @@ jobs:
         uses: azohra/shell-linter@latest
         with:
           # zsh completion functions (shell/completions) use zsh-only syntax
-          # that ShellCheck cannot parse; ShellCheck has no zsh dialect.
-          exclude-paths: "shell/completions"
+          # ShellCheck cannot parse; tests/ holds .bats files (non-bash @test
+          # syntax) and third-party BATS submodules. ShellCheck skips both.
+          exclude-paths: "shell/completions,tests"
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Run BATS tests
+        run: ./tests/bats/bin/bats tests/*.bats
 
   lua:
     runs-on: ubuntu-latest
