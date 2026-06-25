@@ -97,6 +97,9 @@ HISTSIZE=100000
 SAVEHIST=10000
 setopt SHARE_HISTORY
 
+if (( ! ${fpath[(Ie)${HOME}/.dotfiles/shell/completions]} )); then
+	fpath=("${HOME}/.dotfiles/shell/completions" ${fpath})
+fi
 autoload -U compinit && compinit
 zmodload -i zsh/complist
 compdef __git_branch_names gpDo
