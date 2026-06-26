@@ -13,9 +13,6 @@ setup() {
 	XDG_CACHE_HOME="$(temp_make)"
 	export XDG_CACHE_HOME
 
-	# Projects sit at <root>/<category>/<project> and always hold a .git.
-	# wordpress projects carry a .git alongside their bedrock/site app dir;
-	# vcpkg is a nested submodule (deeper) that must be excluded from scans.
 	mkdir -p \
 		"${ROOT}/mods/HoldFast/.git" \
 		"${ROOT}/mods/HoldFast/lib" \
@@ -24,7 +21,9 @@ setup() {
 		"${ROOT}/wordpress/acme/.git" \
 		"${ROOT}/wordpress/acme/site" \
 		"${ROOT}/wordpress/beta/.git" \
-		"${ROOT}/wordpress/beta/bedrock"
+		"${ROOT}/wordpress/beta/bedrock" \
+		"${ROOT}/wordpress/itineris/bedrock/.git" \
+		"${ROOT}/wordpress/itineris/trellis/.git"
 
 	# shell/aliases sources ${HOME}/.dotfiles/shell/os.sh, so point HOME at a
 	# temp dir whose .dotfiles symlinks to this repo. That lets the suite run
@@ -43,10 +42,10 @@ teardown() {
 	temp_del "${TEST_HOME}"
 }
 
-@test "scan finds category/project dirs and excludes nested submodules" {
+@test "scan finds category/project dirs and excludes itineris submodules" {
 	local out
 	out="$(_project_open_scan | sed "s#^${ROOT}/##" | LC_ALL=C sort | tr '\n' ',')"
-	assert_equal "${out}" "misc/khuey,mods/HoldFast,wordpress/acme,wordpress/beta,"
+	assert_equal "${out}" "misc/khuey,mods/HoldFast,wordpress/acme,wordpress/beta,wordpress/itineris,"
 }
 
 @test "po_refresh creates the cache file" {
@@ -106,6 +105,11 @@ teardown() {
 	assert_output "${ROOT}/wordpress/acme"
 }
 
+@test "resolve maps a itineris-git project (no root .git) to its path" {
+	run _project_open_resolve itineris
+	assert_output "${ROOT}/wordpress/itineris"
+}
+
 @test "resolve of an unknown name is empty" {
 	run _project_open_resolve nope
 	assert_output ''
@@ -115,7 +119,7 @@ teardown() {
 	po_refresh
 	local out
 	out="$(_project_open_projects | LC_ALL=C sort | tr '\n' ',')"
-	assert_equal "${out}" "HoldFast,acme,beta,khuey,"
+	assert_equal "${out}" "HoldFast,acme,beta,itineris,khuey,"
 }
 
 @test "targets lists a project's subdirs" {
@@ -162,6 +166,13 @@ teardown() {
 	local dir
 	dir="$(cd / && project_open acme >/dev/null 2>&1 && pwd)"
 	assert_equal "${dir}" "${ROOT}/wordpress/acme/site"
+}
+
+@test "project_open descends into bedrock for a itineris-git project" {
+	po_refresh
+	local dir
+	dir="$(cd / && project_open itineris >/dev/null 2>&1 && pwd)"
+	assert_equal "${dir}" "${ROOT}/wordpress/itineris/bedrock"
 }
 
 @test "project_open <name> <subdir> cds into the subdir" {

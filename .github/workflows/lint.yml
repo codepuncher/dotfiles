@@ -25,7 +25,7 @@ jobs:
         with:
           submodules: recursive
       - name: Run BATS tests
-        run: ./tests/bats/bin/bats tests/*.bats
+        run: ./bin/bats/bin/bats tests/*.bats
 
   lua:
     runs-on: ubuntu-latest
