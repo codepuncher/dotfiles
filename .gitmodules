@@ -1,5 +1,5 @@
-[submodule "tests/bats"]
-	path = tests/bats
+[submodule "bin/bats"]
+	path = bin/bats
 	url = https://github.com/bats-core/bats-core.git
 [submodule "tests/test_helper/bats-support"]
 	path = tests/test_helper/bats-support

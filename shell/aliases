@@ -275,11 +275,16 @@ _project_open_root() {
 _project_open_scan() {
 	local root
 	root="$(_project_open_root)"
-	# Projects live at <root>/<category>/<project> and always hold a .git, so one
-	# find at that fixed depth lists them; submodules sit deeper and fall out.
-	find "${root}" -mindepth 3 -maxdepth 3 -name '.git' 2>/dev/null |
-		sed 's#/\.git$##' |
-		LC_ALL=C sort
+	{
+		# Direct repos: root/cat/proj/.git
+		find "${root}" -mindepth 3 -maxdepth 3 -name '.git' 2>/dev/null |
+			sed 's#/\.git$##'
+		# Nested repos: root/cat/proj/sub/.git → root/cat/proj
+		# Handles WordPress projects where bedrock/trellis hold the .git instead.
+		# Submodules at depth 5+ are still excluded.
+		find "${root}" -mindepth 4 -maxdepth 4 -name '.git' 2>/dev/null |
+			sed 's#/[^/]*/\.git$##'
+	} | LC_ALL=C sort -u
 }
 
 _project_open_cache_file() {
