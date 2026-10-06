@@ -124,3 +124,13 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 . "$HOME/.cargo/env"
+
+ITINERIS_BIN_PATH="${HOME}/Code/misc/itineris-bin"
+if [[ -d "${ITINERIS_BIN_PATH}" ]]; then
+	PATH="${ITINERIS_BIN_PATH}:${PATH}"
+fi
+
+# Load sensitive variables such as credentials and tokens
+if [ -f ~/.shell_env ]; then
+	source ~/.shell_env
+fi

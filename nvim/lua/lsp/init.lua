@@ -41,7 +41,7 @@ local servers = {
   'pyright',
   'rust_analyzer',
   'stylelint_lsp',
-  'ts_ls',
+  'tsc',
   'vue_ls',
   'yamlls',
   'tailwindcss',

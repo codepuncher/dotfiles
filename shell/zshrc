@@ -22,12 +22,17 @@ fi
 # General bin paths
 PATH="${PATH}:/usr/local/bin:${HOME}/.local/bin"
 
+# If snaps are installed, add their bin path to PATH
+if [[ -d "/snap/bin" ]]; then
+  PATH="${PATH}:/snap/bin"
+fi
+
 # Dotfiles bin
 PATH="${PATH}:${HOME}/.dotfiles/bin"
 
 ITINERIS_BIN_PATH="${HOME}/Code/misc/itineris-bin"
 if [[ -d "${ITINERIS_BIN_PATH}" ]]; then
-	PATH="${PATH}:${ITINERIS_BIN_PATH}"
+	PATH="${ITINERIS_BIN_PATH}:${PATH}"
 fi
 
 # Composer
