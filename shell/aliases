@@ -100,8 +100,8 @@ function gp_create_pr {
 
 	sleep 5 && gh pr view -w
 }
-alias gh_check_merge='gh pr checks --watch --interval 2 && gh pr merge -md'
 alias gfrh='gf --all --prune && gr --hard "@{u}"'
+alias gh_check_merge='gh pr checks --watch --interval 2 && gh pr merge -md'
 
 # Composer
 alias c='composer'
