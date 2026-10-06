@@ -284,6 +284,10 @@ _project_open_scan() {
 		# Submodules at depth 5+ are still excluded.
 		find "${root}" -mindepth 4 -maxdepth 4 -name '.git' 2>/dev/null |
 			sed 's#/[^/]*/\.git$##'
+		# Plain WordPress installs with no project-level repo (only the theme is
+		# versioned): root/cat/proj/site/wp-config.php → root/cat/proj
+		find "${root}" -mindepth 4 -maxdepth 4 -type f -path '*/site/wp-config.php' 2>/dev/null |
+			sed 's#/site/wp-config\.php$##'
 	} | LC_ALL=C sort -u
 }
 
