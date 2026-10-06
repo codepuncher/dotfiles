@@ -23,7 +23,9 @@ setup() {
 		"${ROOT}/wordpress/beta/.git" \
 		"${ROOT}/wordpress/beta/bedrock" \
 		"${ROOT}/wordpress/itineris/bedrock/.git" \
-		"${ROOT}/wordpress/itineris/trellis/.git"
+		"${ROOT}/wordpress/itineris/trellis/.git" \
+		"${ROOT}/wordpress/plain/site/wp-content/themes/plain/.git"
+	touch "${ROOT}/wordpress/plain/site/wp-config.php"
 
 	# shell/aliases sources ${HOME}/.dotfiles/shell/os.sh, so point HOME at a
 	# temp dir whose .dotfiles symlinks to this repo. That lets the suite run
@@ -45,7 +47,7 @@ teardown() {
 @test "scan finds category/project dirs and excludes itineris submodules" {
 	local out
 	out="$(_project_open_scan | sed "s#^${ROOT}/##" | LC_ALL=C sort | tr '\n' ',')"
-	assert_equal "${out}" "misc/khuey,mods/HoldFast,wordpress/acme,wordpress/beta,wordpress/itineris,"
+	assert_equal "${out}" "misc/khuey,mods/HoldFast,wordpress/acme,wordpress/beta,wordpress/itineris,wordpress/plain,"
 }
 
 @test "po_refresh creates the cache file" {
@@ -110,6 +112,11 @@ teardown() {
 	assert_output "${ROOT}/wordpress/itineris"
 }
 
+@test "resolve maps a plain wordpress site (no project .git) to its path" {
+	run _project_open_resolve plain
+	assert_output "${ROOT}/wordpress/plain"
+}
+
 @test "resolve of an unknown name is empty" {
 	run _project_open_resolve nope
 	assert_output ''
@@ -119,7 +126,7 @@ teardown() {
 	po_refresh
 	local out
 	out="$(_project_open_projects | LC_ALL=C sort | tr '\n' ',')"
-	assert_equal "${out}" "HoldFast,acme,beta,itineris,khuey,"
+	assert_equal "${out}" "HoldFast,acme,beta,itineris,khuey,plain,"
 }
 
 @test "targets lists a project's subdirs" {
@@ -166,6 +173,13 @@ teardown() {
 	local dir
 	dir="$(cd / && project_open acme >/dev/null 2>&1 && pwd)"
 	assert_equal "${dir}" "${ROOT}/wordpress/acme/site"
+}
+
+@test "project_open descends into site for a plain wordpress site" {
+	po_refresh
+	local dir
+	dir="$(cd / && project_open plain >/dev/null 2>&1 && pwd)"
+	assert_equal "${dir}" "${ROOT}/wordpress/plain/site"
 }
 
 @test "project_open descends into bedrock for a itineris-git project" {
