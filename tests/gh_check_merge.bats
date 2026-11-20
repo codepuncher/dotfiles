@@ -66,3 +66,11 @@ setup() {
 	run grep -c 'pr merge' "${CALLS}"
 	assert_output '0'
 }
+
+@test 'passes the PR selector to both checks and merge' {
+	SETTINGS='true true true'
+	run gh_check_merge 123
+	assert_success
+	assert_equal "$(grep 'pr checks' "${CALLS}")" 'pr checks --watch --interval 2 123'
+	assert_equal "$(tail -n1 "${CALLS}")" 'pr merge -m -d 123'
+}

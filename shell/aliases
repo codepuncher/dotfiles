@@ -101,11 +101,12 @@ function gp_create_pr {
 	sleep 5 && gh pr view -w
 }
 alias gfrh='gf --all --prune && gr --hard "@{u}"'
+unalias gh_check_merge 2>/dev/null
 gh_check_merge() {
 	local ALLOWED MERGE_FLAG
 
 	if ! ALLOWED="$(gh repo view --json mergeCommitAllowed,squashMergeAllowed,rebaseMergeAllowed --jq '[.mergeCommitAllowed, .squashMergeAllowed, .rebaseMergeAllowed] | map(tostring) | join(" ")')"; then
-		echo 'Could not read the repository merge settings.'
+		echo 'Could not read the repository merge settings.' >&2
 		return 1
 	fi
 
@@ -114,15 +115,15 @@ gh_check_merge() {
 	false\ true\ *) MERGE_FLAG='-s' ;;
 	false\ false\ true)
 		MERGE_FLAG='-r'
-		echo 'Only rebase merging is allowed; GitHub will not sign the rebased commits.'
+		echo 'Only rebase merging is allowed; GitHub will not sign the rebased commits.' >&2
 		;;
 	*)
-		echo 'The repository allows no merge method.'
+		echo 'The repository allows no merge method.' >&2
 		return 1
 		;;
 	esac
 
-	gh pr checks --watch --interval 2 || return 1
+	gh pr checks --watch --interval 2 "$@" || return 1
 	gh pr merge "${MERGE_FLAG}" -d "$@"
 }
 
