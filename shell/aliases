@@ -101,7 +101,7 @@ function gp_create_pr {
 	sleep 5 && gh pr view -w
 }
 alias gfrh='gf --all --prune && gr --hard "@{u}"'
-unalias gh_check_merge 2>/dev/null
+unalias gh_check_merge 2>/dev/null || true
 gh_check_merge() {
 	local ALLOWED MERGE_FLAG
 
