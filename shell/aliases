@@ -103,10 +103,28 @@ function gp_create_pr {
 alias gfrh='gf --all --prune && gr --hard "@{u}"'
 unalias gh_check_merge 2>/dev/null || true
 gh_check_merge() {
-	local ALLOWED MERGE_FLAG ARG
+	local ALLOWED MERGE_FLAG ARG REPO_NAME=''
 	local -a CHECKS_ARGS=()
+	local TAKE_NEXT=false
 
-	if ! ALLOWED="$(gh repo view --json mergeCommitAllowed,squashMergeAllowed,rebaseMergeAllowed --jq '[.mergeCommitAllowed, .squashMergeAllowed, .rebaseMergeAllowed] | map(tostring) | join(" ")')"; then
+	# gh pr checks accepts only the PR selector and --repo, so forward just those.
+	# The selector is the leading non-flag argument, as in gh pr merge.
+	[[ "${1:-}" != -* ]] && CHECKS_ARGS+=("${1:-}")
+	for ARG in "$@"; do
+		if [[ "${TAKE_NEXT}" == true ]]; then
+			REPO_NAME="${ARG}"
+			TAKE_NEXT=false
+			continue
+		fi
+		case "${ARG}" in
+		-R | --repo) TAKE_NEXT=true ;;
+		--repo=*) REPO_NAME="${ARG#--repo=}" ;;
+		-R?*) REPO_NAME="${ARG#-R}" ;;
+		esac
+	done
+	[[ -n "${REPO_NAME}" ]] && CHECKS_ARGS+=(--repo "${REPO_NAME}")
+
+	if ! ALLOWED="$(gh repo view ${REPO_NAME:+"${REPO_NAME}"} --json mergeCommitAllowed,squashMergeAllowed,rebaseMergeAllowed --jq '[.mergeCommitAllowed, .squashMergeAllowed, .rebaseMergeAllowed] | map(tostring) | join(" ")')"; then
 		echo 'Could not read the repository merge settings.' >&2
 		return 1
 	fi
@@ -123,25 +141,6 @@ gh_check_merge() {
 		return 1
 		;;
 	esac
-
-	# gh pr checks does not accept merge-only flags (e.g. --admin), so forward just the PR selector and --repo.
-	local TAKE_NEXT=false
-	for ARG in "$@"; do
-		if [[ "${TAKE_NEXT}" == true ]]; then
-			CHECKS_ARGS+=("${ARG}")
-			TAKE_NEXT=false
-			continue
-		fi
-		case "${ARG}" in
-		-R | --repo)
-			CHECKS_ARGS+=("${ARG}")
-			TAKE_NEXT=true
-			;;
-		--repo=*) CHECKS_ARGS+=("${ARG}") ;;
-		-*) ;;
-		*) CHECKS_ARGS+=("${ARG}") ;;
-		esac
-	done
 
 	gh pr checks --watch --interval 2 "${CHECKS_ARGS[@]}" || return 1
 	gh pr merge "${MERGE_FLAG}" -d "$@"

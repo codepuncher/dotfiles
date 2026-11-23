@@ -17,6 +17,7 @@ setup() {
 	# Stub gh: `repo view` prints ${SETTINGS}, everything else is recorded.
 	gh() {
 		if [[ "${1}" == 'repo' ]]; then
+			echo "${*}" >>"${CALLS}.repo"
 			echo "${SETTINGS}"
 			return 0
 		fi
@@ -83,10 +84,30 @@ setup() {
 	assert_equal "$(tail -n1 "${CALLS}")" 'pr merge -m -d --admin'
 }
 
-@test 'passes --repo and the PR selector to checks and merge' {
+@test 'passes the selector and --repo to checks and merge, and the repo to the settings lookup' {
 	SETTINGS='true true true'
-	run gh_check_merge --repo owner/name 123 --admin
+	run gh_check_merge 123 --repo owner/name --admin
 	assert_success
-	assert_equal "$(grep 'pr checks' "${CALLS}")" 'pr checks --watch --interval 2 --repo owner/name 123'
-	assert_equal "$(tail -n1 "${CALLS}")" 'pr merge -m -d --repo owner/name 123 --admin'
+	assert_equal "$(grep 'pr checks' "${CALLS}")" 'pr checks --watch --interval 2 123 --repo owner/name'
+	assert_equal "$(tail -n1 "${CALLS}")" 'pr merge -m -d 123 --repo owner/name --admin'
+	assert_equal "$(cat "${CALLS}.repo")" 'repo view owner/name --json mergeCommitAllowed,squashMergeAllowed,rebaseMergeAllowed --jq [.mergeCommitAllowed, .squashMergeAllowed, .rebaseMergeAllowed] | map(tostring) | join(" ")'
+}
+
+@test 'accepts -R, -R<repo> and --repo=<repo>' {
+	SETTINGS='true true true'
+	for ARGS in '-R owner/name' '-Rowner/name' '--repo=owner/name'; do
+		: >"${CALLS}"
+		# shellcheck disable=SC2086
+		run gh_check_merge ${ARGS}
+		assert_success
+		assert_equal "$(grep 'pr checks' "${CALLS}")" 'pr checks --watch --interval 2 --repo owner/name'
+	done
+}
+
+@test 'does not leak value-taking merge flags into checks' {
+	SETTINGS='true true true'
+	run gh_check_merge 123 --body 'Fixes the thing'
+	assert_success
+	assert_equal "$(grep 'pr checks' "${CALLS}")" 'pr checks --watch --interval 2 123'
+	assert_equal "$(tail -n1 "${CALLS}")" 'pr merge -m -d 123 --body Fixes the thing'
 }
