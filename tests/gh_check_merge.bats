@@ -74,3 +74,19 @@ setup() {
 	assert_equal "$(grep 'pr checks' "${CALLS}")" 'pr checks --watch --interval 2 123'
 	assert_equal "$(tail -n1 "${CALLS}")" 'pr merge -m -d 123'
 }
+
+@test 'does not pass merge-only flags to checks' {
+	SETTINGS='true true true'
+	run gh_check_merge --admin
+	assert_success
+	assert_equal "$(grep 'pr checks' "${CALLS}")" 'pr checks --watch --interval 2'
+	assert_equal "$(tail -n1 "${CALLS}")" 'pr merge -m -d --admin'
+}
+
+@test 'passes --repo and the PR selector to checks and merge' {
+	SETTINGS='true true true'
+	run gh_check_merge --repo owner/name 123 --admin
+	assert_success
+	assert_equal "$(grep 'pr checks' "${CALLS}")" 'pr checks --watch --interval 2 --repo owner/name 123'
+	assert_equal "$(tail -n1 "${CALLS}")" 'pr merge -m -d --repo owner/name 123 --admin'
+}
