@@ -102,14 +102,25 @@ function gp_create_pr {
 }
 alias gfrh='gf --all --prune && gr --hard "@{u}"'
 unalias gh_check_merge 2>/dev/null || true
+# Watches checks, then merges. With --wait, a merge blocked on approval is retried every 15s.
+# A failed check, a conflict or a closed PR is final and is never retried.
 gh_check_merge() {
-	local ALLOWED MERGE_FLAG ARG REPO_NAME=''
-	local -a CHECKS_ARGS=()
-	local TAKE_NEXT=false
+	local ALLOWED MERGE_FLAG ARG REPO_NAME='' MERGE_STATUS PR_STATE
+	local -a CHECKS_ARGS=() REST_ARGS=()
+	local TAKE_NEXT=false IS_WAITING=false
+
+	for ARG in "$@"; do
+		if [[ "${ARG}" == '--wait' ]]; then
+			IS_WAITING=true
+			continue
+		fi
+		REST_ARGS+=("${ARG}")
+	done
+	set -- "${REST_ARGS[@]}"
 
 	# gh pr checks accepts only the PR selector and --repo, so forward just those.
 	# The selector is the leading non-flag argument, as in gh pr merge.
-	[[ "${1:-}" != -* ]] && CHECKS_ARGS+=("${1:-}")
+	[[ $# -gt 0 && "${1}" != -* ]] && CHECKS_ARGS+=("${1}")
 	for ARG in "$@"; do
 		if [[ "${TAKE_NEXT}" == true ]]; then
 			REPO_NAME="${ARG}"
@@ -142,8 +153,23 @@ gh_check_merge() {
 		;;
 	esac
 
-	gh pr checks --watch --interval 2 "${CHECKS_ARGS[@]}" || return 1
-	gh pr merge "${MERGE_FLAG}" -d "$@"
+	while true; do
+		gh pr checks --watch --interval 2 "${CHECKS_ARGS[@]}" || return 1
+		gh pr merge "${MERGE_FLAG}" -d "$@" && return 0
+		MERGE_STATUS=$?
+		[[ "${IS_WAITING}" == true ]] || return "${MERGE_STATUS}"
+		((MERGE_STATUS >= 130)) && return "${MERGE_STATUS}"
+
+		PR_STATE="$(gh pr view "${CHECKS_ARGS[@]}" --json state,reviewDecision,mergeStateStatus --jq '[.state, .reviewDecision, .mergeStateStatus] | join(" ")')" || return "${MERGE_STATUS}"
+		case "${PR_STATE}" in
+		MERGED\ *) return 0 ;;
+		OPEN\ REVIEW_REQUIRED\ BLOCKED | OPEN\ \ BLOCKED | OPEN\ *\ UNKNOWN) ;;
+		*) return "${MERGE_STATUS}" ;;
+		esac
+
+		echo 'Merge blocked, waiting for approval, retrying in 15s (Ctrl-C to stop)' >&2
+		sleep 15
+	done
 }
 
 # Composer
